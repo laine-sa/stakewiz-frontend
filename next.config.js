@@ -4,3 +4,9 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+
+module.exports = {
+  env: {
+    API_BASE_URL: 'http://localhost/'
+  }
+}

@@ -1,0 +1,294 @@
+@font-face {
+  font-family:josefin;
+  src: url('./fonts/JosefinSans-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family:lato;
+  src: url('./fonts/lato/Lato-Regular.ttf');
+}
+
+button:focus, button:active {
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+.btn:focus, .btn:active {
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+input:focus, input:active {
+  outline:none!important;
+  box-shadow:none!important;
+}
+
+html {
+  height:100%;
+}
+
+body {
+  padding: 0;
+  margin:0;
+  font-display:auto;
+  font-family:lato;
+  font-size:0.9rem;
+  background-color:#333;
+  background-image:url('../public/images/body-bg2.jpg');
+  height:100%;
+  background-size:cover;
+  
+  background-attachment:fixed;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
+}
+
+.logo img {
+  width:300px;
+  height:auto;
+}
+
+.modal-open {
+  overflow-y:scroll!important;
+  padding-right:inherit!important;
+}
+
+.headline {
+  font-size:2rem;
+  font-family:josefin;
+  font-style:italic;
+  text-align:right;
+}
+
+#support-label, #support-box {
+  display:none;
+}
+
+input:focus {
+  outline:none;
+}
+
+.page-loading {
+  display:none;
+}
+
+#vlist {
+  min-height:100%;
+}
+
+#loading-spinner {
+  height:100vh;
+  padding-top:20vh;
+}
+
+#laine-img { 
+  cursor:pointer;
+}
+
+.vbox {
+  content-visibility: auto;
+  background-image:url('../public/images/box-tile.png');
+  background-repeat:repeat;
+}
+
+.full-height {
+  min-height:100%;
+}
+
+#clear-input {
+  position:absolute;
+  right:1rem;
+  z-index:999;
+}
+
+.social-icons {
+  font-size:2rem;
+}
+
+.vlist-label {
+  color:#ccc;
+}
+
+.vlist-header {
+  background-color:bisque;
+  color:#000;
+  border-radius:0.3em;
+}
+
+.search-row .form-check, .search-row .form-switch {
+  padding-left:0.1rem!important;
+}
+
+.vcheckbox {
+  margin-top:0!important;
+}
+
+a {
+  color: #00B7FF;
+  text-decoration:none;
+}
+
+a:hover {
+  text-decoration:underline;
+}
+
+.cluster_statistic {
+  font-size:0.7rem;
+}
+
+.click-to-copy {
+  cursor:pointer;
+}
+
+#laine-stake {
+  font-size:0.8rem;
+}
+
+.mobile-visible {
+  display:none!important;
+}
+
+.mobile-faq-nav {
+  display:none;
+}
+
+.mobile-home-nav {
+  display:none;
+}
+
+.apy-value {
+  font-size:1.2rem;
+}
+
+.td-min-width {
+  width:30%;
+}
+
+@media only screen and (max-width: 600px) {
+  .logo {
+    margin:auto;
+    text-align:center;
+  }
+
+  .desktop-visible{
+    display:none!important;
+  }
+  .mobile-visible {
+    display:initial!important;
+  }
+
+  #support-label {
+    justify-content:center!important;
+    margin-top:0.4rem!important;
+    margin-bottom:0.4rem!important;
+  }
+  #support-box {
+    display:none!important;
+  }
+
+  .logo {
+    padding-bottom:0.4rem!important;
+  }
+
+  .mobile-col-hide {
+    display:none!important;;
+  }
+
+  .vbox {
+    display:flex;
+    flex-wrap:wrap;
+    flex-direction: row;
+    margin-left:0.1rem!important;
+    margin-right:0.1rem!important;
+  }
+
+  .mobile-name-column {
+    display:flex;
+    flex-wrap:wrap;
+    flex-direction: column;
+    flex-grow:1;
+    flex:unset;
+    padding-bottom:0.4rem!important;
+  }
+  .mobile-stake-column {
+    display:flex;
+    flex-wrap:wrap;
+    flex-direction:column;
+  }
+  .mobile-stats-column {
+    display:flex;
+    flex-wrap:wrap;
+    flex-direction:column;
+    text-align:left;
+    font-size: 0.8rem;
+    justify-content:flex-end;
+  }
+  .mobile-identities {
+    display:flex;
+    flex-direction:column;
+  }
+  .search-row {
+    display:flex;
+    flex-direction:column;
+    justify-items: center;
+  }
+  .search-row .col {
+    margin-top:0.5rem!important;
+    padding-left:3rem!important;
+  }
+
+  .vcheckbox {
+    padding:0.8rem!important;
+    padding-left:2rem!important;
+    padding-right:2rem!important;
+  }
+
+  .search-row .form-check label {
+    margin-left:1rem!important;
+  }
+
+  #resultsno {
+    margin-left:5rem!important;
+    margin-right:5rem!important;
+    padding-left:2rem!important;
+    padding-right:2rem!important;
+    width:auto!important;
+  }
+
+  .alert-button {
+    width:100%;
+  }
+
+  .mobile-checkbox-wrap {
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .mobile-checkbox-label {
+    justify-content:center;
+  }
+  .mobile-faq-nav {
+    justify-content: center!important;
+  }
+  .mobile-home-nav {
+    justify-content: center!important;
+  }
+  .mobile-faq-container {
+    margin:0!important;
+  }
+  .mobile-faq-container hr {
+    display:none;
+  }
+
+  .mobile-faq-container .vbox {
+    padding:2rem!important;
+  }
+  #alert-terms {
+    display:initial!important;
+    text-align:left!important;
+  }
+  .cluster_statistic {
+    font-size:0.6rem;
+  }
+}

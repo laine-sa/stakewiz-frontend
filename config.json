@@ -1,0 +1,18 @@
+{
+    "RPC_URL": "https://ssc-dao.genesysgo.net/",
+    "SOL_PER_LAMPORT": 0.000000001,
+    "STAKE_RENT_LAMPORTS": 2282880,
+    "API_ENDPOINTS": {
+        "validators": "validators",
+        "alert": "alert"
+    },
+    "DEFAULT_LIST_SIZE": 25,
+    "WIZ_SCORE_RANK_GROUPS": {
+        "TOP": 50,
+        "MEDIUM": 250
+    },
+    "STAKE_CATEGORIES": {
+        "HIGH": 0.1,
+        "MEDIUM": 0.025
+    }
+}
