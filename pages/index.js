@@ -1,6 +1,7 @@
 import React from 'react';
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import Validator from '../components/validator.js'
 import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -53,9 +54,9 @@ export default function Home() {
           <div className="row">
             <div className="col col-md-4">
               <div className="logo p-3 position-relative">
-                <a href="/">
-                  <img src="./images/stakewiz-logo-white.webp" />
-                </a>
+                <Link href="/">
+                  <Image src="./images/stakewiz-logo-white.webp" alt="Stakewiz Logo" />
+                </Link>
               </div>
             </div>
           </div>
@@ -69,18 +70,18 @@ export default function Home() {
         <div className="container">
           <div className="row"> 
             <div className="col"> 
-              <a className="text-white" href="/">Home</a>
+              <Link className="text-white" href="/">Home</Link>
               <br />
-              <a className="text-white" href="/faq">Frequently Asked Questions </a>
+              <Link className="text-white" href="/faq">Frequently Asked Questions </Link>
               <br />
-              <a className="text-white" href="/terms">Terms &amp; Conditions</a>
+              <Link className="text-white" href="/terms">Terms &amp; Conditions</Link>
             </div>
             <div className="col social-icons">
-              <a className="text-white" href="https://discord.gg/3JXdTavv6x" target="_new"><i className="bi bi-discord p-2"></i></a>
-              <a className="text-white" href="https://twitter.com/laine_sa_" target="_new"><i className="bi bi-twitter p-2"></i></a>
+              <Link className="text-white" href="https://discord.gg/3JXdTavv6x" target="_new"><i className="bi bi-discord p-2"></i></Link>
+              <Link className="text-white" href="https://twitter.com/laine_sa_" target="_new"><i className="bi bi-twitter p-2"></i></Link>
             </div>
             <div className="col"> 
-              This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
+              This site is protected by reCAPTCHA and the Google&nbsp;<Link href="https://policies.google.com/privacy">Privacy Policy</Link>&nbsp;and&nbsp;<Link href="https://policies.google.com/terms">Terms of Service</Link>&nbsp;apply.
             </div>
           </div>
         </div>

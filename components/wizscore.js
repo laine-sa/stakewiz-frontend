@@ -83,7 +83,7 @@ class WizScoreBody extends React.Component {
         if(this.props.validator.commission>10) {
             return (
                 <div className="bg-danger text-white p-2 m-2 text-center">
-                    Validator's commission is above 10%. We override their score to 0%.
+                    Validator&apos;s commission is above 10%. We override their score to 0%.
                 </div>
             );
         }
@@ -94,7 +94,7 @@ class WizScoreBody extends React.Component {
         if(this.props.validator.no_voting_override>10) {
             return (
                 <div className="bg-danger text-white p-2 m-2 text-center">
-                    Validator hasn't voted this epoch. We override their score to 0%.
+                    Validator hasn&apos;t voted this epoch. We override their score to 0%.
                 </div>
             );
         }
@@ -133,12 +133,12 @@ class WizScoreBody extends React.Component {
             <div>
                         <p>
                             This score helps users pick good validators to stake with. 
-                            It's designed to rewards behaviour that benefits the network and penalize behaviour that 
+                            It&apos;s designed to rewards behaviour that benefits the network and penalize behaviour that 
                             harms the network (e.g. centralization of stake). We periodically update our weighting and 
                             metrics used, but record the version with each score. The score below is using version&nbsp;
                             <span id="scorecard-scoreversion">
                                {this.props.validator.score_version}
-                            </span>. You can read the full details of the current version's weightings&nbsp; 
+                            </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
                             <a href="/faq#faq-wizscore" target="_new">here</a>.
                         </p>
                         <table className="table table-sm"> 
