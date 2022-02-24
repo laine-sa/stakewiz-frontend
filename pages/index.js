@@ -46,7 +46,7 @@ export default function Home() {
         <title>Stakewiz</title>
         <meta name="description" content="Validator monitoring and alerting" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/images/favicon.png" />
+        <link rel="icon" href="/images/wiz-square.png" />
       </Head>
 
       <main>
