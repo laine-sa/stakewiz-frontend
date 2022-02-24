@@ -1,6 +1,7 @@
 import React from 'react';
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import Link from 'next/link';
 
 function WizScoreRowTooltip(props) {
     return (
@@ -139,7 +140,7 @@ class WizScoreBody extends React.Component {
                             <span id="scorecard-scoreversion">
                                {this.props.validator.score_version}
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
-                            <a href="/faq#faq-wizscore" target="_new">here</a>.
+                            <Link href="/faq#faq-wizscore" target="_new" passHref>here</Link>.
                         </p>
                         <table className="table table-sm"> 
                             <thead>

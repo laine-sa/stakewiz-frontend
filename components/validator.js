@@ -4,7 +4,8 @@ import config from '../config.json';
 import Search from './search.js';
 import WizScore from './wizscore.js';
 import Alert from './alert.js';
-import Image from 'next/image'
+import Image from 'next/image';
+import Link from 'next/link';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -30,7 +31,7 @@ class ValidatorBox extends React.Component {
         if(img==null) {
             return '';
         }
-        else return <Image className="rounded-circle" src={img} width="50px" height="50px" loading="lazy" alt={this.props.validator.vote_identity+"-logo"} />
+        else return <Image className="rounded-circle" src={img} width={50} height={50} loading="lazy" alt={this.props.validator.vote_identity+"-logo"} />
     }
 
     renderURL(url) {
@@ -38,7 +39,7 @@ class ValidatorBox extends React.Component {
             return '';
         }
         else {
-            return <a className="fst-normal text-white" href={url} target="_new">{url}</a>
+            return <Link className="fst-normal text-white" href={url} target="_new" passHref>{url}</Link>
         }
     }
 
