@@ -434,7 +434,7 @@ class WizScoreWeightings extends React.Component {
                                     Valid Version 
                                 </td>
                                 <td>
-                                    {this.state.weightings.version.map((v) => {return v+' '})}
+                                    
                                 </td>
                                 <td>
                                     The version a validator should use
