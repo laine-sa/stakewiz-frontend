@@ -378,10 +378,10 @@ class WizScoreWeightings extends React.Component {
         if(this.state.hasData) {
             return (
                 [
-                    <p>
+                    <p key='wiz-weighting-paragraph'>
                         The Wiz Score consists of many metrics which are given different weightings. We revise these from time to time and assign them a version number. The current score (for which the details are shown below) is version {this.state.weightings.score_version}.
                     </p>,
-                    <table className="table table-sm text-white"> 
+                    <table className="table table-sm text-white" key='wiz-weighting-table'> 
                         <thead> 
                             <tr>
                                 <th scope="col">
@@ -404,7 +404,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.vote_success_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's voting success.
+                                    The weighting given to validator&apos;s voting success.
                                 </td>
                             </tr>
                             <tr> 
@@ -415,7 +415,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.skip_rate_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's skip rate.
+                                    The weighting given to validator&apos;s skip rate.
                                 </td>
                             </tr>
                             <tr> 
@@ -503,7 +503,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.epoch_distance_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's operational history.
+                                    The weighting given to validator&apos;s operational history.
                                 </td>
                             </tr>
                             <tr> 
@@ -514,7 +514,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.stake_weight_threshold}
                                 </td>
                                 <td>
-                                    Percentage of the largest validator's stake that is the cut off where we assign 0% score for stake weight. E.g. if largest validator has 15m SOL staked and the threshold is 0.1 all validators &gt;=1.5m stake will get a 0 score.
+                                    Percentage of the largest validator&apos;s stake that is the cut off where we assign 0% score for stake weight. E.g. if largest validator has 15m SOL staked and the threshold is 0.1 all validators &gt;=1.5m stake will get a 0 score.
                                 </td>
                             </tr>
                             <tr> 
@@ -525,7 +525,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.stake_weight_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's stake. We give the highest score to the average stake weight, with a linear drop off below to 0 and above to the threshold value.
+                                    The weighting given to validator&apos;s stake. We give the highest score to the average stake weight, with a linear drop off below to 0 and above to the threshold value.
                                     <br /><br />If the average stake is 200,000 SOL a validator with 100,000 stake will earn 50% of the stake weight weight. A validator with 500,000 SOL stake will earn (500,000 - 200,000) / (1,500,000 - 200,000) * stake weight weight.
                                 </td>
                             </tr>
@@ -548,7 +548,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.asn_concentration_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's ASN stake concentration.
+                                    The weighting given to validator&apos;s ASN stake concentration.
                                 </td>
                             </tr>
                             <tr> 
@@ -559,7 +559,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.city_concentration_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's city stake concentration.
+                                    The weighting given to validator&apos;s city stake concentration.
                                 </td>
                             </tr>
                             <tr> 
@@ -570,7 +570,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.asn_city_concentration_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's ASN + city combined stake concentration.
+                                    The weighting given to validator&apos;s ASN + city combined stake concentration.
                                 </td>
                             </tr>
                             <tr> 
@@ -581,7 +581,7 @@ class WizScoreWeightings extends React.Component {
                                     {this.state.weightings.uptime_weight}
                                 </td>
                                 <td>
-                                    The weighting given to validator's uptime over the past 30 days (or max period available if less than 30 days).
+                                    The weighting given to validator&apos;s uptime over the past 30 days (or max period available if less than 30 days).
                                 </td>
                             </tr>
                             <tr> 

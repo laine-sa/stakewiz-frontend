@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Validator from '../components/validator.js'
 import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {Header, TopBar, Footer} from './common.js';
+import {Header, TopBar, Footer} from '../components/common.js';
 
 const API_URL = process.env.API_BASE_URL;
 
