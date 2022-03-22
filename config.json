@@ -4,7 +4,10 @@
     "STAKE_RENT_LAMPORTS": 2282880,
     "API_ENDPOINTS": {
         "validators": "validators",
-        "alert": "alert"
+        "alert": "alert",
+        "weightings": "wiz_score",
+        "activate": "activate",
+        "cancel": "cancel"
     },
     "DEFAULT_LIST_SIZE": 25,
     "WIZ_SCORE_RANK_GROUPS": {

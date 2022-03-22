@@ -23,10 +23,6 @@ input:focus, input:active {
   box-shadow:none!important;
 }
 
-html {
-  height:100%;
-}
-
 body {
   padding: 0;
   margin:0;
@@ -35,10 +31,17 @@ body {
   font-size:0.9rem;
   background-color:#333;
   background-image:url('../public/images/body-bg2.jpg');
-  height:100%;
   background-size:cover;
-  
   background-attachment:fixed;
+}
+
+html,
+body,
+main,
+body > div:first-child,
+div#__next,
+div#__next > div {
+  height: 100%;
 }
 
 .grecaptcha-badge {

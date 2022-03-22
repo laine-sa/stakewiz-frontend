@@ -2,6 +2,9 @@ import React from 'react';
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Link from 'next/link';
+import axios from 'axios';
+
+const API_URL = process.env.API_BASE_URL;
 
 function WizScoreRowTooltip(props) {
     return (
@@ -341,4 +344,279 @@ class WizScore extends React.Component {
         );
         }
 }
-export default WizScore;
+
+class WizScoreWeightings extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            weightings: undefined,
+            hasData: false
+        };
+        if(this.state.weightings==undefined) this.getWeightings();
+    }
+
+    getWeightings() {
+        axios(API_URL+config.API_ENDPOINTS.weightings, {
+            crossDomain: true,
+            headers: {'Content-Type':'application/json'}
+        })
+            .then(response => {
+            let json = response.data;
+            console.log(json);
+            this.setState({
+                weightings: json,
+                hasData: true
+                });
+            })
+            .catch(e => {
+            console.log(e);
+            setTimeout(() => { this.getWeightings() }, 5000);
+            })
+    }
+
+    render() {
+        if(this.state.hasData) {
+            return (
+                [
+                    <p>
+                        The Wiz Score consists of many metrics which are given different weightings. We revise these from time to time and assign them a version number. The current score (for which the details are shown below) is version {this.state.weightings.score_version}.
+                    </p>,
+                    <table className="table table-sm text-white"> 
+                        <thead> 
+                            <tr>
+                                <th scope="col">
+                                    Parameter
+                                </th>
+                                <th scope="col">
+                                    Value 
+                                </th>
+                                <th scope="col">
+                                    Comment
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr> 
+                                <td>
+                                    Vote Success Weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.vote_success_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's voting success.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Skip rate weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.skip_rate_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's skip rate.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Skip rate cutoff multiplier 
+                                </td>
+                                <td>
+                                    {this.state.weightings.skip_rate_cutoff_multiplier}
+                                </td>
+                                <td>
+                                    Cluster average * this multiplier gives us the value which has a 0 score. If the average skip rate is 5% and the multiplier is 2, then a 10% skip rate or above will have a score of 0, and anything below 10% will have a score higher than 0.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Valid Version 
+                                </td>
+                                <td>
+                                    {this.state.weightings.version.map((v) => {return v+' '})}
+                                </td>
+                                <td>
+                                    The version a validator should use
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Invalid version penalty
+                                </td>
+                                <td>
+                                   {this.state.weightings.invalid_version_penalty}
+                                </td>
+                                <td>
+                                    Penalty for invalid version 
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Info weight
+                                </td>
+                                <td>
+                                    {this.state.weightings.info_weight}
+                                </td>
+                                <td>
+                                    The total weight of validator info (broken up into 5 equally weighted components for name, logo, website, description and keybase account).
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Maximum commission
+                                </td>
+                                <td>
+                                    {this.state.weightings.max_commission}
+                                </td>
+                                <td>
+                                    The commission that gets a 0 score, anything below this value has a score &gt; 0 up to the max commission weight (i.e. 0% commission gets 100% which earns the full commission weight)
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Commission weight
+                                </td>
+                                <td>
+                                    {this.state.weightings.commission_weight}
+                                </td>
+                                <td>
+                                    The weight of the commission score.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Epoch max distance 
+                                </td>
+                                <td>
+                                    {this.state.weightings.epoch_distance_max}
+                                </td>
+                                <td>
+                                    The number of epochs with stake a validator should have to get the highest operational history score.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Epoch distance weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.epoch_distance_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's operational history.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Stake weight threshold 
+                                </td>
+                                <td>
+                                    {this.state.weightings.stake_weight_threshold}
+                                </td>
+                                <td>
+                                    Percentage of the largest validator's stake that is the cut off where we assign 0% score for stake weight. E.g. if largest validator has 15m SOL staked and the threshold is 0.1 all validators &gt;=1.5m stake will get a 0 score.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Stake weight weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.stake_weight_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's stake. We give the highest score to the average stake weight, with a linear drop off below to 0 and above to the threshold value.
+                                    <br /><br />If the average stake is 200,000 SOL a validator with 100,000 stake will earn 50% of the stake weight weight. A validator with 500,000 SOL stake will earn (500,000 - 200,000) / (1,500,000 - 200,000) * stake weight weight.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Withdraw authority penalty 
+                                </td>
+                                <td>
+                                    {this.state.weightings.withdraw_authority_penalty}
+                                </td>
+                                <td>
+                                    The penalty for validators with an unsafe withdraw authority (i.e. set to their validator identity).
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    ASN Concentration Weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.asn_concentration_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's ASN stake concentration.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    City Concentration Weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.city_concentration_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's city stake concentration.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    ASN+City Concentration Weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.asn_city_concentration_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's ASN + city combined stake concentration.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Uptime Weight 
+                                </td>
+                                <td>
+                                    {this.state.weightings.uptime_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator's uptime over the past 30 days (or max period available if less than 30 days).
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Uptime cutoff 
+                                </td>
+                                <td>
+                                    {this.state.weightings.uptime_cutoff}
+                                </td>
+                                <td>
+                                    Threshold below which uptime has a score of 0, the uptime score is scaled linearly between this value and 100%.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Superminority Penalty 
+                                </td>
+                                <td>
+                                    {this.state.weightings.superminority_penalty}
+                                </td>
+                                <td>
+                                    The penalty given to validators in the superminority (top 33.3% of stake weight).
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                ]
+            )
+        }
+        else {
+            return (
+                <p>Loading...</p>
+            )
+        }
+    }
+}
+
+export {WizScore, WizScoreWeightings}

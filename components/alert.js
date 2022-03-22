@@ -7,6 +7,156 @@ import $ from 'jquery';
 
 const API_URL = process.env.API_BASE_URL;
 
+class Activate extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activateResult: undefined
+        }
+        if(this.props.token!=undefined) {
+            this.doActivate();
+        }
+        
+    }
+    
+    doActivate() {
+        
+        const postData = JSON.stringify({
+            token: this.props.token
+          });
+
+        axios.post(API_URL+config.API_ENDPOINTS.activate, 
+            postData,
+            {
+            crossDomain: true
+        })
+            .then(response => {
+            let json = response.data;
+            
+            if(json.message.name!='') {
+                let message = json.message.name
+            }
+            else {
+                let message = json.message.vote_identity;
+            }
+
+            let result = (
+                <div className="alert alert-success show text-center">
+                    Alert activated for {message}
+                </div>
+            )
+
+            this.setState({
+                activateResult: result
+            })
+                
+            })
+            .catch(e => {
+                let result = (
+                    <div className="alert alert-danger show text-center">
+                        Error trying to activate alert: {e.response.data.reason}
+                    </div>
+                )
+
+                this.setState({
+                    activateResult: result
+                })
+            })
+
+    }
+
+
+    render() {
+      if(this.state.activateResult!=undefined) {
+        return (
+            this.state.activateResult
+        )
+        }
+        else return ''
+    }
+}
+
+class Cancel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            cancelResult: undefined
+        }
+        if(this.props.query!=undefined) {
+            this.doCancel();
+        }
+        
+    }
+    
+    doCancel() {
+        
+        const postData = JSON.stringify(this.props.query);
+        console.log(postData)
+
+        axios.post(API_URL+config.API_ENDPOINTS.cancel, 
+            postData,
+            {
+            crossDomain: true
+        })
+            .then(response => {
+            let json = response.data;
+            
+            if(json.message.type!='all') {
+                if(json.message.type=='validator') {
+                    var type = json.message.alert_count+' alerts for '
+                    var verb = ' have'
+                }
+                else {
+                    var type = 'Your '+json.message.type+' alert for '
+                    var verb = ' has'
+                }
+                if(json.message.name!='') {
+                    var message = type+json.message.name+verb+' been cancelled. You can create new alerts at any time.'
+                }
+                else {
+                    var message = type+json.message.vote_identity+verb+' been cancelled. You can create new alerts at any time.'
+                }
+            }
+            else {
+                var message = 'We have cancelled all your Stakewiz Alerts ('+json.message.alert_count+' alerts). You can create new alerts at any time.'
+            }
+            let result = (
+                <div className="alert alert-success show text-center">
+                    {message}
+                </div>
+            )
+
+            this.setState({
+                activateResult: result
+            })
+                
+            })
+            .catch(e => {
+                console.log(e.response)
+                let result = (
+                    <div className="alert alert-danger show text-center">
+                        Error trying to cancel alert. {e.response.data.reason}
+                    </div>
+                )
+
+                this.setState({
+                    activateResult: result
+                })
+            })
+
+    }
+
+
+    render() {
+      if(this.state.activateResult!=undefined) {
+        return (
+            this.state.activateResult
+        )
+        }
+        else return ''
+    }
+}
+
 function ErrorFlash(props) {
     return (
         <div className="container p-0 pt-2" id="alertAlert">
@@ -368,4 +518,4 @@ class Alert extends React.Component {
         }
 }
 
-export default Alert;
+export {Alert, Activate, Cancel};

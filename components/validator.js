@@ -2,8 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import Search from './search.js';
-import WizScore from './wizscore.js';
-import Alert from './alert.js';
+import {WizScore} from './wizscore.js';
+import {Alert} from './alert.js';
 import Image from 'next/image';
 import Link from 'next/link';
 
