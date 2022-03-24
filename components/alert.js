@@ -485,7 +485,7 @@ class AlertForm extends React.Component {
                         {this.state.error ? <ErrorFlash text={this.state.error.reason} /> : null}
                         <div className="mt-3 d-flex justify-content-end flex-wrap align-items-center">
                             <div className="d-flex text-end fst-italic me-2" id="alert-terms">
-                                By clicking &quot;Create Alert&quot; you accept our&nbsp;<Link href="/terms" target="_new">Privacy Policy &amp; Terms of Use</a>.
+                                By clicking &quot;Create Alert&quot; you accept our&nbsp;<Link href="/terms" target="_new">Privacy Policy &amp; Terms of Use</Link>.
                             </div>
                             <div className="d-flex"> 
                                 <input type="hidden" id="alertRecaptchaToken" name="token" />
