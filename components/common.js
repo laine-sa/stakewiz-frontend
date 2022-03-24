@@ -2,6 +2,7 @@ import Head from 'next/head';
 import React from 'react';
 import Image from 'next/image'
 import Link from 'next/link'
+import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 
 class Header extends React.Component {
 
@@ -20,21 +21,26 @@ class Header extends React.Component {
 class TopBar extends React.Component {
     render() {
       return (
-        <div className="container">
-          <div className="row">
-            <div className="col col-md-4">
-              <div className="logo p-3 position-relative">
-                <Link href="/" passHref>
-                  <Image 
-                    src="/images/stakewiz-logo-white.webp" 
-                    width={300}
-                    height={96}
-                    alt="Stakewiz Logo" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
+            <Navbar bg="none" variant="dark" expand="lg">
+              <Container>
+                <Navbar.Brand href="#home">
+                    <Image 
+                      src="/images/stakewiz-logo-white.webp" 
+                      width={300}
+                      height={96}
+                      alt="Stakewiz Logo" 
+                    />
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
+                  <Nav>
+                    <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href="/faq">FAQs</Nav.Link>
+                    <Nav.Link href="https://laine.co.za/solana" target="_new">Support Laine</Nav.Link>
+                  </Nav>
+                </Navbar.Collapse>
+              </Container>
+            </Navbar>
       )
     }
 }

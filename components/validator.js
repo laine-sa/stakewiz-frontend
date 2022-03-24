@@ -380,7 +380,7 @@ class ValidatorList extends React.Component {
 }
 
 function LoadMoreButton(props) {
-    console.log(props.viewDelta);
+    
     if(props.viewDelta>0) {
         return (
                 <div className="container my-3 text-center">
@@ -453,7 +453,7 @@ class Validator extends React.Component {
   }
 
   bumpVisibleCount() {
-      console.log('bumping');
+      
       this.props.onClick({
         visibleCount: this.props.state.visibleCount+config.DEFAULT_LIST_SIZE
       });
