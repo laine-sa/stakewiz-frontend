@@ -426,7 +426,16 @@ class AlertForm extends React.Component {
                                     <Field className={"form-check-input p-2 "+(errors.alertChoice ? 'is-invalid' : null)} type="checkbox" name="alertDelinquency" onChange={() => this.toggleRadios()} checked={this.state.delinquencyRadiosVisible} />
                                     <label className="d-flex align-items center form-check-label" htmlFor="alertDelinquency">
                                         Get Delinquency Alerts
-                                        <i className="px-2 bi bi-info-circle" data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="If the validator is marked delinquent continuously beyond your chosen threshold you'll get an alert."></i>
+                                        <OverlayTrigger
+                                            placement="right"
+                                            overlay={
+                                                <Tooltip>
+                                                    If the validator is marked delinquent continuously beyond your chosen threshold you&apos;ll get an alert.
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            <i className="px-2 bi bi-info-circle"></i>
+                                        </OverlayTrigger>
                                     </label>
                                 </div>
                             </div>
@@ -438,7 +447,16 @@ class AlertForm extends React.Component {
                                     <Field className={"form-check-input p-2 "+(errors.alertChoice ? 'is-invalid' : null)} type="checkbox" name="alertCommissionCheckbox" role="switch" checked={this.state.alertCommission} onChange={() => this.toggleCommission()} />
                                     <label className="d-flex align-items-center form-check-label" htmlFor="alertCommission">
                                         Get Commission Alerts
-                                        <i className="px-2 bi bi-info-circle" data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="If the validator changes their commission (up or down) you'll get an alert."></i>
+                                        <OverlayTrigger
+                                            placement="right"
+                                            overlay={
+                                                <Tooltip>
+                                                    If the validator changes their commission (up or down) you&apos;ll get an alert.
+                                                </Tooltip>
+                                            } 
+                                        >
+                                        <i className="px-2 bi bi-info-circle"></i>
+                                        </OverlayTrigger>
                                     </label>
                                     {errors.alertChoice ? <div className="invalid-feedback">{errors.alertChoice}</div> : null}
                                 </div>

@@ -6,6 +6,7 @@ import {WizScore} from './wizscore.js';
 import {Alert} from './alert.js';
 import Image from 'next/image';
 import Link from 'next/link';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -106,7 +107,16 @@ class ValidatorBox extends React.Component {
                             </div>            
                         </div>            
                         <div className="row wiz-score-button" type="button" onClick={this.props.showWizModal} >                
-                            <div className="col apy-label text-center mb-1 vlist-label text-warning fst-italic" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-original-title="Click for detailed calculation">WIZ SCORE</div>            
+                            <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={
+                                        <Tooltip>
+                                            Click for detailed scorecard
+                                        </Tooltip>
+                                    } 
+                                >
+                                <div className="col apy-label text-center mb-1 vlist-label text-warning fst-italic">WIZ SCORE</div>            
+                            </OverlayTrigger>
                         </div>        
                     </div>
                     <div className="col col-md-2 my-2 mobile-name-column">            
@@ -124,9 +134,20 @@ class ValidatorBox extends React.Component {
                     <div className="col my-1 mt-4">            
                         <div className="row">                
                             <div className="col apy-value text-center">
-                                {this.props.validator.apy_estimate}
+                                {this.props.validator.apy_estimate} %
                                 <br />                    
-                                <span className="cluster_statistic text-secondary" data-bs-toggle="tooltip" title="" data-bs-placement="bottom" data-bs-original-title="Stake weighted cluster average (excludes private validators)">Ø TODO</span>                
+                                
+                                    <OverlayTrigger
+                                        placement="bottom"
+                                        overlay={
+                                            <Tooltip>
+                                                Stake weighted cluster average (excludes private validators)
+                                            </Tooltip>
+                                        } 
+                                    >
+                                        <span className="cluster_statistic text-secondary">Ø {this.props.clusterStats.avg_apy} %</span>
+                                    </OverlayTrigger>
+                                             
                             </div>            
                         </div>            
                         <div className="row">                
@@ -136,9 +157,27 @@ class ValidatorBox extends React.Component {
                     <div className="col my-1 mobile-stake-column">            
                         <div className="row">                
                             <div className="col text-center">                    
-                                <span data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="Active Stake">◎ {this.activated_stake}</span>
+                                <OverlayTrigger
+                                    placement="right"
+                                    overlay={
+                                        <Tooltip>
+                                            Active Stake
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <span>◎ {this.activated_stake}</span>
+                                </OverlayTrigger>
                                 <br />                        
-                                <span className="cluster_statistic text-secondary" data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="Cluster average">Ø ◎ TODO</span>                
+                                <OverlayTrigger
+                                    placement="right"
+                                    overlay={
+                                        <Tooltip>
+                                            Cluster average
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <span className="cluster_statistic text-secondary">Ø ◎ {new Intl.NumberFormat().format(Number(this.props.clusterStats.avg_activated_stake).toFixed(0))}</span>                
+                                </OverlayTrigger>
                             </div>            
                         </div>            
                         {this.renderStakeBar()}   
@@ -146,28 +185,91 @@ class ValidatorBox extends React.Component {
                     <div className="col mobile-stats-column">            
                         <div className="row">                
                             <div className="col my-1">                    
-                                <i className="bi bi-box pe-2" data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Slot Skip Rate (lower is better)" aria-label="Slot Skip Rate (lower is better)"></i>
+                                <OverlayTrigger
+                                    placement="left"
+                                    overlay={
+                                        <Tooltip>
+                                            Skip Rate (lower is better)
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <i className="bi bi-box pe-2"></i>
+                                </OverlayTrigger>
                                     {this.skip_rate} %
-                                <span className="cluster_statistic text-secondary ps-1" data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="Cluster average">Ø TODO</span>                
+                                    <OverlayTrigger
+                                placement="right"
+                                overlay={
+                                    <Tooltip>
+                                        Cluster average
+                                    </Tooltip>
+                                } 
+                                >
+                                    <span className="cluster_statistic text-secondary ps-1">Ø {this.props.clusterStats.avg_skip_rate} %</span>                
+                                </OverlayTrigger>
                             </div>            
                         </div>            
                         <div className="row">                
                             <div className="col my-1">                    
-                                <i className="bi bi-pencil-square pe-2" data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Voting Success Rate (higher is better)" aria-label="Voting Success Rate (higher is better)"></i>
+                                <OverlayTrigger
+                                    placement="left"
+                                    overlay={
+                                        <Tooltip>
+                                            Voting Success Rate (higher is better)
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <i className="bi bi-pencil-square pe-2"></i>
+                                </OverlayTrigger>
                                     {this.credit_ratio} %
-                                <span className="cluster_statistic text-secondary ps-1" data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="Cluster average">Ø TODO</span>                
+                                <OverlayTrigger
+                                placement="right"
+                                overlay={
+                                    <Tooltip>
+                                        Cluster average
+                                    </Tooltip>
+                                } 
+                                >
+                                    <span className="cluster_statistic text-secondary ps-1">Ø {this.props.clusterStats.avg_credit_ratio} %</span>                
+                                </OverlayTrigger>
                             </div>            
                         </div>            
                         <div className="row">                
                             <div className="col my-1">                    
-                                <i className="bi bi-cash-coin pe-2" data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Commission" aria-label="Commission"></i>
+                                <OverlayTrigger
+                                    placement="left"
+                                    overlay={
+                                        <Tooltip>
+                                            Commission
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <i className="bi bi-cash-coin pe-2"></i>
+                                </OverlayTrigger>
                                     {this.props.validator.commission} %
-                                <span className="cluster_statistic text-secondary ps-1" data-bs-toggle="tooltip" title="" data-bs-placement="right" data-bs-original-title="Cluster average">Ø TODO</span>                
+                                <OverlayTrigger
+                                placement="right"
+                                overlay={
+                                    <Tooltip>
+                                        Cluster average
+                                    </Tooltip>
+                                } 
+                                >
+                                    <span className="cluster_statistic text-secondary ps-1">Ø {this.props.clusterStats.avg_commission} %</span>                
+                                </OverlayTrigger>
                             </div>            
                         </div>            
                         <div className="row">                
                             <div className="col my-1">                    
-                                <i className="bi bi-cpu pe-2" data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Version" aria-label="Version"></i>
+                                <OverlayTrigger
+                                    placement="left"
+                                    overlay={
+                                        <Tooltip>
+                                            Version
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <i className="bi bi-cpu pe-2"></i>
+                                </OverlayTrigger>
                                     {this.props.validator.version}                
                             </div>            
                         </div>        
@@ -176,10 +278,18 @@ class ValidatorBox extends React.Component {
                         <div className="row">                
                             <div className="col my-1 mt-1 text-truncate">                    
                                 <i className="bi bi-card-text pe-1"></i>
-                                    <span data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Zero Percent Commission - High Yields - Reliable Infrastructure">
-                                        {this.props.validator.description}
-                                    </span>
-                                                
+                                    <OverlayTrigger
+                                        placement="left"
+                                        overlay={
+                                            <Tooltip>
+                                                {this.props.validator.description}
+                                            </Tooltip>
+                                        } 
+                                    >
+                                        <span>
+                                            {this.props.validator.description}
+                                        </span>
+                                    </OverlayTrigger>
                             </div>            
                         </div>            
                         <div className="row">                
@@ -191,22 +301,38 @@ class ValidatorBox extends React.Component {
                         <div className="row my-1 mobile-identities">                
                             <div className="col text-truncate">                    
                                 <span className="vlist-label">Identity:&nbsp;</span>
-                                <span className="click-to-copy videntity" id={this.props.validator.identity} data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Copy">{this.props.validator.identity}</span>                
+                                <OverlayTrigger
+                                        placement="left"
+                                        overlay={
+                                            <Tooltip>
+                                                Copy
+                                            </Tooltip>
+                                        } 
+                                    >
+                                    <span className="click-to-copy videntity" id={this.props.validator.identity} onClick={() => {navigator.clipboard.writeText(this.props.validator.identity)}}>{this.props.validator.identity}</span>                
+                                </OverlayTrigger>
                             </div>            
                         </div>            
                         <div className="row my-1 mobile-identities">                
                             <div className="col text-truncate">                    
                                 <span className="vlist-label">Vote Account:&nbsp;</span>
-                                <span className="click-to-copy vvoteaccount" id={this.props.validator.vote_identity} data-bs-toggle="tooltip" title="" data-bs-placement="left" data-bs-original-title="Copy">{this.props.validator.vote_identity}</span>                
+                                <OverlayTrigger
+                                        placement="left"
+                                        overlay={
+                                            <Tooltip>
+                                                Copy
+                                            </Tooltip>
+                                        } 
+                                    >
+                                    <span className="click-to-copy vvoteaccount" id={this.props.validator.vote_identity} onClick={() => {navigator.clipboard.writeText(this.props.validator.vote_identity)}}>{this.props.validator.vote_identity}</span>                
+                                </OverlayTrigger>
                             </div>            
                         </div>        
                     </div>
-                    <div className="col align-items-center justify-content-center d-flex">            
-                        <button className="desktop-visible btn btn-success alert-button"  onClick={this.props.showAlertModal} >                
-                            <i className="bi bi-exclamation-triangle px-2 alert-btn-icon" data-bs-toggle="tooltip" title="" data-bs-original-title="Create alert" aria-label="Create alert"></i>            
-                        </button>            
-                        <button className="mobile-visible btn btn-success alert-button" onClick={this.props.showAlertModal} >                
-                            <i className="bi bi-exclamation-triangle px-2 alert-btn-icon" data-bs-toggle="tooltip" title="" data-bs-original-title="Create alert" aria-label="Create alert"></i>
+                    <div className="col align-items-center justify-content-center d-flex">         
+                        
+                        <button className="btn btn-success alert-button" onClick={this.props.showAlertModal} >                
+                            <i className="bi bi-plus px-1 alert-btn-icon"></i>
                                 Create Alert            
                         </button>        
                     </div>
@@ -220,6 +346,7 @@ class ValidatorList extends React.Component {
     return (
             <ValidatorBox 
               key={this.props.validators[i].vote_identity}
+              clusterStats={this.props.clusterStats}
               validator={this.props.validators[i]} 
               showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
               showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
@@ -253,17 +380,23 @@ class ValidatorList extends React.Component {
 }
 
 function LoadMoreButton(props) {
-    return (
-            <div className="container my-3 text-center">
-                <button className="px-5 btn btn-outline-light btn-lg" 
-                        type="button" 
-                        id="load-more-btn" 
-                        onClick={() => props.onClick()}
-                >
-                    Load More...
-                </button>
-            </div>
-    );
+    console.log(props.viewDelta);
+    if(props.viewDelta>0) {
+        return (
+                <div className="container my-3 text-center">
+                    <button className="px-5 btn btn-outline-light btn-lg" 
+                            type="button" 
+                            id="load-more-btn" 
+                            onClick={() => props.onClick()}
+                    >
+                        Load More...
+                    </button>
+                </div>
+        );
+    }
+    else {
+        return '';
+    }
 }
 
 
@@ -271,6 +404,7 @@ class Validator extends React.Component {
   constructor(props) {
     super(props);
     if(this.props.state.validators==null) this.getValidators();
+    if(this.props.state.clusterStats==null) this.getClusterStats();
   }
 
   getValidators() {
@@ -290,6 +424,24 @@ class Validator extends React.Component {
       .catch(e => {
         console.log(e);
         setTimeout(() => { this.getValidators() }, 5000);
+      })
+  }
+
+  getClusterStats() {
+    axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
+      crossDomain: true,
+      headers: {'Content-Type':'application/json'}
+    })
+      .then(response => {
+        let json = response.data;
+        
+        this.props.onClick({
+            clusterStats: json
+        });
+      })
+      .catch(e => {
+        console.log(e);
+        setTimeout(() => { this.getClusterStats() }, 5000);
       })
   }
 
@@ -349,6 +501,7 @@ class Validator extends React.Component {
                 />,
             <ValidatorList 
                 validators={this.props.state.filteredValidators}
+                clusterStats={this.props.state.clusterStats}
                 listSize={this.props.state.visibleCount}
                 key='validatorList'
                 showWizModal={this.props.state.showWizModal}
@@ -360,6 +513,7 @@ class Validator extends React.Component {
                 />,
             <LoadMoreButton
                 key='loadMoreButton'
+                viewDelta={this.props.state.filteredValidators.length - this.props.state.visibleCount}
                 onClick={() => this.bumpVisibleCount()}
                 />
           ]

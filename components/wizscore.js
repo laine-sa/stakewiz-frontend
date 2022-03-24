@@ -6,13 +6,6 @@ import axios from 'axios';
 
 const API_URL = process.env.API_BASE_URL;
 
-function WizScoreRowTooltip(props) {
-    return (
-        <Tooltip>
-            props.tooltip
-        </Tooltip>
-    );
-}
 
 function WizScoreRow(props) {
 
@@ -434,7 +427,14 @@ class WizScoreWeightings extends React.Component {
                                     Valid Version 
                                 </td>
                                 <td>
-                                    
+                                    {this.state.weightings.version.map((v, i, arr) => {
+                                        if(arr.length-1===i) {
+                                            return v;
+                                        }
+                                        else {
+                                            return v+', ';
+                                        }
+                                    })}
                                 </td>
                                 <td>
                                     The version a validator should use

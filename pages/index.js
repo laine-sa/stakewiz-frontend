@@ -14,6 +14,7 @@ class Homepage extends React.Component {
     super(props);
     this.state = {
       validators: null,
+      clusterStats: null,
       filteredValidators: null,
       hasData: false,
       visibleCount: config.DEFAULT_LIST_SIZE,
