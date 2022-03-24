@@ -3,7 +3,7 @@ import axios from 'axios';
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
-import $ from 'jquery';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -322,7 +322,10 @@ class AlertForm extends React.Component {
         });
     }
 
-    async submitHandler(values) {
+    async submitHandler(values,recaptchaRef) {
+
+        const token = await recaptchaRef.current.executeAsync();
+        
         
         this.setState({
             error:false
@@ -335,8 +338,9 @@ class AlertForm extends React.Component {
         payload.alerts.commission = values.alertCommissionCheckbox;
         payload.vote_identity = values.alertValidator;
         payload.opt_in = values.alertOptIn;
+        payload.recaptcha_token = token;
 
-        console.log(payload);
+        
 
         axios.post(
                 API_URL+config.API_ENDPOINTS.alert, 
@@ -372,6 +376,7 @@ class AlertForm extends React.Component {
     }
 
     render() {
+        const recaptchaRef = React.createRef();
         const form = (
             
             <div className="container-fluid" id="alertFormInputs">
@@ -388,11 +393,16 @@ class AlertForm extends React.Component {
                 validate={() => this.validate()}
                 validateOnBlur={false}
                 onSubmit={async (values) => {
-                    await this.submitHandler(values);
+                    await this.submitHandler(values,recaptchaRef);
                 }}
                 >
                 {({ errors, touched, isSubmitting }) => (
                     <Form>
+                        <ReCAPTCHA
+                            ref={recaptchaRef}
+                            size="invisible"
+                            sitekey={config.RECAPTCHA_SITE_KEY}
+                        />
                         <div className="row">
                             <div className="col my-1">
                                 Enter your email address and select which alerts you&apos;d like to receive. We&apos;ll send you an activation email with a link, please click it to active your alerts.
@@ -404,7 +414,7 @@ class AlertForm extends React.Component {
                                     <span className="input-group-text" id="vid1">
                                         <i className="bi bi-info-circle"></i>
                                     </span>
-                                    <Field className="form-control" type="text" name='alertValidator' />
+                                    <Field className="form-control" type="text" name='alertValidator' disabled />
                                 </div>
                             </div>
                         </div>

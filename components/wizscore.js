@@ -355,7 +355,7 @@ class WizScoreWeightings extends React.Component {
         })
             .then(response => {
             let json = response.data;
-            console.log(json);
+            
             this.setState({
                 weightings: json,
                 hasData: true

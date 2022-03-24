@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
+
 const API_URL = process.env.API_BASE_URL;
 
 class ValidatorBox extends React.Component {
@@ -40,7 +41,11 @@ class ValidatorBox extends React.Component {
             return '';
         }
         else {
-            return <Link className="fst-normal text-white" href={url} target="_new" passHref>{url}</Link>
+            return (
+                <a href={url} target="_new">
+                    <span className="fst-normal text-white pointer" >{url}</span>
+                </a>
+            );
         }
     }
 

@@ -53,18 +53,24 @@ class Footer extends React.Component {
               <div className="container">
               <div className="row"> 
                   <div className="col"> 
-                  <Link className="text-white" href="/" passHref>Home</Link>
+                  <Link href="/" passHref>
+                    <span className="text-white pointer" >Home</span>
+                  </Link>
                   <br />
-                  <Link className="text-white" href="/faq" passHref>Frequently Asked Questions </Link>
+                  <Link href="/faq" passHref>
+                    <span className="text-white pointer" >Frequently Asked Questions</span>
+                  </Link>
                   <br />
-                  <Link className="text-white" href="/terms" passHref>Terms &amp; Conditions</Link>
+                  <Link href="/terms" passHref>
+                    <span className="text-white pointer" >Terms &amp; Conditions</span>
+                  </Link>
                   </div>
                   <div className="col social-icons">
-                  <Link className="text-white" href="https://discord.gg/3JXdTavv6x" target="_new" passHref><i className="bi bi-discord p-2"></i></Link>
-                  <Link className="text-white" href="https://twitter.com/laine_sa_" target="_new" passHref><i className="bi bi-twitter p-2"></i></Link>
+                  <a href="https://discord.gg/3JXdTavv6x" target="_new"><i className="bi bi-discord p-2 pointer"></i></a>
+                  <a href="https://twitter.com/laine_sa_" target="_new"><i className="bi bi-twitter p-2 pointer"></i></a>
                   </div>
                   <div className="col"> 
-                  This site is protected by reCAPTCHA and the Google&nbsp;<Link href="https://policies.google.com/privacy">Privacy Policy</Link>&nbsp;and&nbsp;<Link href="https://policies.google.com/terms">Terms of Service</Link>&nbsp;apply.
+                  This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
                   </div>
               </div>
               </div>

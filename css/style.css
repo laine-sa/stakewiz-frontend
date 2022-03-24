@@ -44,6 +44,10 @@ div#__next > div {
   min-height: 100%;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .grecaptcha-badge {
   visibility: hidden;
 }

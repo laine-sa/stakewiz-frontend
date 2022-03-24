@@ -18,5 +18,6 @@
     "STAKE_CATEGORIES": {
         "HIGH": 0.1,
         "MEDIUM": 0.025
-    }
+    },
+    "RECAPTCHA_SITE_KEY": "6LefDqYdAAAAACgv6tMS0h5f6Y9YHslRBtW5nZNf"
 }
