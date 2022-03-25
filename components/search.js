@@ -60,10 +60,13 @@ class SearchBar extends React.Component {
                 }
 
                 let sf = this.state.sortField;
+                
                 if(!sf.includes('_asc')) {
+                    console.log(sf);
                     filteredValidators.sort((a,b) => (a[sf] < b[sf]) ? 1 : ((b[sf] < a[sf]) ? -1 : 0));
                 }
                 else {
+                    console.log(sf);
                     sf = sf.substring(0,sf.length-4);
                     filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));
                 }
@@ -114,14 +117,20 @@ class SearchBar extends React.Component {
                         <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
                             <option value='rank_asc'>Wiz Score ↑</option>
                             <option value='rank'>Wiz Score ↓</option>
-                            <option value='activated_stake'>Stake ↓</option>
                             <option value='activated_stake_asc'>Stake ↑</option>
+                            <option value='activated_stake'>Stake ↓</option>
                             <option value='apy_estimate'>Estimated APY ↓</option>
                             <option value='skip_rate_asc'>Slot skip rate ↑</option>
-                            <option value='credit_ratio'>Vote Credits ↓</option>
                             <option value='credit_ratio_asc'>Vote Credits ↑</option>
+                            <option value='credit_ratio'>Vote Credits ↓</option>
                             <option value='commission_asc'>Commission ↑</option>
                             <option value='commission'>Commission ↓</option>
+                            <option value='uptime_asc'>Uptime ↑</option>
+                            <option value='uptime'>Uptime ↓</option>
+                            <option value='first_epoch_with_stake'>Epochs active ↑</option>
+                            <option value='first_epoch_with_stake_asc'>Epochs active ↓</option>
+                            <option value='asncity_concentration_asc'>ASN+City Concentration ↑</option>
+                            <option value='asncity_concentration'>ASN+City Concentration ↓</option>
                         </select>
                     </div>
                     <div className="col d-flex align-items-center bg-dark text-white p-1 rounded justify-content-center" id="resultsno">
