@@ -9,17 +9,10 @@ class SearchBar extends React.Component {
             hidePrivate: false,
             hideHighStake: false,
             validatorCount: this.props.validators.length,
-            sortField: 'rank'
+            sortField: 'rank_asc'
         };
     }
 
-    
-
-    componentDidMount() {
-        document.getElementById('vsearch').addEventListener("keydown", () => {
-
-        });
-    }
 
     doSearch(key,value) {
         
