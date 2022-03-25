@@ -14,19 +14,6 @@ class Header extends React.Component {
                 <meta name="description" content="Validator monitoring and alerting" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/images/wiz-square.webp" />
-                <Script
-                  src="https://www.googletagmanager.com/gtag/js?id=G-L7C5EZ0C4F"
-                  strategy="afterInteractive"
-                />
-                <Script id="google-analytics" strategy="afterInteractive">
-                  {`
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){window.dataLayer.push(arguments);}
-                    gtag('js', new Date());
-
-                    gtag('config', 'G-L7C5EZ0C4F');
-                  `}
-                </Script>
             </Head>
         )
     }
@@ -35,25 +22,41 @@ class Header extends React.Component {
 class TopBar extends React.Component {
     render() {
       return (
-            <Navbar bg="none" variant="dark" expand="lg">
-              <Container>
-                <Navbar.Brand href="#home" className='brand-box'>
-                    <img 
-                      src="/images/stakewiz-logo-white.webp" 
-                      className='stakewiz-logo'
-                      alt="Stakewiz Logo" 
-                    />
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
-                  <Nav>
-                    <Nav.Link href="/">Home</Nav.Link>
-                    <Nav.Link href="/faq">FAQs</Nav.Link>
-                    <Nav.Link href="https://laine.co.za/solana" target="_new">Support Laine</Nav.Link>
-                  </Nav>
-                </Navbar.Collapse>
-              </Container>
-            </Navbar>
+              [
+                <Script
+                  key='gtag-script'
+                  src="https://www.googletagmanager.com/gtag/js?id=G-L7C5EZ0C4F"
+                  strategy="afterInteractive"
+                />,
+                <Script key='ga-script' id="google-analytics" strategy="afterInteractive">
+                  {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){window.dataLayer.push(arguments);}
+                    gtag('js', new Date());
+
+                    gtag('config', 'G-L7C5EZ0C4F');
+                  `}
+                </Script>,
+                <Navbar key='navbar' bg="none" variant="dark" expand="lg">
+                  <Container>
+                    <Navbar.Brand href="#home" className='brand-box'>
+                        <img 
+                          src="/images/stakewiz-logo-white.webp" 
+                          className='stakewiz-logo'
+                          alt="Stakewiz Logo" 
+                        />
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
+                      <Nav>
+                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/faq">FAQs</Nav.Link>
+                        <Nav.Link href="https://laine.co.za/solana" target="_new">Support Laine</Nav.Link>
+                      </Nav>
+                    </Navbar.Collapse>
+                  </Container>
+                </Navbar>
+              ]
       )
     }
 }
