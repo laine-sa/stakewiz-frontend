@@ -108,7 +108,7 @@ class ValidatorBox extends React.Component {
                                 <span className={"cluster_statistic rounded-pill text-white fw-bold p-2 px-3 mx-1 "+this.renderRankColor()}>
                                     {this.props.validator.rank}
                                 </span>                    
-                                <div className="p-2">{this.props.validator.wiz_score}</div>                
+                                <div className="p-2">{this.props.validator.wiz_score} %</div>                
                             </div>            
                         </div>            
                         <div className="row wiz-score-button" type="button" onClick={this.props.showWizModal} >                

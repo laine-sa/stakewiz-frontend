@@ -406,7 +406,7 @@ class AlertForm extends React.Component {
                         />
                         <div className="row">
                             <div className="col my-1">
-                                Enter your email address and select which alerts you&apos;d like to receive. We&apos;ll send you an activation email with a link, please click it to active your alerts.
+                                Enter your email address and select which alerts you&apos;d like to receive. We&apos;ll send you an activation email with a link, please click it to activate your alerts.
                             </div>
                         </div>
                         <div className="row">
@@ -486,7 +486,7 @@ class AlertForm extends React.Component {
                         {this.state.error ? <ErrorFlash text={this.state.error.reason} /> : null}
                         <div className="mt-3 d-flex justify-content-end flex-wrap align-items-center">
                             <div className="d-flex text-end fst-italic me-2" id="alert-terms">
-                                By clicking &quot;Create Alert&quot; you accept our&nbsp;<Link href="/terms" target="_new">Privacy Policy &amp; Terms of Use</Link>.
+                                By clicking &quot;Create Alert&quot; you accept our&nbsp;<Link href="/terms" passHref><a target="_blank">Privacy Policy &amp; Terms of Use</a></Link>.
                             </div>
                             <div className="d-flex"> 
                                 <input type="hidden" id="alertRecaptchaToken" name="token" />
