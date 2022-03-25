@@ -39,7 +39,7 @@ class TopBar extends React.Component {
                 </Script>,
                 <Navbar key='navbar' bg="none" variant="dark" expand="lg">
                   <Container>
-                    <Navbar.Brand href="#home" className='brand-box'>
+                    <Navbar.Brand href="/" className='brand-box'>
                         <img 
                           src="/images/stakewiz-logo-white.webp" 
                           className='stakewiz-logo'
