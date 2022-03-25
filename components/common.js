@@ -23,11 +23,10 @@ class TopBar extends React.Component {
       return (
             <Navbar bg="none" variant="dark" expand="lg">
               <Container>
-                <Navbar.Brand href="#home">
-                    <Image 
+                <Navbar.Brand href="#home" className='brand-box'>
+                    <img 
                       src="/images/stakewiz-logo-white.webp" 
-                      width={300}
-                      height={96}
+                      className='stakewiz-logo'
                       alt="Stakewiz Logo" 
                     />
                 </Navbar.Brand>

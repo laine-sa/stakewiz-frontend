@@ -94,6 +94,12 @@ input:focus {
   cursor:pointer;
 }
 
+
+.stakewiz-logo {
+  width:300px;
+  height:96px;
+}
+
 .vbox {
   content-visibility: auto;
   background-image:url('../public/images/box-tile.png');
@@ -181,6 +187,11 @@ a:hover {
   .logo {
     margin:auto;
     text-align:center;
+  }
+
+  .stakewiz-logo {
+    width:15rem;
+    height:auto;
   }
 
   .desktop-visible{
