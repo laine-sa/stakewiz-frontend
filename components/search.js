@@ -118,8 +118,8 @@ class SearchBar extends React.Component {
                             <option value='credit_ratio'>Vote Credits ↓</option>
                             <option value='commission_asc'>Commission ↑</option>
                             <option value='commission'>Commission ↓</option>
-                            <option value='uptime_asc'>Uptime ↑</option>
-                            <option value='uptime'>Uptime ↓</option>
+                            <option value='uptime_asc'>30 day uptime ↑</option>
+                            <option value='uptime'>30 day uptime ↓</option>
                             <option value='first_epoch_with_stake'>Epochs active ↑</option>
                             <option value='first_epoch_with_stake_asc'>Epochs active ↓</option>
                             <option value='asncity_concentration_asc'>ASN+City Concentration ↑</option>
