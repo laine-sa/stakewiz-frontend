@@ -97,20 +97,20 @@ class SearchBar extends React.Component {
                             Clear
                         </button>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hideAnonymous vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
                         <label htmlFor="vhideanonymous">Hide unnamed</label>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hidePrivate vcheckbox mx-1" type="checkbox" name="hidePrivate" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hidePrivate} />
                         <label htmlFor="vhideprivate" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Validators with 100% Commission">Hide private</label>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hideHStake vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />
                         <label htmlFor="vhidestake">Hide high-stake</label>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
-                        <label className="text-nowrap pe-1" htmlFor="vrankapy">Sort by</label>
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchSort">
+                        <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
                         <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
                             <option value='rank_asc'>Wiz Score ↑</option>
                             <option value='rank'>Wiz Score ↓</option>
