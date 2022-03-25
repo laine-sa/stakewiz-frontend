@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import React from 'react';
 import Image from 'next/image'
+import Script from 'next/script'
 import Link from 'next/link'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 
@@ -13,6 +14,19 @@ class Header extends React.Component {
                 <meta name="description" content="Validator monitoring and alerting" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/images/wiz-square.webp" />
+                <Script
+                  src="https://www.googletagmanager.com/gtag/js?id=G-L7C5EZ0C4F"
+                  strategy="afterInteractive"
+                />
+                <Script id="google-analytics" strategy="afterInteractive">
+                  {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){window.dataLayer.push(arguments);}
+                    gtag('js', new Date());
+
+                    gtag('config', 'G-L7C5EZ0C4F');
+                  `}
+                </Script>
             </Head>
         )
     }
