@@ -114,8 +114,8 @@ class SearchBar extends React.Component {
                             <option value='activated_stake'>Stake ↓</option>
                             <option value='apy_estimate'>Estimated APY ↓</option>
                             <option value='skip_rate_asc'>Slot skip rate ↑</option>
-                            <option value='credit_ratio_asc'>Vote Credits ↑</option>
-                            <option value='credit_ratio'>Vote Credits ↓</option>
+                            <option value='epoch_credits_asc'>Vote Credits ↑</option>
+                            <option value='epoch_credits'>Vote Credits ↓</option>
                             <option value='commission_asc'>Commission ↑</option>
                             <option value='commission'>Commission ↓</option>
                             <option value='uptime_asc'>30 day uptime ↑</option>
