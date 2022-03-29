@@ -4,6 +4,7 @@
     "STAKE_RENT_LAMPORTS": 2282880,
     "API_ENDPOINTS": {
         "validators": "validators",
+        "validator": "validator",
         "cluster_stats": "cluster_stats",
         "alert": "alert",
         "weightings": "wiz_score",

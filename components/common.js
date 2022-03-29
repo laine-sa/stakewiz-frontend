@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import React from 'react';
-import Image from 'next/image'
 import Script from 'next/script'
 import Link from 'next/link'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'

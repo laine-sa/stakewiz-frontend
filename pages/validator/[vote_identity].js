@@ -4,6 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../../components/common.js';
 import { useRouter } from 'next/router'
 import { Activate } from '../../components/alert.js';
+import { ValidatorDetail } from '../../components/validator.js'
 
 export default function Home() {
     
@@ -24,7 +25,9 @@ export default function Home() {
             <TopBar />
     
             <div className="container full-height">
-                <h1>{vote_identity}</h1>
+                <ValidatorDetail
+                    vote_identity={vote_identity}
+                />
             </div>
             
             </main>

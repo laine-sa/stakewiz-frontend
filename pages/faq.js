@@ -1,9 +1,5 @@
 import React from 'react';
-import Head from 'next/head'
-import Image from 'next/image'
 import Link from 'next/link'
-import Validator from '../components/validator.js'
-import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common.js'
 import { WizScoreWeightings } from '../components/wizscore.js';

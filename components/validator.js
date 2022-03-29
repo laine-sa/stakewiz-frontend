@@ -11,6 +11,13 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const API_URL = process.env.API_BASE_URL;
 
+function RenderImage(props) {
+    if(props.img==null) {
+        return '';
+    }
+    else return <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+}
+
 class ValidatorBox extends React.Component {
     static activated_stake;
     static credit_ratio;
@@ -33,7 +40,7 @@ class ValidatorBox extends React.Component {
         if(img==null) {
             return '';
         }
-        else return <Image className="rounded-circle" src={img} width={50} height={50} loading="lazy" alt={this.props.validator.vote_identity+"-logo"} />
+        else return <Image className="rounded-circle pointer" src={img} width={50} height={50} loading="lazy" alt={this.props.validator.vote_identity+"-logo"} />
     }
 
     renderURL(url) {
@@ -101,7 +108,7 @@ class ValidatorBox extends React.Component {
     render() {
         
         return (
-                <div className="row py-2 my-2 border vbox rounded border-white" id={this.props.validator.vote_identity}>
+                <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
                     <div className="col my-1 mt-3">            
                         <div className="row">                
                             <div className="col apy-value text-center">         
@@ -127,12 +134,20 @@ class ValidatorBox extends React.Component {
                     <div className="col col-md-2 my-2 mobile-name-column">            
                         <div className="row">                
                             <div className="col text-center">                    
-                                {this.renderImage(this.props.validator.image)}
+                                <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
+                                    <RenderImage
+                                        img={this.props.validator.image}
+                                        vote_identity={this.props.validator.vote_identity}
+                                        size={50}
+                                    />
+                                </Link>
                             </div>            
                         </div>            
                         <div className="row pt-2">                
-                            <div className="col text-center vlist-name">                                        
-                                <span className="vlist-name-inner">{this.props.validator.name}</span>                
+                            <div className="col text-center vlist-name">
+                                <Link href={'/validator/'+this.props.validator.vote_identity} passHref>                                        
+                                    <span className="vlist-name-inner pointer">{this.props.validator.name}</span>                
+                                </Link>
                             </div>            
                         </div>        
                     </div>
@@ -405,7 +420,7 @@ function LoadMoreButton(props) {
 }
 
 
-class Validator extends React.Component {
+class ValidatorListing extends React.Component {
   constructor(props) {
     super(props);
     if(this.props.state.validators==null) this.getValidators();
@@ -527,4 +542,87 @@ class Validator extends React.Component {
   }
 }
 
-export default Validator;
+class ValidatorDetail extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            validator: null
+        };
+        if(this.props.vote_identity!='') this.getValidator(this.props.vote_identity);
+    }
+
+    getValidator(vote_identity) {
+        axios(API_URL+config.API_ENDPOINTS.validator+'/'+vote_identity, {
+          crossDomain: true,
+          headers: {'Content-Type':'application/json'}
+        })
+          .then(response => {
+            let json = response.data;
+            
+            console.log(json);
+
+            this.setState({
+                validator: json
+            })
+          })
+          .catch(e => {
+            console.log(e);
+            setTimeout(() => { this.getValidator() }, 5000);
+          })
+    }
+
+    render() {
+        if(this.state.validator!=null) {
+            return (
+                <div className='container-sm vbox mt-5 rounded-top'>
+                    <div className='row'>
+                        <div className='col text-center validator-logo'>
+                            <RenderImage
+                                img={this.state.validator.image}
+                                vote_identity={this.state.validator.vote_identity}
+                                size={100}
+                            />
+                        </div>
+                    </div>
+
+                    <div className='row'>
+                        <div className='col text-white text-center p-2'>
+                            <h2>{this.state.validator.name}</h2>
+                        </div>
+                    </div>
+
+                    <div className='row'>
+                        <div className='col bg-dark p-2 m-2 text-white'>
+                            <h3>Description</h3>
+                            <p>{this.state.validator.description}</p>
+                        </div>
+                        <div className='col bg-dark p-2 m-2 text-white'>
+                            <h3>Identities</h3>
+                            <p><span className='fw-bold me-2'>Validator Identity&nbsp;</span>{this.state.validator.identity}</p>
+                            <p><span className='fw-bold me-2'>Vote Account&nbsp;</span>{this.state.validator.vote_identity}</p>
+                        </div>
+                        <div className='col bg-dark p-2 m-2 text-white'>
+                            <h3>Other</h3>
+                            <p><span className='fw-bold me-2'>Website&nbsp;</span>{this.state.validator.website}</p>
+                            <p><span className='fw-bold me-2'>Keybase&nbsp;</span>{this.state.validator.keybase}</p>
+                            <p><span className='fw-bold me-2'>Commission&nbsp;</span>{this.state.validator.commission} %</p>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            )
+        }
+        else {
+            return (
+                <div className="container text-center" id='loading-spinner'>
+                    <div className='spinner-grow text-light' role="status">
+                        <span className='visually-hidden'>Loading...</span>
+                    </div>
+                </div>
+            )
+        }
+    }
+}
+
+export { ValidatorListing, ValidatorDetail }

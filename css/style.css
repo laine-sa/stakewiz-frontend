@@ -29,8 +29,8 @@ body {
   font-display:auto;
   font-family:lato;
   font-size:0.9rem;
-  background-color:#333;
-  background-image:url('../public/images/body-bg2.jpg');
+  background-color:#131313;
+  background-image:url('../public/images/body-bg2.webp');
   background-size:cover;
   background-attachment:fixed;
 }
@@ -101,7 +101,6 @@ input:focus {
 }
 
 .vbox {
-  content-visibility: auto;
   background-image:url('../public/images/box-tile.png');
   background-repeat:repeat;
 }
@@ -181,6 +180,10 @@ a:hover {
 
 .alert-button {
   font-size:inherit!important;
+}
+
+.validator-logo {
+  margin-top:-50px;
 }
 
 @media only screen and (max-width: 600px) {
