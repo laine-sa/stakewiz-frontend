@@ -2,12 +2,13 @@ import React from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import Search from './search.js';
-import {WizScore} from './wizscore.js';
+import {WizScore, WizScoreChart} from './wizscore.js';
 import {Alert} from './alert.js';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-
+import {Spinner} from './common.js'
+import {Chart} from 'react-google-charts'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -16,6 +17,19 @@ function RenderImage(props) {
         return '';
     }
     else return <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+}
+
+function RenderUrl(props) {
+    if(props.url==null || props.url=='') {
+        return '';
+    }
+    else {
+        return (
+            <a href={props.url} target="_new">
+                <span className="fst-normal text-white pointer" >{props.url}</span>
+            </a>
+        );
+    }
 }
 
 class ValidatorBox extends React.Component {
@@ -33,26 +47,6 @@ class ValidatorBox extends React.Component {
         catch (e) {
             console.log(this.props.validator.identity);
             console.log(e);
-        }
-    }
-
-    renderImage(img) {
-        if(img==null) {
-            return '';
-        }
-        else return <Image className="rounded-circle pointer" src={img} width={50} height={50} loading="lazy" alt={this.props.validator.vote_identity+"-logo"} />
-    }
-
-    renderURL(url) {
-        if(url==null || url=='') {
-            return '';
-        }
-        else {
-            return (
-                <a href={url} target="_new">
-                    <span className="fst-normal text-white pointer" >{url}</span>
-                </a>
-            );
         }
     }
 
@@ -315,7 +309,9 @@ class ValidatorBox extends React.Component {
                         <div className="row">                
                             <div className="col my-1 align-items-center">                    
                                 <i className="bi bi-globe pe-1"> </i>
-                                    {this.renderURL(this.props.validator.website)}
+                                    <RenderUrl
+                                        url={this.props.validator.website}
+                                    />
                             </div>            
                         </div>            
                         <div className="row my-1 mobile-identities">                
@@ -502,11 +498,7 @@ class ValidatorListing extends React.Component {
   render() {
     if(!this.props.state.hasData) {
       return (
-        <div className="container text-center" id='loading-spinner'>
-            <div className='spinner-grow text-light' role="status">
-            <span className='visually-hidden'>Loading...</span>
-            </div>
-        </div>
+        <Spinner />
         );
     }
     else {
@@ -558,9 +550,7 @@ class ValidatorDetail extends React.Component {
         })
           .then(response => {
             let json = response.data;
-            
             console.log(json);
-
             this.setState({
                 validator: json
             })
@@ -571,8 +561,29 @@ class ValidatorDetail extends React.Component {
           })
     }
 
+    renderName() {
+        
+    }
+
     render() {
+    
+
         if(this.state.validator!=null) {
+
+            let skipGauge = [
+                ["Label", "Value"],
+                ["Skip Rate", parseFloat(this.state.validator.skip_rate)]
+                
+            ];
+            let creditGauge = [
+                ["Label", "Value"],
+                ["Vote Credits", parseFloat(this.state.validator.credit_ratio)]
+            ]
+            let wizScoreGauge = [
+                ["Label", "Value"],
+                ["Wiz Score", parseFloat(this.state.validator.wiz_score)]
+            ]
+
             return (
                 <div className='container-sm vbox mt-5 rounded-top'>
                     <div className='row'>
@@ -592,20 +603,97 @@ class ValidatorDetail extends React.Component {
                     </div>
 
                     <div className='row'>
-                        <div className='col bg-dark p-2 m-2 text-white'>
-                            <h3>Description</h3>
-                            <p>{this.state.validator.description}</p>
+                        <div className='col p-2 m-2 text-white'>
+                            <table className='table table-dark'>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            Description
+                                        </th>
+                                        <td>
+                                            {this.state.validator.description}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            Website
+                                        </th>
+                                        <td>
+                                        <RenderUrl
+                                            url={this.state.validator.website}
+                                        />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            Keybase
+                                        </th>
+                                        <td>
+                                            {this.state.validator.keybase}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
                         </div>
-                        <div className='col bg-dark p-2 m-2 text-white'>
-                            <h3>Identities</h3>
-                            <p><span className='fw-bold me-2'>Validator Identity&nbsp;</span>{this.state.validator.identity}</p>
-                            <p><span className='fw-bold me-2'>Vote Account&nbsp;</span>{this.state.validator.vote_identity}</p>
-                        </div>
-                        <div className='col bg-dark p-2 m-2 text-white'>
-                            <h3>Other</h3>
-                            <p><span className='fw-bold me-2'>Website&nbsp;</span>{this.state.validator.website}</p>
-                            <p><span className='fw-bold me-2'>Keybase&nbsp;</span>{this.state.validator.keybase}</p>
-                            <p><span className='fw-bold me-2'>Commission&nbsp;</span>{this.state.validator.commission} %</p>
+                        
+                        <div className='col col-md-6 text-white text-center p-2'>
+                            <div className='row'>
+                                <div className='col ms-5 text-center d-flex justify-content-center'>
+                                    <Chart
+                                        chartType="Gauge"
+                                        width="100%"
+                                        height="10rem"
+                                        data={skipGauge}
+                                        options={{
+                                            greenFrom: 0,
+                                            greenTo: 5,
+                                            yellowFrom: 5,
+                                            yellowTo: 10,
+                                            minorTicks: 5
+                                        }}
+                                    />
+                                </div>
+                                <div className='col text-center d-flex justify-content-center'>
+                                    <Chart
+                                        chartType="Gauge"
+                                        width="100%"
+                                        height="10rem"
+                                        data={creditGauge}
+                                        options={{
+                                            greenFrom: 90,
+                                            greenTo: 100,
+                                            yellowFrom: 80,
+                                            yellowTo: 90,
+                                            minorTicks: 5,
+                                        }}
+                                    />
+                                </div>
+                                <div className='col me-5 text-center d-flex justify-content-center'>
+                                    <Chart
+                                        chartType="Gauge"
+                                        width="100%"
+                                        height="10rem"
+                                        data={wizScoreGauge}
+                                        options={{
+                                            greenFrom: 90,
+                                            greenTo: 100,
+                                            yellowFrom: 75,
+                                            yellowTo: 90,
+                                            minorTicks: 5,
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className='row'>
+                                <div className='col p-2 mt-4 text-white text-center'>
+                                    <h3>24h Moving Average Wiz Score</h3>
+                                    <WizScoreChart 
+                                        vote_identity={this.state.validator.vote_identity}
+                                    />
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -615,11 +703,7 @@ class ValidatorDetail extends React.Component {
         }
         else {
             return (
-                <div className="container text-center" id='loading-spinner'>
-                    <div className='spinner-grow text-light' role="status">
-                        <span className='visually-hidden'>Loading...</span>
-                    </div>
-                </div>
+                <Spinner />
             )
         }
     }

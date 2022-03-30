@@ -3,6 +3,8 @@ import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Link from 'next/link';
 import axios from 'axios';
+import {Chart} from 'react-google-charts'
+import {Spinner} from './common.js'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -619,4 +621,99 @@ class WizScoreWeightings extends React.Component {
     }
 }
 
-export {WizScore, WizScoreWeightings}
+class WizScoreChart extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            wiz_scores: null
+        };
+        if(this.state.wiz_scores==null) this.getWizScores(this.props.vote_identity);
+    }
+
+    getWizScores(vote_identity) {
+        axios(API_URL+config.API_ENDPOINTS.validator_wiz_scores+"/"+vote_identity, {
+          crossDomain: true,
+          headers: {'Content-Type':'application/json'}
+        })
+          .then(response => {
+            let json = response.data;
+            
+            console.log(json);
+
+            let wiz_scores = [];
+            wiz_scores.push(['Time', 'Wiz Score']);
+
+            for(var i in json) {
+                wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
+            }
+
+            console.log(wiz_scores);
+
+            this.setState({
+                wiz_scores: wiz_scores
+            });
+          })
+          .catch(e => {
+            console.log(e);
+            setTimeout(() => { this.getValidators() }, 5000);
+          })
+      }
+
+    render() {
+        if(this.state.wiz_scores==null) {
+            return (
+                <Spinner />
+            )
+        }
+        else {
+            return (
+                <Chart 
+                    chartType='LineChart'
+                    width="100%"
+                    height="20rem"
+                    data={this.state.wiz_scores}
+                    options={{
+                        backgroundColor: 'none',
+                        curveType: "function",
+                        colors: ['#fff', '#fff', '#fff'],
+                        lineWidth: 2,
+                        legend:{
+                            position:'none'
+                        },
+                        vAxis: {
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            },
+                            format: 'percent'
+                        },
+                        hAxis: {
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        trendlines: {
+                            0: {
+                                color:'#ffc107',
+                                type: 'exponential'
+                            }
+                        },
+                        chartArea: {
+                            top: 20,
+                            left: 30,
+                            width:'100%',
+                            height:'80%'
+                        }
+                    }}
+                />
+            )
+        }
+    };
+}
+
+export {WizScore, WizScoreWeightings, WizScoreChart}

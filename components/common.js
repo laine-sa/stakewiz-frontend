@@ -4,6 +4,16 @@ import Script from 'next/script'
 import Link from 'next/link'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 
+function Spinner() {
+  return (
+    <div className="container text-center" id='loading-spinner'>
+        <div className='spinner-grow text-light' role="status">
+            <span className='visually-hidden'>Loading...</span>
+        </div>
+    </div>
+  )
+}
+
 class Header extends React.Component {
 
     render() {
@@ -38,7 +48,7 @@ class TopBar extends React.Component {
                 </Script>,
                 <Navbar key='navbar' bg="none" variant="dark" expand="lg">
                   <Container>
-                    <Navbar.Brand href="#home" className='brand-box'>
+                    <Navbar.Brand href="/" className='brand-box'>
                         <img 
                           src="/images/stakewiz-logo-white.webp" 
                           className='stakewiz-logo'
@@ -94,4 +104,4 @@ class Footer extends React.Component {
   }
 }
 
-export {Header, TopBar, Footer}
+export {Header, TopBar, Footer, Spinner}
