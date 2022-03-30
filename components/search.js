@@ -9,14 +9,10 @@ class SearchBar extends React.Component {
             hidePrivate: false,
             hideHighStake: false,
             validatorCount: this.props.validators.length,
+            sortField: 'rank_asc'
         };
     }
 
-    componentDidMount() {
-        document.getElementById('vsearch').addEventListener("keydown", () => {
-
-        });
-    }
 
     doSearch(key,value) {
         
@@ -55,6 +51,19 @@ class SearchBar extends React.Component {
                     }
                 
                 }
+
+                let sf = this.state.sortField;
+                
+                if(!sf.includes('_asc')) {
+                    console.log(sf);
+                    filteredValidators.sort((a,b) => (a[sf] < b[sf]) ? 1 : ((b[sf] < a[sf]) ? -1 : 0));
+                }
+                else {
+                    console.log(sf);
+                    sf = sf.substring(0,sf.length-4);
+                    filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));
+                }
+
                 this.setState({
                     validatorCount: filteredValidators.length
                 });
@@ -78,23 +87,44 @@ class SearchBar extends React.Component {
         return (
             <div className="container text-white py-2">
                 <div className="row search-row">
-                    <div className="col col-md-5 position-relative d-flex align-items-center">
+                    <div className="col col-md-4 position-relative d-flex align-items-center">
                         <input className="p-2 form-control" type="text" id="vsearch" name='textInput' value={this.state.textInput} placeholder="Search validators..." autoComplete="off" onChange={event => this.doSearch(event.target.name,event.target.value)} onKeyDown={event => this.keyPressed(event)} />
                         <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(event.target.previousSibling.name)}>
                             Clear
                         </button>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hideAnonymous vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
-                        <label htmlFor="vhideanonymous">Hide unnamed validators</label>
+                        <label htmlFor="vhideanonymous">Hide unnamed</label>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hidePrivate vcheckbox mx-1" type="checkbox" name="hidePrivate" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hidePrivate} />
-                        <label htmlFor="vhideprivate" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Validators with 100% Commission">Hide private validators</label>
+                        <label htmlFor="vhideprivate" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Validators with 100% Commission">Hide private</label>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch">
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hideHStake vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />
-                        <label htmlFor="vhidestake">Hide high-stake validators</label>
+                        <label htmlFor="vhidestake">Hide high-stake</label>
+                    </div>
+                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchSort">
+                        <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
+                        <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
+                            <option value='rank_asc'>Wiz Score ↑</option>
+                            <option value='rank'>Wiz Score ↓</option>
+                            <option value='activated_stake_asc'>Stake ↑</option>
+                            <option value='activated_stake'>Stake ↓</option>
+                            <option value='apy_estimate'>Estimated APY ↓</option>
+                            <option value='skip_rate_asc'>Slot skip rate ↑</option>
+                            <option value='epoch_credits_asc'>Vote Credits ↑</option>
+                            <option value='epoch_credits'>Vote Credits ↓</option>
+                            <option value='commission_asc'>Commission ↑</option>
+                            <option value='commission'>Commission ↓</option>
+                            <option value='uptime_asc'>30 day uptime ↑</option>
+                            <option value='uptime'>30 day uptime ↓</option>
+                            <option value='first_epoch_with_stake'>Epochs active ↑</option>
+                            <option value='first_epoch_with_stake_asc'>Epochs active ↓</option>
+                            <option value='asncity_concentration_asc'>ASN+City Concentration ↑</option>
+                            <option value='asncity_concentration'>ASN+City Concentration ↓</option>
+                        </select>
                     </div>
                     <div className="col d-flex align-items-center bg-dark text-white p-1 rounded justify-content-center" id="resultsno">
                         {this.state.validatorCount} validators
