@@ -638,8 +638,6 @@ class WizScoreChart extends React.Component {
           .then(response => {
             let json = response.data;
             
-            console.log(json);
-
             let wiz_scores = [];
             wiz_scores.push(['Time', 'Wiz Score']);
 
@@ -647,15 +645,13 @@ class WizScoreChart extends React.Component {
                 wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
             }
 
-            console.log(wiz_scores);
-
             this.setState({
                 wiz_scores: wiz_scores
             });
           })
           .catch(e => {
             console.log(e);
-            setTimeout(() => { this.getValidators() }, 5000);
+            setTimeout(() => { this.getWizScores() }, 5000);
           })
       }
 
