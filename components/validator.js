@@ -805,7 +805,7 @@ class ValidatorLog extends React.Component {
             }
 
             return ([
-                <table className='table table-striped table-dark table-sm'>
+                <table className='table table-striped table-dark table-sm' key='validator-log-table'>
                     <thead>
                         <th scope='col'>Date</th>
                         <th scope='col'>Old Data</th>
