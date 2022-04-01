@@ -538,31 +538,124 @@ class ValidatorStakeHistoryChart extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            stakes: null
+            all_stakes: null,
+            ten_stakes: null,
+            epoch_stakes: null
         };
-        if(this.state.stakes==null) this.getStakeHistory(this.props.vote_identity);
+        if(this.state.all_stakes==null) this.getStakeHistory();
     }
 
-    getStakeHistory(vote_identity) {
-        axios(API_URL+config.API_ENDPOINTS.validator_stake_history+"/"+vote_identity, {
+    getStakeHistory() {
+        axios(API_URL+config.API_ENDPOINTS.validator_total_stakes+"/"+this.props.vote_identity, {
             crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
             let json = response.data;
+
             
-            let stakes = [];
-            stakes.push(['Time', 'Stake']);
+            if(json.length>0) {
 
-            for(var i in json) {
-                let data = JSON.parse(json[i].new_data).activated_stake * config.SOL_PER_LAMPORT;
-                stakes.push([new Date(json[i].created_at), parseInt(data.toFixed(0))]);
+                /*
+                var epoch_stakes = [];
+                var max_epoch = 0;
+                */
+
+                let stake = [];
+                stake.push([
+                    'Epoch',
+                    'Stake'
+                ]);
+
+                for(var i in json) {
+                    stake.push([
+                        json[i].epoch,
+                        json[i].stake
+                    ]);
+                    /*
+                    let s = json[i];
+                    max_epoch = (s.activation_epoch > max_epoch) ? s.activation_epoch : max_epoch;
+
+                    if(typeof(epoch_stakes[s.activation_epoch])!=='object' && !Array.isArray(epoch_stakes[s.activation_epoch]) &&
+                    epoch_stakes[s.activation_epoch] !== null) {
+                        epoch_stakes[s.activation_epoch] = {
+                            activating: 0,
+                            deactivating: 0
+                        }
+                    }
+                    if(typeof(epoch_stakes[s.deactivation_epoch])!=='object' && !Array.isArray(epoch_stakes[s.deactivation_epoch]) &&
+                    epoch_stakes[s.deactivation_epoch] !== null) {
+                        epoch_stakes[s.deactivation_epoch] = {
+                            activating: 0,
+                            deactivating: 0
+                        }
+                    }
+
+                    if(s.activation_epoch!=0) epoch_stakes[s.activation_epoch].activating += s.delegated_stake * config.SOL_PER_LAMPORT;
+                    if(s.deactivation_epoch!=0) epoch_stakes[s.deactivation_epoch].deactivating += s.delegated_stake * config.SOL_PER_LAMPORT;
+                    */
+
+                }
+
+                /*
+                var all_stakes = [];
+                all_stakes.push([
+                    'Epoch',
+                    'Activating',
+                    'Deactivating',
+                    'Total Stake',
+                    {
+                        type: 'boolean',
+                        role: 'certainty'
+                    }
+                ]);
+
+                var ten_stakes = [];
+                ten_stakes.push([
+                    'Epoch',
+                    'Activating',
+                    'Deactivating',
+                    'Total Stake',
+                    {
+                        type: 'boolean',
+                        role: 'certainty'
+                    }
+                ]);
+
+                let cn = 0;
+                
+
+                epoch_stakes.forEach((s, i) => {
+                    if(i==0) return;
+                    let certainty = (i==max_epoch) ? false : true;
+                    
+                    cn += (s.activating - s.deactivating);
+                    all_stakes.push([
+                        i,
+                        s.activating,
+                        s.deactivating,
+                        cn,
+                        certainty
+                    ]);
+
+                    if(i > max_epoch - 10) {
+                        ten_stakes.push([
+                            i,
+                            s.activating,
+                            s.deactivating,
+                            cn,
+                            certainty
+                        ]);
+                    }
+                    
+                });
+                */
+
+
+                this.setState({
+                    all_stakes: stake
+                });
             }
-
-
-            this.setState({
-                stakes: stakes
-            });
             })
             .catch(e => {
             console.log(e);
@@ -571,7 +664,7 @@ class ValidatorStakeHistoryChart extends React.Component {
         }
 
     render() {
-        if(this.state.stakes==null) {
+        if(this.state.all_stakes==null) {
             return (
                 <Spinner />
             )
@@ -582,7 +675,7 @@ class ValidatorStakeHistoryChart extends React.Component {
                     chartType='LineChart'
                     width="100%"
                     height="20rem"
-                    data={this.state.stakes}
+                    data={this.state.all_stakes}
                     options={{
                         backgroundColor: 'none',
                         curveType: "function",
@@ -613,6 +706,11 @@ class ValidatorStakeHistoryChart extends React.Component {
                             left: 50,
                             width:'100%',
                             height:'80%'
+                        },
+                        explorer: {
+                            maxZoomIn: 2.0,
+                            keepInBounds: true,
+                            axis: 'horizontal'
                         }
                     }}
                 />
@@ -627,11 +725,11 @@ class ValidatorEpochStakeChart extends React.Component {
         this.state = {
             stakes: null
         };
-        if(this.state.stakes==null) this.getEpochStakes(this.props.vote_identity);
+        if(this.state.stakes==null) this.getEpochStakes();
     }
 
     getEpochStakes(vote_identity) {
-        axios(API_URL+config.API_ENDPOINTS.validator_epoch_stakes+"/"+vote_identity, {
+        axios(API_URL+config.API_ENDPOINTS.validator_epoch_stakes+"/"+this.props.vote_identity, {
             crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
@@ -723,11 +821,11 @@ class ValidatorLog extends React.Component {
         this.state = {
             log: null
         };
-        if(this.state.log==null) this.getValidatorLog(this.props.vote_identity);
+        if(this.state.log==null) this.getValidatorLog();
     }
 
     getValidatorLog(vote_identity) {
-        axios(API_URL+config.API_ENDPOINTS.validator_log+"/"+vote_identity, {
+        axios(API_URL+config.API_ENDPOINTS.validator_log+"/"+this.props.vote_identity, {
             crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
@@ -828,7 +926,6 @@ class ValidatorLog extends React.Component {
 
 function StakeLabel(props) {
     if(props.stake!=null) {
-        console.log('2: '+props.stake);
         let stake = new Intl.NumberFormat().format(Number(props.stake).toFixed(0));
         if(props.stake<0) {
             
@@ -1035,7 +1132,9 @@ class ValidatorDetail extends React.Component {
                                             greenTo: 5,
                                             yellowFrom: 5,
                                             yellowTo: 10,
-                                            minorTicks: 5
+                                            minorTicks: 5,
+                                            min:0,
+                                            max:20
                                         }}
                                     />
                                 </div>
@@ -1046,11 +1145,13 @@ class ValidatorDetail extends React.Component {
                                         height="8rem"
                                         data={creditGauge}
                                         options={{
-                                            greenFrom: 90,
+                                            greenFrom: 85,
                                             greenTo: 100,
-                                            yellowFrom: 80,
-                                            yellowTo: 90,
+                                            yellowFrom: 75,
+                                            yellowTo: 85,
                                             minorTicks: 5,
+                                            min:50,
+                                            max:100
                                         }}
                                     />
                                 </div>
@@ -1061,11 +1162,13 @@ class ValidatorDetail extends React.Component {
                                         height="8rem"
                                         data={wizScoreGauge}
                                         options={{
-                                            greenFrom: 90,
+                                            greenFrom: 85,
                                             greenTo: 100,
-                                            yellowFrom: 75,
-                                            yellowTo: 90,
+                                            yellowFrom: 70,
+                                            yellowTo: 85,
                                             minorTicks: 5,
+                                            min:50,
+                                            max:100
                                         }}
                                     />
                                 </div>
@@ -1076,11 +1179,13 @@ class ValidatorDetail extends React.Component {
                                         height="8rem"
                                         data={uptimeGauge}
                                         options={{
-                                            greenFrom: 99,
+                                            greenFrom: 99.5,
                                             greenTo: 100,
-                                            yellowFrom: 97,
-                                            yellowTo: 99,
+                                            yellowFrom: 98.5,
+                                            yellowTo:99.5,
                                             minorTicks: 5,
+                                            min: 95,
+                                            max: 100
                                         }}
                                     />
                                 </div>
@@ -1091,7 +1196,7 @@ class ValidatorDetail extends React.Component {
 
                         <div className='row'>
                             <div className='col p-2 m-1 text-white text-center'>
-                                <h3>Stake changes (30 days)</h3>
+                                <h3>Active Stake (20 epochs)</h3>
                                 <ValidatorStakeHistoryChart 
                                     vote_identity={this.state.validator.vote_identity}
                                 />
