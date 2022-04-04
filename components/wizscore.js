@@ -109,7 +109,7 @@ class WizScoreBody extends React.Component {
             color = 'bg-warning';
         }
         return (
-            <div className="row">
+            <div className="row scorecard-wiz-score">
                 <div className={"col text-center text-white fst-italic p-3 mx-5 rounded "+color}>
                     <h5 className="mb-0">
                         WIZ SCORE: 
@@ -132,7 +132,7 @@ class WizScoreBody extends React.Component {
             <div>
                         <p>
                             This score helps users pick good validators to stake with. 
-                            It&apos;s designed to rewards behaviour that benefits the network and penalize behaviour that 
+                            It&apos;s designed to reward behaviour that benefits the network and penalize behaviour that 
                             harms the network (e.g. centralization of stake). We periodically update our weighting and 
                             metrics used, but record the version with each score. The score below is using version&nbsp;
                             <span id="scorecard-scoreversion">
@@ -712,4 +712,4 @@ class WizScoreChart extends React.Component {
     };
 }
 
-export {WizScore, WizScoreWeightings, WizScoreChart}
+export {WizScore, WizScoreBody, WizScoreWeightings, WizScoreChart}

@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import Search from './search.js';
-import {WizScore, WizScoreChart} from './wizscore.js';
+import {WizScore, WizScoreBody, WizScoreChart} from './wizscore.js';
 import {Alert} from './alert.js';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -556,11 +556,6 @@ class ValidatorStakeHistoryChart extends React.Component {
             
             if(json.length>0) {
 
-                /*
-                var epoch_stakes = [];
-                var max_epoch = 0;
-                */
-
                 let stake = [];
                 stake.push([
                     'Epoch',
@@ -572,85 +567,9 @@ class ValidatorStakeHistoryChart extends React.Component {
                         json[i].epoch,
                         json[i].stake
                     ]);
-                    /*
-                    let s = json[i];
-                    max_epoch = (s.activation_epoch > max_epoch) ? s.activation_epoch : max_epoch;
-
-                    if(typeof(epoch_stakes[s.activation_epoch])!=='object' && !Array.isArray(epoch_stakes[s.activation_epoch]) &&
-                    epoch_stakes[s.activation_epoch] !== null) {
-                        epoch_stakes[s.activation_epoch] = {
-                            activating: 0,
-                            deactivating: 0
-                        }
-                    }
-                    if(typeof(epoch_stakes[s.deactivation_epoch])!=='object' && !Array.isArray(epoch_stakes[s.deactivation_epoch]) &&
-                    epoch_stakes[s.deactivation_epoch] !== null) {
-                        epoch_stakes[s.deactivation_epoch] = {
-                            activating: 0,
-                            deactivating: 0
-                        }
-                    }
-
-                    if(s.activation_epoch!=0) epoch_stakes[s.activation_epoch].activating += s.delegated_stake * config.SOL_PER_LAMPORT;
-                    if(s.deactivation_epoch!=0) epoch_stakes[s.deactivation_epoch].deactivating += s.delegated_stake * config.SOL_PER_LAMPORT;
-                    */
+                    
 
                 }
-
-                /*
-                var all_stakes = [];
-                all_stakes.push([
-                    'Epoch',
-                    'Activating',
-                    'Deactivating',
-                    'Total Stake',
-                    {
-                        type: 'boolean',
-                        role: 'certainty'
-                    }
-                ]);
-
-                var ten_stakes = [];
-                ten_stakes.push([
-                    'Epoch',
-                    'Activating',
-                    'Deactivating',
-                    'Total Stake',
-                    {
-                        type: 'boolean',
-                        role: 'certainty'
-                    }
-                ]);
-
-                let cn = 0;
-                
-
-                epoch_stakes.forEach((s, i) => {
-                    if(i==0) return;
-                    let certainty = (i==max_epoch) ? false : true;
-                    
-                    cn += (s.activating - s.deactivating);
-                    all_stakes.push([
-                        i,
-                        s.activating,
-                        s.deactivating,
-                        cn,
-                        certainty
-                    ]);
-
-                    if(i > max_epoch - 10) {
-                        ten_stakes.push([
-                            i,
-                            s.activating,
-                            s.deactivating,
-                            cn,
-                            certainty
-                        ]);
-                    }
-                    
-                });
-                */
-
 
                 this.setState({
                     all_stakes: stake
@@ -706,11 +625,6 @@ class ValidatorStakeHistoryChart extends React.Component {
                             left: 50,
                             width:'100%',
                             height:'80%'
-                        },
-                        explorer: {
-                            maxZoomIn: 2.0,
-                            keepInBounds: true,
-                            axis: 'horizontal'
                         }
                     }}
                 />
@@ -723,7 +637,8 @@ class ValidatorEpochStakeChart extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            stakes: null
+            stakes: null,
+            change: null
         };
         if(this.state.stakes==null) this.getEpochStakes();
     }
@@ -744,12 +659,13 @@ class ValidatorEpochStakeChart extends React.Component {
             
             stakes.push(['Activating',parseFloat(json[0].activating_stake),'#428c57']);
             stakes.push(['Deactivating',parseFloat(json[0].deactivating_stake*-1), '#d65127']);
-            stakes.push(['Net Change',parseFloat(change), '#27abd6']);
+            //stakes.push(['Net Change',parseFloat(change), '#27abd6']);
             
             this.props.updateStake(change);
 
             this.setState({
-                stakes: stakes
+                stakes: stakes,
+                change: change
             });
             })
             .catch(e => {
@@ -766,7 +682,7 @@ class ValidatorEpochStakeChart extends React.Component {
         }
         else {
             
-            let change = new Intl.NumberFormat().format(Number(this.state.stakes[3][1]).toFixed(0));
+            let change = new Intl.NumberFormat().format(Number(this.state.change).toFixed(0));
             
             if(change<0) {
                 var title = <span className="text-danger">- ◎ {change*-1}</span>;
@@ -1011,20 +927,20 @@ class ValidatorDetail extends React.Component {
 
             let skipGauge = [
                 ["Label", "Value"],
-                ["Skip Rate", parseFloat(this.state.validator.skip_rate)]
+                ["Skip Rate", {v: parseFloat(this.state.validator.skip_rate), f: parseFloat(this.state.validator.skip_rate).toFixed(1)+'%'}]
                 
             ];
             let creditGauge = [
                 ["Label", "Value"],
-                ["Vote Credits", parseFloat(this.state.validator.credit_ratio)]
+                ["Vote Credits", {v: parseFloat(this.state.validator.credit_ratio), f: parseFloat(this.state.validator.credit_ratio).toFixed(1)+'%'}]
             ]
             let wizScoreGauge = [
                 ["Label", "Value"],
-                ["Wiz Score", parseFloat(this.state.validator.wiz_score)]
+                ["Wiz Score", {v: parseFloat(this.state.validator.wiz_score), f: parseFloat(this.state.validator.wiz_score).toFixed(1)+'%'}]
             ]
             let uptimeGauge = [
                 ["Label", "Value"],
-                ["Uptime", parseFloat(this.state.validator.uptime)]
+                ["Uptime", {v: parseFloat(this.state.validator.uptime), f: parseFloat(this.state.validator.uptime).toFixed(2)+'%'}]
             ]
 
             let updated_at = new Date(this.state.validator.updated_at);
@@ -1034,9 +950,7 @@ class ValidatorDetail extends React.Component {
             return ( [
                 <div className='container-sm m-1 mt-5 rounded-top position-relative' key='validator-details-header'>
                     
-                    <div className='text-secondary fst-italic position-absolute end-0 m-1 me-3'>
-                        Updated: {updated_at.toLocaleString()}
-                    </div>
+                   
                     <div className='row rounded-top'>
                         <div className='col text-center validator-logo'>
                             <RenderImage
@@ -1053,79 +967,15 @@ class ValidatorDetail extends React.Component {
                         </div>
                     </div>
                 </div>,
-                <div className='container' key='validator-details-content'>
+                <div className='container validator-details-content' key='validator-details-content'>
 
                     <div className='row'>
-                        <div className='col p-2 m-1 text-white'>
-                            <table className='table vbox text-white'>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">
-                                            Description
-                                        </th>
-                                        <td colSpan="3">
-                                            {this.state.validator.description}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            Website
-                                        </th>
-                                        <td>
-                                        <RenderUrl
-                                            url={this.state.validator.website}
-                                        />
-                                        </td>
-                                        <th scope="row">
-                                            Keybase
-                                        </th>
-                                        <td>
-                                            {this.state.validator.keybase}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            Commission
-                                        </th>
-                                        <td>
-                                            {this.state.validator.commission} %
-                                        </td>
-                                        <th scope="row">
-                                            Stake
-                                        </th>
-                                        <td>
-                                            ◎ {activated_stake}
-                                            <StakeLabel
-                                                stake={this.state.stake_change}
-                                                />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            ~ APY
-                                        </th>
-                                        <td>
-                                            {this.state.validator.apy_estimate} %
-                                        </td>
-                                        <th scope="row">
-                                            Version
-                                        </th>
-                                        <td>
-                                            {this.state.validator.version}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            
-                        </div>
-                        
-                        <div className='col text-white text-center p-2 m-1'>
-                            <div className='row'>
-                                <div className='col text-center d-flex justify-content-center'>
+                        <div className='col text-white p-2 m-1 d-flex justify-content-center mobile-gauge-container'>
+                                <div className='row mobile-gauges justify-content-center'>
                                     <Chart
                                         chartType="Gauge"
-                                        width="100%"
-                                        height="8rem"
+                                        width="10rem"
+                                        height="10rem"
                                         data={skipGauge}
                                         options={{
                                             greenFrom: 0,
@@ -1137,12 +987,10 @@ class ValidatorDetail extends React.Component {
                                             max:20
                                         }}
                                     />
-                                </div>
-                                <div className='col text-center d-flex justify-content-center'>
                                     <Chart
                                         chartType="Gauge"
-                                        width="100%"
-                                        height="8rem"
+                                        width="10rem"
+                                        height="10rem"
                                         data={creditGauge}
                                         options={{
                                             greenFrom: 85,
@@ -1154,12 +1002,10 @@ class ValidatorDetail extends React.Component {
                                             max:100
                                         }}
                                     />
-                                </div>
-                                <div className='col text-center d-flex justify-content-center'>
                                     <Chart
                                         chartType="Gauge"
-                                        width="100%"
-                                        height="8rem"
+                                        width="10rem"
+                                        height="10rem"
                                         data={wizScoreGauge}
                                         options={{
                                             greenFrom: 85,
@@ -1171,12 +1017,10 @@ class ValidatorDetail extends React.Component {
                                             max:100
                                         }}
                                     />
-                                </div>
-                                <div className='col text-center d-flex justify-content-center'>
                                     <Chart
                                         chartType="Gauge"
-                                        width="100%"
-                                        height="8rem"
+                                        width="10rem"
+                                        height="10rem"
                                         data={uptimeGauge}
                                         options={{
                                             greenFrom: 99.5,
@@ -1189,48 +1033,182 @@ class ValidatorDetail extends React.Component {
                                         }}
                                     />
                                 </div>
-                            </div>
 
                         </div>
+                    </div>
 
+                    <div className='row'>
+                        <div className='col p-2 text-white border border-white rounded'>
+                                <div className='row'>
+                                    <div className='col'>
+                                            <div className='row mb-2'>
+                                                <div className='col col-md-2 fw-bold'>
+                                                    Identity
+                                                </div>
+                                                <div className='col text-truncate'>
 
-                        <div className='row'>
-                            <div className='col p-2 m-1 text-white text-center'>
-                                <h3>Active Stake (20 epochs)</h3>
-                                <ValidatorStakeHistoryChart 
-                                    vote_identity={this.state.validator.vote_identity}
-                                />
-                            </div>
-                            <div className='col p-2 m-1 text-white text-center'>
-                                <h3>24h Moving Average Wiz Score</h3>
-                                <WizScoreChart 
-                                    vote_identity={this.state.validator.vote_identity}
-                                />
-                            </div>
-                        </div>
+                                                    <OverlayTrigger
+                                                        placement="top"
+                                                        overlay={
+                                                            <Tooltip>
+                                                                Copy
+                                                            </Tooltip>
+                                                        } 
+                                                    >
+                                                        <span className='pointer' onClick={() => {navigator.clipboard.writeText(this.state.validator.identity)}}>{this.state.validator.identity}</span>
+                                                    </OverlayTrigger>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                                <div className='col col-md-2 fw-bold'>
+                                                    Vote Account
+                                                </div>
+                                                <div className='col text-truncate'>
 
-
-                        <div className='row'>
-                            <div className='col p-2 m-1 text-white text-center'>
-                                <ValidatorEpochStakeChart 
-                                    vote_identity={this.state.validator.vote_identity}
-                                    updateStake={(change) => this.updateStakeChange(change)}
-                                />
-                            </div>
-                        </div>
-                        <div className='row'>
-                            <div className='col p-2 m-1'>
-                                <ValidatorLog
-                                    vote_identity={this.state.validator.vote_identity}
-                                    log_limit={this.state.log_limit}
-                                    updateLogLength={(length) => this.updateLogLength(length)}
-                                    onClick={() => this.bumpLogLimit()}
-                                    />
+                                                    <OverlayTrigger
+                                                        placement="top"
+                                                        overlay={
+                                                            <Tooltip>
+                                                                Copy
+                                                            </Tooltip>
+                                                        } 
+                                                    >
+                                                        <span className='pointer' onClick={() => {navigator.clipboard.writeText(this.state.validator.vote_identity)}}>{this.state.validator.vote_identity}</span>
+                                                    </OverlayTrigger>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div className='row'>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col col-md-2 fw-bold'>
+                                                Description
+                                            </div>
+                                            <div className='col'>
+                                                {this.state.validator.description}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row mobile-validator-info-row'>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col fw-bold'>
+                                                Website
+                                            </div>
+                                            <div className='col text-truncate'>
+                                                <RenderUrl
+                                                    url={this.state.validator.website}
+                                                />
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col fw-bold'>
+                                                Keybase
+                                            </div>
+                                            <div className='col'>
+                                                <RenderUrl
+                                                    url={this.state.validator.keybase}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col fw-bold'>
+                                                Commission
+                                            </div>
+                                            <div className='col'>
+                                                {this.state.validator.commission} %
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='row  mobile-validator-info-row'>
+                                <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col fw-bold'>
+                                                APY (estimate)
+                                            </div>
+                                            <div className='col'>
+                                                {this.state.validator.apy_estimate} %
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col fw-bold'>
+                                                Stake
+                                            </div>
+                                            <div className='col'>
+                                                ◎ {activated_stake}
+                                                <StakeLabel
+                                                    stake={this.state.stake_change}
+                                                    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='col'>
+                                        <div className='row mb-2'>
+                                            <div className='col fw-bold'>
+                                                Version
+                                            </div>
+                                            <div className='col'>
+                                                {this.state.validator.version}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            
+                            <div className='text-secondary fst-italic text-end'>
+                                Updated: {updated_at.toLocaleString()}
                             </div>
                         </div>
                     </div>
 
-                    
+
+                    <div className='row m-0'>
+                        <div className='col p-2 m-1 text-white text-center'>
+                            <h3>Active Stake (20 epochs)</h3>
+                            <ValidatorStakeHistoryChart 
+                                vote_identity={this.state.validator.vote_identity}
+                            />
+                        </div>
+                        <div className='col p-2 m-1 text-white text-center'>
+                            <h3>24h Moving Average Wiz Score</h3>
+                            <WizScoreChart 
+                                vote_identity={this.state.validator.vote_identity}
+                            />
+                        </div>
+                    </div>
+
+
+                    <div className='row m-0'>
+                        <div className='col p-2 m-1 text-white text-center'>
+                            <ValidatorEpochStakeChart 
+                                vote_identity={this.state.validator.vote_identity}
+                                updateStake={(change) => this.updateStakeChange(change)}
+                            />
+                        </div>
+                        <div className='col p-2 m-1 text-white text-center'>
+                            <h3>Scorecard</h3>
+                            <div className='text-start text-white validator-detail-scorecard'>
+                                <WizScoreBody
+                                    validator={this.state.validator}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div> ]
             )
         }

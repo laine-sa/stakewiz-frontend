@@ -186,6 +186,22 @@ a:hover {
   margin-top:-50px;
 }
 
+.validator-detail-table tbody tr th {
+  min-width:120px;
+}
+
+.validator-detail-scorecard div table {
+  color:#fff;
+}
+
+.validator-detail-scorecard div table .text-black {
+  color:#fff!important;
+}
+
+.scorecard-wiz-score { 
+  display:none!important;
+}
+
 @media only screen and (max-width: 600px) {
   .logo {
     margin:auto;
@@ -321,5 +337,33 @@ a:hover {
   }
   .cluster_statistic {
     font-size:0.6rem;
+  }
+
+  .validator-detail-table tbody tr th {
+    min-width:initial;
+  }
+
+  .validator-details-content .row {
+    display:flex;
+    flex-direction:column;
+  }
+
+  .mobile-validator-info-row .col .row {
+    flex-direction:row;
+  }
+
+  .mobile-gauges {
+    display:block;
+    flex-direction:unset!important;
+  }
+
+  .mobile-gauges div {
+    margin:0;
+    padding:0;
+  }
+
+  .mobile-gauge-container {
+    margin: 0;
+    padding: 0;
   }
 }
