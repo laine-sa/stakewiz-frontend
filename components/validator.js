@@ -1247,9 +1247,7 @@ class ValidatorDetail extends React.Component {
                                                 Keybase
                                             </div>
                                             <div className='col'>
-                                                <RenderUrl
-                                                    url={this.state.validator.keybase}
-                                                />
+                                                {this.state.validator.keybase}
                                             </div>
                                         </div>
                                     </div>
