@@ -547,7 +547,7 @@ class ValidatorListing extends React.Component {
   }
 }
 
-class ValidatorStakeHistoryChart extends React.Component {
+class ValidatorStakeHistoryChart extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -646,7 +646,7 @@ class ValidatorStakeHistoryChart extends React.Component {
     };
 }
 
-class ValidatorDelinquencyChart extends React.Component {
+class ValidatorDelinquencyChart extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -754,7 +754,7 @@ class ValidatorDelinquencyChart extends React.Component {
     };
 }
 
-class ValidatorEpochStakeChart extends React.Component {
+class ValidatorEpochStakeChart extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -802,18 +802,8 @@ class ValidatorEpochStakeChart extends React.Component {
             )
         }
         else {
-            
-            let change = new Intl.NumberFormat().format(Number(this.state.change).toFixed(0));
-            
-            if(change<0) {
-                var title = <span className="text-danger">- ◎ {change*-1}</span>;
-            }
-            else {
-                var title = <span className="text-success">+ ◎ {change}</span>;
-            }
 
             return ([
-                <h3 key='epoch-stake-title'>Stake changes this epoch: {title}</h3>,
                 <Chart 
                     key='epoch-stake-chart'
                     chartType='BarChart'
@@ -852,7 +842,7 @@ class ValidatorEpochStakeChart extends React.Component {
     };
 }
 
-class ValidatorLog extends React.Component {
+class ValidatorLog extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
@@ -963,12 +953,13 @@ class ValidatorLog extends React.Component {
 
 function StakeLabel(props) {
     if(props.stake!=null) {
-        let stake = new Intl.NumberFormat().format(Number(props.stake).toFixed(0));
+        let stake = (props.stake<0) ? props.stake*-1 : props.stake;
+        stake = new Intl.NumberFormat().format(Number(stake).toFixed(0));
         if(props.stake<0) {
             
             return (
                 <span className="text-danger ms-1">
-                    - ◎ {stake*-1}
+                    - ◎ {stake}
                 </span>
             );
         }
@@ -1330,6 +1321,12 @@ class ValidatorDetail extends React.Component {
                                 />
                             </div>
                             <div>
+                                <h3>
+                                    Stake changes this epoch: 
+                                    <StakeLabel
+                                        stake={this.state.stake_change}
+                                    />
+                                </h3>
                                 <ValidatorEpochStakeChart 
                                     vote_identity={this.state.validator.vote_identity}
                                     updateStake={(change) => this.updateStakeChange(change)}
