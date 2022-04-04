@@ -731,7 +731,7 @@ class ValidatorDelinquencyChart extends React.Component {
                                 color: '#fff'
                             },
                             format: 'short',
-                            maxValue: 60
+                            maxValue: 30
                         },
                         hAxis: {
                             gridlines: {
