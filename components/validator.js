@@ -1083,9 +1083,6 @@ class ValidatorDetail extends React.Component {
                     <div className='row'>
                         <div className='col text-white text-center p-2'>
                             <h2>{this.renderName()}</h2>
-                            <button className='btn btn-outline-success' onClick={() => this.updateAlertModalVisibility(true)}>
-                                + Create Alert
-                            </button>
                         </div>
                     </div>
                 </div>,
@@ -1345,13 +1342,7 @@ class ValidatorDetail extends React.Component {
                     <div className='text-secondary fst-italic text-end'>
                         Updated: {updated_at.toLocaleString()}
                     </div>
-                </div>,
-                <Alert 
-                    key='alertModal'  
-                    showAlertModal={this.state.showAlertModal}
-                    hideAlertModal={() => this.updateAlertModalVisibility(false)}
-                    validator={this.state.validator}
-                /> ]
+                </div>]
             )
         }
         else {
