@@ -1170,6 +1170,7 @@ class ValidatorDetail extends React.Component {
 
                     <div className='row'>
                         <div className='col p-2 text-white border border-white rounded'>
+                        
                                 <div className='row'>
                                     <div className='col'>
                                             <div className='row mb-2'>
@@ -1301,9 +1302,6 @@ class ValidatorDetail extends React.Component {
                                 
                                 
                             
-                            <div className='text-secondary fst-italic text-end'>
-                                Updated: {updated_at.toLocaleString()}
-                            </div>
                         </div>
                     </div>
 
@@ -1348,6 +1346,9 @@ class ValidatorDetail extends React.Component {
                                 />
                             </div>
                         </div>
+                    </div>
+                    <div className='text-secondary fst-italic text-end'>
+                        Updated: {updated_at.toLocaleString()}
                     </div>
                 </div>,
                 <Alert 
