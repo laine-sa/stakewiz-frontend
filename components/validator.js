@@ -16,7 +16,11 @@ function RenderImage(props) {
     if(props.img==null) {
         return '';
     }
-    else return <Image className="rounded-circle" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+    else return (
+        <Link href={'/validator/'+props.vote_identity} passHref>
+            <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+        </Link>
+    )
 }
 
 function RenderUrl(props) {
@@ -139,8 +143,9 @@ class ValidatorBox extends React.Component {
                         </div>            
                         <div className="row pt-2">                
                             <div className="col text-center vlist-name">
-                                
-                                    <span className="vlist-name-inner">{this.props.validator.name}</span>                
+                                    <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
+                                        <span className="vlist-name-inner pointer">{this.props.validator.name}</span>  
+                                    </Link>              
                                 
                             </div>            
                         </div>        
@@ -345,12 +350,20 @@ class ValidatorBox extends React.Component {
                             </div>            
                         </div>        
                     </div>
-                    <div className="col align-items-center justify-content-center d-flex">         
-                        
-                        <button className="btn btn-success alert-button" onClick={this.props.showAlertModal} >                
+                    <div className="col d-grid gap-2">         
+                    
+                        <button className="btn btn-outline-success alert-button" onClick={this.props.showAlertModal} >                
                             <i className="bi bi-plus px-1 alert-btn-icon"></i>
                                 Create Alert            
-                        </button>        
+                        </button>  
+                        <button className="btn btn-outline-warning alert-button" onClick={this.props.showWizModal} >                
+                                Scorecard            
+                        </button>    
+                        <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
+                            <button className="btn btn-outline-light alert-button">                
+                                    More Info            
+                            </button>          
+                        </Link>
                     </div>
                 </div>
         );
@@ -493,7 +506,7 @@ class ValidatorListing extends React.Component {
         showAlertModal: show,
         alertValidator: validator
     });
-}
+    }
 
   render() {
     if(!this.props.state.hasData) {
@@ -611,6 +624,114 @@ class ValidatorStakeHistoryChart extends React.Component {
                                 color: '#fff'
                             },
                             format: 'short'
+                        },
+                        hAxis: {
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+                        chartArea: {
+                            top: 20,
+                            left: 50,
+                            width:'100%',
+                            height:'80%'
+                        }
+                    }}
+                />
+            )
+        }
+    };
+}
+
+class ValidatorDelinquencyChart extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            delinquencies: null
+        };
+        if(this.state.delinquencies==null) this.getDelinquencies();
+    }
+
+    getDelinquencies() {
+        axios(API_URL+config.API_ENDPOINTS.validator_delinquencies+"/"+this.props.vote_identity, {
+            crossDomain: true,
+            headers: {'Content-Type':'application/json'}
+        })
+            .then(response => {
+            let json = response.data;
+
+            if(json.length>0) {
+
+                let delinquencies = [];
+                delinquencies.push([
+                    'Date', 'Delinquent Minutes'
+                ]);
+
+                let d = new Date();
+                for(let a = 1; a <= 30; a++) {
+                    
+                    delinquencies.push([
+                        new Date(d.getTime()),
+                        0
+                    ]);
+                    d.setDate(d.getDate() - 1);
+                }
+
+                
+
+                for(var i in json) {
+                    for(var a in delinquencies) {
+                        if(new Date(delinquencies[a][0]).toLocaleDateString() == new Date(json[i].date).toLocaleDateString()) {
+                            delinquencies[a][1] = parseInt(json[i].delinquent_minutes);
+                        }
+                    }
+                }
+
+
+                this.setState({
+                    delinquencies: delinquencies
+                });
+            }
+            })
+            .catch(e => {
+            console.log(e);
+            setTimeout(() => { this.getDelinquencies() }, 5000);
+            })
+        }
+
+    render() {
+        if(this.state.delinquencies==null) {
+            return (
+                <Spinner />
+            )
+        }
+        else {
+            return (
+                <Chart 
+                    chartType='ColumnChart'
+                    width="100%"
+                    height="20rem"
+                    data={this.state.delinquencies}
+                    options={{
+                        backgroundColor: 'none',
+                        curveType: "function",
+                        colors: ['#fff', '#fff', '#fff'],
+                        lineWidth: 2,
+                        legend:{
+                            position:'none'
+                        },
+                        vAxis: {
+                            gridlines: {
+                                color: 'transparent'
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            },
+                            format: 'short',
+                            maxValue: 60
                         },
                         hAxis: {
                             gridlines: {
@@ -872,7 +993,8 @@ class ValidatorDetail extends React.Component {
             validator: null,
             stake_change: null,
             log_limit: 25,
-            log_length: 0
+            log_length: 0,
+            showAlertModal: false
         };
         if(this.props.vote_identity!='') this.getValidator(this.props.vote_identity);
     }
@@ -887,6 +1009,12 @@ class ValidatorDetail extends React.Component {
         this.setState({
             log_limit: this.state.log_limit+25
         })
+    }
+
+    updateAlertModalVisibility(show) {
+        this.setState({
+            showAlertModal: show
+        });
     }
 
     getValidator(vote_identity) {
@@ -964,6 +1092,9 @@ class ValidatorDetail extends React.Component {
                     <div className='row'>
                         <div className='col text-white text-center p-2'>
                             <h2>{this.renderName()}</h2>
+                            <button className='btn btn-outline-success' onClick={() => this.updateAlertModalVisibility(true)}>
+                                + Create Alert
+                            </button>
                         </div>
                     </div>
                 </div>,
@@ -1179,6 +1310,7 @@ class ValidatorDetail extends React.Component {
 
                     <div className='row m-0'>
                         <div className='col p-2 m-1 text-white text-center'>
+                        
                             <h3>Active Stake (20 epochs)</h3>
                             <ValidatorStakeHistoryChart 
                                 vote_identity={this.state.validator.vote_identity}
@@ -1195,10 +1327,18 @@ class ValidatorDetail extends React.Component {
 
                     <div className='row m-0'>
                         <div className='col p-2 m-1 text-white text-center'>
-                            <ValidatorEpochStakeChart 
-                                vote_identity={this.state.validator.vote_identity}
-                                updateStake={(change) => this.updateStakeChange(change)}
-                            />
+                            <div>
+                                <h3>Delinquencies (30 days)</h3>
+                                <ValidatorDelinquencyChart
+                                    vote_identity={this.state.validator.vote_identity}
+                                />
+                            </div>
+                            <div>
+                                <ValidatorEpochStakeChart 
+                                    vote_identity={this.state.validator.vote_identity}
+                                    updateStake={(change) => this.updateStakeChange(change)}
+                                />
+                            </div>
                         </div>
                         <div className='col p-2 m-1 text-white text-center'>
                             <h3>Scorecard</h3>
@@ -1209,7 +1349,13 @@ class ValidatorDetail extends React.Component {
                             </div>
                         </div>
                     </div>
-                </div> ]
+                </div>,
+                <Alert 
+                    key='alertModal'  
+                    showAlertModal={this.state.showAlertModal}
+                    hideAlertModal={() => this.updateAlertModalVisibility(false)}
+                    validator={this.state.validator}
+                /> ]
             )
         }
         else {

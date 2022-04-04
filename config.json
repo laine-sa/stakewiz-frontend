@@ -9,6 +9,7 @@
         "validator_stake_history": "validator_stake_history",
         "validator_epoch_stakes": "validator_epoch_stakes",
         "validator_total_stakes": "validator_total_stakes",
+        "validator_delinquencies": "validator_delinquencies",
         "validator_stakes": "validator_stakes",
         "validator_log": "validator_log",
         "cluster_stats": "cluster_stats",

@@ -9,7 +9,6 @@ export default function Home() {
     
     const router = useRouter()
     const query = router.query
-    console.log(router.query)
 
     if(!query.checksum) {
         return ''

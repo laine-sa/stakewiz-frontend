@@ -55,11 +55,9 @@ class SearchBar extends React.Component {
                 let sf = this.state.sortField;
                 
                 if(!sf.includes('_asc')) {
-                    console.log(sf);
                     filteredValidators.sort((a,b) => (a[sf] < b[sf]) ? 1 : ((b[sf] < a[sf]) ? -1 : 0));
                 }
                 else {
-                    console.log(sf);
                     sf = sf.substring(0,sf.length-4);
                     filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));
                 }
