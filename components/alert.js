@@ -442,7 +442,7 @@ class AlertForm extends React.Component {
                         />
                         <div className="row">
                             <div className="col my-1">
-                                Please choose your delivery method and which alerts you'd like to receive. For email alerts you'll receive an activation email with a link, for Telegram please click the button in the next step to activate your alert.
+                                Please choose your delivery method and which alerts you&apos;d like to receive. For email alerts you&apos;ll receive an activation email with a link, for Telegram please click the button in the next step to activate your alert.
                             </div>
                         </div>
                         <div className="row">
