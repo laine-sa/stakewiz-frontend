@@ -378,6 +378,11 @@ class AlertForm extends React.Component {
 
     render() {
         const recaptchaRef = React.createRef();
+        const close_button = (this.props.hideAlertModal==null) ? '' : (
+            <Button variant="secondary" onClick={this.props.hideAlertModal} className='btn btn-secondary mx-2'>
+                 Close   
+            </Button>
+        );
         const form = (
             
             <div className="container-fluid" id="alertFormInputs">
@@ -490,9 +495,7 @@ class AlertForm extends React.Component {
                             </div>
                             <div className="d-flex"> 
                                 <input type="hidden" id="alertRecaptchaToken" name="token" />
-                                <Button variant="secondary" onClick={this.props.hideAlertModal} className='btn btn-secondary mx-2'>
-                                    Close   
-                                </Button>
+                                {close_button}
                                 <Button variant="success" type="submit" disabled={isSubmitting} className='btn btn-success mx-2'>
                                     Submit   
                                 </Button>
@@ -547,4 +550,4 @@ class Alert extends React.Component {
         }
 }
 
-export {Alert, Activate, Cancel};
+export {Alert, AlertForm, Activate, Cancel};
