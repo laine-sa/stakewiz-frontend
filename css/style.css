@@ -23,6 +23,10 @@ input:focus, input:active {
   box-shadow:none!important;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   padding: 0;
   margin:0;

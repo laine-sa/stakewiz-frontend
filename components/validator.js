@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import Search from './search.js';
 import {WizScore, WizScoreBody, WizScoreChart} from './wizscore.js';
-import {Alert} from './alert.js';
+import {Alert, AlertForm} from './alert.js';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -1042,8 +1042,12 @@ class ValidatorDetail extends React.Component {
         });
     }
 
+    
+
     render() {
     
+        const alertFormRef = React.createRef()
+        const scrollToAlertForm = () => alertFormRef.current.scrollIntoView()
 
         if(this.state.validator!=null) {
 
@@ -1086,6 +1090,11 @@ class ValidatorDetail extends React.Component {
                     <div className='row'>
                         <div className='col text-white text-center p-2'>
                             <h2>{this.renderName()}</h2>
+                            
+                            <button className='btn btn-outline-success' onClick={scrollToAlertForm}>
+                                + Create Alert
+                            </button>
+                        
                         </div>
                     </div>
                 </div>,
@@ -1346,7 +1355,15 @@ class ValidatorDetail extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className='text-secondary fst-italic text-end'>
+                    <div className='row'>
+                        <div ref={alertFormRef} className='col p-2 text-white border border-white rounded'>
+                            <AlertForm
+                                validator={this.state.validator}
+                                hideAlertModal={null}
+                            />
+                        </div>
+                    </div>
+                    <div className='text-secondary fst-italic text-end my-1'>
                         Updated: {updated_at.toLocaleString()}
                     </div>
                 </div>]
