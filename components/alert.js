@@ -164,7 +164,7 @@ function ErrorFlash(props) {
             <div className="alert alert-dismissible alert-danger fade show" role="alert">
                 Unable to create alert, please ensure you provided your email address and selected at least one alert. If this error persists please contact us or try again later.
                 <br /><br />
-                Error Details: {props.text}.
+                Error Details: {props.text}
             </div>
         </div>
     )
@@ -237,7 +237,9 @@ class AlertForm extends React.Component {
             alertEmail: '',
             delinquencyThreshold: 60,
             success: false,
-            error: false
+            error: false,
+            deliveryMethod: 'telegram',
+            activation_token: null
         };
     }
 
@@ -248,7 +250,7 @@ class AlertForm extends React.Component {
                             .match(
                                 /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
                             );
-        if(validEmail==null) {
+        if(validEmail==null && this.state.deliveryMethod=='email') {
             errors.alertEmailText = 'Invalid email';
         }
         if(!this.state.alertCommission && !this.state.delinquencyRadiosVisible) {
@@ -317,6 +319,25 @@ class AlertForm extends React.Component {
         else return null;
     }
 
+    renderEmail(errors,touched) {
+        if(this.state.deliveryMethod=='email') {
+            return (
+                <div className="col">
+                    <div className="input-group">
+                        <span className="input-group-text" id="email1">
+                            @
+                        </span>
+                        <Field className={"form-control "+(errors.alertEmailText && touched.alertEmailText ? 'is-invalid' : null)} type="text" name="alertEmailText" value={this.state.alertEmail} onChange={(event) => this.storeEmail(event.target.value)} />
+                        {errors.alertEmailText && touched.alertEmailText ? <div className="invalid-feedback">{errors.alertEmailText}</div> : null}
+                    </div>
+                    
+                </div>
+            );
+            
+        }
+        else return null;
+    }
+
     handleDelinquencyThreshold(value) {
         this.setState({
             delinquencyThreshold: value
@@ -337,6 +358,7 @@ class AlertForm extends React.Component {
         payload.email = values.alertEmailText;
         payload.alerts.delinquency = (values.alertDelinquency) ? values.delinquencyThreshold : false;
         payload.alerts.commission = values.alertCommissionCheckbox;
+        payload.deliveryMethod = values.deliveryMethod;
         payload.vote_identity = values.alertValidator;
         payload.opt_in = values.alertOptIn;
         payload.recaptcha_token = token;
@@ -352,8 +374,15 @@ class AlertForm extends React.Component {
             .then(response => {
               let json = response.data;
               if(json.result=='success') {
+
+                let token = null;
+                if('message' in json) {
+                    if('activation_token' in json.message) token = json.message.activation_token;
+                }
+                
                 this.setState({
-                    success: true
+                    success: true,
+                    activation_token: token
                 });
               }
               else {
@@ -361,7 +390,8 @@ class AlertForm extends React.Component {
               }
             })
             .catch(e => {
-            
+                console.log(e);
+                
               if(e.response.data!=undefined) {
                   this.setState({
                       error: e.response.data
@@ -372,7 +402,7 @@ class AlertForm extends React.Component {
                     error: "Unknown error. Please check that you submitted a valid email address. If the error persists please try again later."
                 });
               }
-              console.log(e);
+              
             })
     }
 
@@ -393,7 +423,8 @@ class AlertForm extends React.Component {
                     alertCommissionCheckbox: this.state.alertCommission,
                     alertDelinquency: this.state.delinquencyRadiosVisible,
                     alertOptIn: this.state.promoOptIn,
-                    delinquencyThreshold: this.state.delinquencyThreshold
+                    delinquencyThreshold: this.state.delinquencyThreshold,
+                    deliveryMethod: this.state.deliveryMethod
                 }}
                 enableReinitialize={true}
                 validate={() => this.validate()}
@@ -411,7 +442,7 @@ class AlertForm extends React.Component {
                         />
                         <div className="row">
                             <div className="col my-1">
-                                Enter your email address and select which alerts you&apos;d like to receive. We&apos;ll send you an activation email with a link, please click it to activate your alerts.
+                                Please choose your delivery method and which alerts you'd like to receive. For email alerts you'll receive an activation email with a link, for Telegram please click the button in the next step to activate your alert.
                             </div>
                         </div>
                         <div className="row">
@@ -424,17 +455,27 @@ class AlertForm extends React.Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col">
-                                <div className="input-group mb-3">
-                                    <span className="input-group-text" id="email1">
-                                        @
-                                    </span>
-                                    <Field className={"form-control "+(errors.alertEmailText && touched.alertEmailText ? 'is-invalid' : null)} type="text" name="alertEmailText" value={this.state.alertEmail} onChange={(event) => this.storeEmail(event.target.value)} />
-                                    {errors.alertEmailText && touched.alertEmailText ? <div className="invalid-feedback">{errors.alertEmailText}</div> : null}
-                                </div>
-                                
+                        <div className="row align-items-center">
+                            <div className="col col-md-auto">
+                                Delivery
                             </div>
+                            <div className="col col-md-auto">
+                                <Field className="btn-check" type="radio" name="deliveryMethod" id="delTelegram" autoComplete="off" value="telegram"
+                                    checked={this.state.deliveryMethod == 'telegram' ? true : false}
+                                    onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
+                                />
+                                <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delTelegram">
+                                    Telegram
+                                </label>
+                                <Field className="btn-check" type="radio" name="deliveryMethod" id="delEmail" autoComplete="off" value="email"
+                                    checked={this.state.deliveryMethod == 'email' ? true : false}
+                                    onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
+                                />
+                                <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delEmail">
+                                    Email
+                                </label>
+                            </div>
+                            {this.renderEmail(errors,touched)}
                         </div>
                         <div className="row">
                             <div className="col">
@@ -509,6 +550,15 @@ class AlertForm extends React.Component {
 
         if(!this.state.success) {
             return form;
+        }
+        else if(this.state.activation_token!=null) {
+            return (
+                <div className="container p-0 pt-2" id="alertAlert">
+                    <div className="alert alert-dismissible alert-success fade show" role="alert">
+                        Alert created, to activate it please send an activation message to our Telegram Bot by clicking <a href={'https://t.me/stakewiz_bot?start='+this.state.activation_token} target='_new'>here</a>.
+                    </div>
+                </div>
+            )
         }
         else {
             return (
