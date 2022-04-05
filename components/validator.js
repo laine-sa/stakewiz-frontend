@@ -638,7 +638,8 @@ class ValidatorStakeHistoryChart extends React.PureComponent {
                             left: 50,
                             width:'100%',
                             height:'80%'
-                        }
+                        },
+                        allowAsync: true
                     }}
                 />
             )
@@ -746,7 +747,8 @@ class ValidatorDelinquencyChart extends React.PureComponent {
                             left: 50,
                             width:'100%',
                             height:'80%'
-                        }
+                        },
+                        allowAsync: true
                     }}
                 />
             )
@@ -834,7 +836,8 @@ class ValidatorEpochStakeChart extends React.PureComponent {
                             textStyle: {
                                 color: '#fff'
                             }
-                        }
+                        },
+                        allowAsync: true
                     }}
                 />]
             )
@@ -1103,7 +1106,8 @@ class ValidatorDetail extends React.Component {
                                             yellowTo: 10,
                                             minorTicks: 5,
                                             min:0,
-                                            max:20
+                                            max:20,
+                                            allowAsync: true
                                         }}
                                     />
                                     <Chart
@@ -1118,7 +1122,8 @@ class ValidatorDetail extends React.Component {
                                             yellowTo: 85,
                                             minorTicks: 5,
                                             min:50,
-                                            max:100
+                                            max:100,
+                                            allowAsync: true
                                         }}
                                     />
                                     <Chart
@@ -1133,7 +1138,8 @@ class ValidatorDetail extends React.Component {
                                             yellowTo: 85,
                                             minorTicks: 5,
                                             min:50,
-                                            max:100
+                                            max:100,
+                                            allowAsync: true
                                         }}
                                     />
                                     <Chart
@@ -1148,7 +1154,8 @@ class ValidatorDetail extends React.Component {
                                             yellowTo:99.5,
                                             minorTicks: 5,
                                             min: 95,
-                                            max: 100
+                                            max: 100,
+                                            allowAsync: true
                                         }}
                                     />
                                 </div>
