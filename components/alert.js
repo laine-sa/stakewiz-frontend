@@ -578,7 +578,7 @@ class AlertForm extends React.Component {
             return (
                 <div className="container p-0 pt-2" id="alertAlert">
                     <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
-                        Alert created, to activate it please click the link below to send us an activation code via Telegram:<br />
+                        Alert created, to activate it please click the link below to open Telegram, then click Start:<br />
                         <span className='d-inline-block mt-2'>
                             <a href={'https://t.me/stakewiz_bot?start='+this.state.activation_token} target='_new'>
                                 <button className='btn btn-telegram text-white'>
