@@ -230,7 +230,7 @@ class AlertForm extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
+        const initialState = {
             delinquencyRadiosVisible: false,
             alertCommission: false,
             promoOptIn: true,
@@ -239,8 +239,25 @@ class AlertForm extends React.Component {
             success: false,
             error: false,
             deliveryMethod: 'telegram',
-            activation_token: null
+            activation_token: null,
+            initial: {
+                delinquencyRadiosVisible: false,
+                alertCommission: false,
+                promoOptIn: true,
+                alertEmail: '',
+                delinquencyThreshold: 60,
+                success: false,
+                error: false,
+                deliveryMethod: 'telegram',
+                activation_token: null
+            }
         };
+        
+        this.state = initialState;
+    }
+
+    resetState() {
+        this.setState(this.state.initial);
     }
 
     validate() {
@@ -413,6 +430,12 @@ class AlertForm extends React.Component {
                  Close   
             </Button>
         );
+        const reset_button = (this.props.hideAlertModal!=null) ? '' : (
+            <Button variant="secondary" onClick={this.resetState.bind(this)} className='btn btn-secondary mx-2'>
+                 New Alert   
+            </Button>
+        );
+
         const form = (
             
             <div className="container-fluid" id="alertFormInputs">
@@ -554,8 +577,16 @@ class AlertForm extends React.Component {
         else if(this.state.activation_token!=null) {
             return (
                 <div className="container p-0 pt-2" id="alertAlert">
-                    <div className="alert alert-dismissible alert-success fade show" role="alert">
-                        Alert created, to activate it please send an activation message to our Telegram Bot by clicking <a href={'https://t.me/stakewiz_bot?start='+this.state.activation_token} target='_new'>here</a>.
+                    <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
+                        Alert created, to activate it please click the link below to send us an activation code via Telegram:<br />
+                        <span className='d-inline-block mt-2'>
+                            <a href={'https://t.me/stakewiz_bot?start='+this.state.activation_token} target='_new'>
+                                <button className='btn btn-telegram text-white'>
+                                <i className="bi bi-telegram me-1"></i> Activate in Telegram
+                                </button>
+                            </a>
+                            {reset_button}
+                        </span>
                     </div>
                 </div>
             )
@@ -563,9 +594,11 @@ class AlertForm extends React.Component {
         else {
             return (
                 <div className="container p-0 pt-2" id="alertAlert">
-                    <div className="alert alert-dismissible alert-success fade show" role="alert">
-                        Alert created, you&apos;ll receive a confirmation email, please click on the activation link.
+                    <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
+                        Alert created, you&apos;ll receive a confirmation email, please click on the activation link.<br />
+                        {reset_button}
                     </div>
+                    
                 </div>
             )
         }

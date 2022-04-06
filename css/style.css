@@ -48,6 +48,10 @@ div#__next > div {
   min-height: 100vh;
 }
 
+.btn-telegram {
+  background-color: #0088cc;
+}
+
 .pointer {
   cursor: pointer;
 }
