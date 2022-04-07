@@ -339,15 +339,17 @@ class AlertForm extends React.Component {
     renderEmail(errors,touched) {
         if(this.state.deliveryMethod=='email') {
             return (
-                <div className="col">
-                    <div className="input-group">
-                        <span className="input-group-text" id="email1">
-                            @
-                        </span>
-                        <Field className={"form-control "+(errors.alertEmailText && touched.alertEmailText ? 'is-invalid' : null)} type="text" name="alertEmailText" value={this.state.alertEmail} onChange={(event) => this.storeEmail(event.target.value)} />
-                        {errors.alertEmailText && touched.alertEmailText ? <div className="invalid-feedback">{errors.alertEmailText}</div> : null}
+                <div className='row my-1'>
+                    <div className="col">
+                        <div className="input-group">
+                            <span className="input-group-text" id="email1">
+                                @
+                            </span>
+                            <Field className={"form-control "+(errors.alertEmailText && touched.alertEmailText ? 'is-invalid' : null)} type="text" name="alertEmailText" value={this.state.alertEmail} onChange={(event) => this.storeEmail(event.target.value)} />
+                            {errors.alertEmailText && touched.alertEmailText ? <div className="invalid-feedback">{errors.alertEmailText}</div> : null}
+                        </div>
+                        
                     </div>
-                    
                 </div>
             );
             
@@ -480,9 +482,6 @@ class AlertForm extends React.Component {
                         </div>
                         <div className="row align-items-center">
                             <div className="col col-md-auto">
-                                Delivery
-                            </div>
-                            <div className="col col-md-auto">
                                 <Field className="btn-check" type="radio" name="deliveryMethod" id="delTelegram" autoComplete="off" value="telegram"
                                     checked={this.state.deliveryMethod == 'telegram' ? true : false}
                                     onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
@@ -498,8 +497,8 @@ class AlertForm extends React.Component {
                                     Email
                                 </label>
                             </div>
-                            {this.renderEmail(errors,touched)}
                         </div>
+                            {this.renderEmail(errors,touched)}
                         <div className="row">
                             <div className="col">
                                 <div className="form-check form-switch">
