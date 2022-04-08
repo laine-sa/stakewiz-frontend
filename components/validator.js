@@ -7,7 +7,7 @@ import {Alert, AlertForm} from './alert.js';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import {Spinner} from './common'
+import {Spinner} from './common.tsx'
 import {Chart} from 'react-google-charts'
 
 const API_URL = process.env.API_BASE_URL;

@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {Header, TopBar, Footer} from '../../components/common.tsx';
+import {Header, TopBar, Footer} from 'components/common';
 import { useRouter } from 'next/router'
 import { Activate } from '../../components/alert.js';
 import { ValidatorDetail } from '../../components/validator.js'
