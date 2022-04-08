@@ -3,6 +3,10 @@ import React from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
+import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+
+import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 function Spinner() {
   return (
@@ -29,7 +33,10 @@ class Header extends React.Component {
 }
 
 class TopBar extends React.Component {
+    
+
     render() {
+
       return (
               [
                 <Script
@@ -58,6 +65,9 @@ class TopBar extends React.Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
                       <Nav>
+                        <div className='wallet-container'>
+                          <WalletMultiButton />
+                        </div>
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/faq">FAQs</Nav.Link>
                         <Nav.Link href="https://laine.co.za/solana" target="_new">Support Laine</Nav.Link>
