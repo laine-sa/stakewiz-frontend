@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {Header, TopBar, Footer} from '../components/common.js'
+import {Header, TopBar, Footer} from '../components/common'
 import { WizScoreWeightings } from '../components/wizscore.js';
 
 const API_URL = process.env.API_BASE_URL;

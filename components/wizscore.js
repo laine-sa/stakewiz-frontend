@@ -4,7 +4,7 @@ import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap
 import Link from 'next/link';
 import axios from 'axios';
 import {Chart} from 'react-google-charts'
-import {Spinner} from './common.js'
+import {Spinner} from './common'
 
 const API_URL = process.env.API_BASE_URL;
 
