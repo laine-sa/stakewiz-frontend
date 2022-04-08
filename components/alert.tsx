@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -28,11 +28,11 @@ interface AlertFormI {
     hideAlertModal: Function;
 }
 
-class Activate extends React.Component<ActivateProps, {activateResult: object}> {
+class Activate extends React.Component<ActivateProps, {activateResult: ReactNode}> {
     constructor(props) {
         super(props);
         this.state = {
-            activateResult: undefined
+            activateResult: null
         }
         if(this.props.token!=undefined) {
             this.doActivate();
@@ -90,15 +90,15 @@ class Activate extends React.Component<ActivateProps, {activateResult: object}> 
             this.state.activateResult
         )
         }
-        else return ''
+        else return null
     }
 }
 
-class Cancel extends React.Component<CancelProps, {cancelResult: object}> {
+class Cancel extends React.Component<CancelProps, {cancelResult: ReactNode}> {
     constructor(props) {
         super(props);
         this.state = {
-            cancelResult: undefined
+            cancelResult: null
         }
         if(this.props.query!=undefined) {
             this.doCancel();
@@ -168,7 +168,7 @@ class Cancel extends React.Component<CancelProps, {cancelResult: object}> {
             this.state.cancelResult
         )
         }
-        else return ''
+        else return null
     }
 }
 
