@@ -1165,7 +1165,7 @@ class ValidatorDetail extends React.Component<validatorI,
         })
           .then(response => {
             let json = response.data as validatorI;
-            console.log(json);
+            
             
             this.setState({
                 validator: json
@@ -1198,8 +1198,6 @@ class ValidatorDetail extends React.Component<validatorI,
         const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
 
         if(this.state.validator!=null) {
-
-            console.log(typeof(this.state.validator.skip_rate));
 
             let skipGauge = [
                 ["Label", "Value"],
