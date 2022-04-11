@@ -206,16 +206,10 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     
     render() {
 
-        try {
-            const activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake.toFixed(0)));
-            const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
-            const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
-            
-        }
-        catch (e) {
-            console.log(this.props.validator.identity);
-            console.log(e);
-        }
+        const activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake.toFixed(0)));
+        const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
+        const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
+         
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
