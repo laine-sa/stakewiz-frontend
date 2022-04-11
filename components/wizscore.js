@@ -138,7 +138,7 @@ class WizScoreBody extends React.Component {
                             <span id="scorecard-scoreversion">
                                {this.props.validator.score_version}
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
-                            <Link href="/faq#faq-wizscore" target="_new" passHref>here</Link>.
+                            <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
                         </p>
                         <table className="table table-sm"> 
                             <thead>

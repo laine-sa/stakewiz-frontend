@@ -3,10 +3,7 @@ import React, {FC} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
-import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 interface HeaderProps {
   title: string;
@@ -74,11 +71,6 @@ class TopBar extends React.Component {
                         <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
                         <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
                       </Nav>
-                      <div className='wallet-container'>
-                          <WalletMultiButton 
-                            className='btn btn-outline-light btn-sm'
-                          />
-                        </div>
                     </Navbar.Collapse>
                   </Container>
                 </Navbar>

@@ -31,6 +31,8 @@ class SearchBar extends React.Component<
 
 
     doSearch(key,value) {
+
+        console.log('hello');
         
         this.setState(() => {
             let obj = {};
@@ -39,7 +41,9 @@ class SearchBar extends React.Component<
             },() => {
                 const {textInput, hideAnonymous, hidePrivate, hideHighStake } = this.state;
                 const list = this.props.validators;
-                let filteredValidators = Array();
+                var filteredValidators = [];
+
+                console.log(list);
 
                 var counter = 0;
                 // Loop through all list items, and hide those who don't match the search query
@@ -54,12 +58,11 @@ class SearchBar extends React.Component<
                     if (txtValue.toUpperCase().indexOf(textInput.toUpperCase()) > -1 ) {
                         
                         if((name=='' && hideAnonymous===true) || (hidePrivate && commission==100) || (hideHighStake && stakeRatio>=100)) {
-                            
-                            
+                            continue;
                         }
                         else {
                             
-                                filteredValidators.push(list[i]);
+                            filteredValidators.push(list[i]);
                             
                             counter ++;
                         }
@@ -82,8 +85,6 @@ class SearchBar extends React.Component<
                     validatorCount: filteredValidators.length
                 });
                 this.props.onClick(filteredValidators);
-                //addClickListeners();
-                //setResultsCount(counter);
             });
     }
 

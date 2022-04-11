@@ -127,7 +127,9 @@ function RenderImage(props) {
     }
     else return (
         <Link href={'/validator/'+props.vote_identity} passHref>
-            <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+            <a>
+                <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+            </a>
         </Link>
     )
 }
