@@ -46,7 +46,7 @@ class Homepage extends React.Component<
     return [
             <ValidatorListing
                 state={this.state}
-                onClick={(state) => this.updateState(state)}
+                updateState={(state) => this.updateState(state)}
                 key='validatorParent'
             />
           ]

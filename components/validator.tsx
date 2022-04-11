@@ -118,7 +118,7 @@ export interface ValidatorListingI {
         showAlertModal: boolean,
         alertValidator: validatorI
       },
-    onClick: Function;
+    updateState: Function;
 }
 
 function RenderImage(props) {
@@ -150,22 +150,9 @@ function RenderUrl(props) {
 
 
 class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
-    static activated_stake: string;
-    static credit_ratio: string;
-    static skip_rate: string;
-    
     constructor(props) {
         super(props);
-        try {
-            ValidatorBox.activated_stake = new Intl.NumberFormat().format((this.props.validator.activated_stake));
-            ValidatorBox.credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio));
-            ValidatorBox.skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate));
-            
-        }
-        catch (e) {
-            console.log(this.props.validator.identity);
-            console.log(e);
-        }
+        
     }
 
     renderRankColor() {
@@ -218,6 +205,17 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     }
     
     render() {
+
+        try {
+            const activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake.toFixed(0)));
+            const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
+            const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
+            
+        }
+        catch (e) {
+            console.log(this.props.validator.identity);
+            console.log(e);
+        }
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
@@ -298,7 +296,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                         </Tooltip>
                                     } 
                                 >
-                                    <span>◎ {ValidatorBox.activated_stake}</span>
+                                    <span>◎ {activated_stake}</span>
                                 </OverlayTrigger>
                                 <br />                        
                                 <OverlayTrigger
@@ -328,7 +326,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                 >
                                     <i className="bi bi-box pe-2"></i>
                                 </OverlayTrigger>
-                                    {ValidatorBox.skip_rate} %
+                                    {skip_rate} %
                                     <OverlayTrigger
                                 placement="right"
                                 overlay={
@@ -353,7 +351,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                 >
                                     <i className="bi bi-pencil-square pe-2"></i>
                                 </OverlayTrigger>
-                                    {ValidatorBox.credit_ratio} %
+                                    {credit_ratio} %
                                 <OverlayTrigger
                                 placement="right"
                                 overlay={
@@ -556,7 +554,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       .then(response => {
         let json = response.data;
         
-        this.props.onClick({
+        this.props.updateState({
             validators: json,
             filteredValidators: json,
             hasData: true,
@@ -575,7 +573,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       .then(response => {
         let json = response.data;
         
-        this.props.onClick({
+        this.props.updateState({
             clusterStats: json
         });
       })
@@ -586,7 +584,8 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
   }
 
   doFilter(filteredValidators) {
-    this.props.onClick({
+
+    this.props.updateState({
         visibleCount: config.DEFAULT_LIST_SIZE,
         filteredValidators: filteredValidators
     });
@@ -594,7 +593,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
 
   bumpVisibleCount() {
       
-      this.props.onClick({
+      this.props.updateState({
         visibleCount: this.props.state.visibleCount+config.DEFAULT_LIST_SIZE
       });
   }
@@ -605,7 +604,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       if(validator==null && this.props.state.wizValidator!=null) {
           validator = this.props.state.wizValidator;
       }
-      this.props.onClick({
+      this.props.updateState({
           showWizModal: show,
           wizValidator: validator
       });
@@ -615,13 +614,14 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     if(validator==null && this.props.state.alertValidator!=null) {
         validator = this.props.state.alertValidator;
     }
-    this.props.onClick({
+    this.props.updateState({
         showAlertModal: show,
         alertValidator: validator
     });
     }
 
   render() {
+      
     if(!this.props.state.hasData) {
       return (
         <Spinner />
@@ -632,7 +632,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
           [
             <SearchBar 
                 validators={this.props.state.validators}
-                onClick={(filteredValidators:[validatorI]) => {
+                setFilter={(filteredValidators:[validatorI]) => {
                     return this.doFilter(filteredValidators);
                 }}
                 key='searchBar'

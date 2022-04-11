@@ -3,7 +3,7 @@ import { validatorI } from './validator';
 
 interface searchI {
     validators: [validatorI];
-    onClick: Function;
+    setFilter: Function;
 }
 
 class SearchBar extends React.Component<
@@ -31,8 +31,6 @@ class SearchBar extends React.Component<
 
 
     doSearch(key,value) {
-
-        console.log('hello');
         
         this.setState(() => {
             let obj = {};
@@ -43,7 +41,6 @@ class SearchBar extends React.Component<
                 const list = this.props.validators;
                 var filteredValidators = [];
 
-                console.log(list);
 
                 var counter = 0;
                 // Loop through all list items, and hide those who don't match the search query
@@ -84,7 +81,7 @@ class SearchBar extends React.Component<
                 this.setState({
                     validatorCount: filteredValidators.length
                 });
-                this.props.onClick(filteredValidators);
+                this.props.setFilter(filteredValidators);
             });
     }
 
