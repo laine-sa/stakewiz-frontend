@@ -217,6 +217,7 @@ a:hover {
 }
 
 @media only screen and (max-width: 600px) {
+  
   .mb-13{
     margin-bottom: 0;
   }
