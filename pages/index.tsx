@@ -1,14 +1,29 @@
-import React from 'react';
-import { ValidatorListing } from '../components/validator.js'
+import type { NextPage } from 'next'
+import React from 'react'
+import { clusterStatsI, validatorI, ValidatorListing } from '../components/validator'
 import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {Header, TopBar, Footer} from '../components/common.js';
+import {Header, TopBar, Footer} from '../components/common'
 
 const API_URL = process.env.API_BASE_URL;
 
-class Homepage extends React.Component {
+
+class Homepage extends React.Component<
+  {},
+  {
+    validators: [validatorI],
+    clusterStats: clusterStatsI,
+    filteredValidators: [validatorI],
+    hasData: boolean,
+    visibleCount: number,
+    showWizModal: boolean,
+    wizValidator: validatorI,
+    showAlertModal: boolean,
+    alertValidator: validatorI
+  }> {
   constructor(props) {
     super(props);
+
     this.state = {
       validators: null,
       clusterStats: null,
@@ -31,7 +46,7 @@ class Homepage extends React.Component {
     return [
             <ValidatorListing
                 state={this.state}
-                onClick={(state) => this.updateState(state)}
+                updateState={(state) => this.updateState(state)}
                 key='validatorParent'
             />
           ]
@@ -39,7 +54,7 @@ class Homepage extends React.Component {
 }
 
 
-export default function Home() {
+const Home: NextPage = () => {
   return (
     <div>
       <Header
@@ -49,13 +64,14 @@ export default function Home() {
       <main>
         <TopBar />
 
-        <div id="vlist" className="container text-white py-2">
+        <div id="vlist" className="container text-white py-2 text-modal-white">
           <Homepage />
         </div>
-        
       </main>
 
       <Footer />
     </div>
   )
 }
+
+export default Home;

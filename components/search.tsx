@@ -1,6 +1,22 @@
 import React from 'react';
+import { validatorI } from './validator';
 
-class SearchBar extends React.Component {
+interface searchI {
+    validators: [validatorI];
+    setFilter: Function;
+}
+
+class SearchBar extends React.Component<
+        searchI, 
+        {
+            textInput:string,
+            hideAnonymous:boolean,
+            hidePrivate:boolean,
+            hideHighStake:boolean,
+            validatorCount: number;
+            sortField: string;
+        }
+    > {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,7 +39,8 @@ class SearchBar extends React.Component {
             },() => {
                 const {textInput, hideAnonymous, hidePrivate, hideHighStake } = this.state;
                 const list = this.props.validators;
-                let filteredValidators = Array();
+                var filteredValidators = [];
+
 
                 var counter = 0;
                 // Loop through all list items, and hide those who don't match the search query
@@ -38,12 +55,11 @@ class SearchBar extends React.Component {
                     if (txtValue.toUpperCase().indexOf(textInput.toUpperCase()) > -1 ) {
                         
                         if((name=='' && hideAnonymous===true) || (hidePrivate && commission==100) || (hideHighStake && stakeRatio>=100)) {
-                            
-                            
+                            continue;
                         }
                         else {
                             
-                                filteredValidators.push(list[i]);
+                            filteredValidators.push(list[i]);
                             
                             counter ++;
                         }
@@ -65,9 +81,7 @@ class SearchBar extends React.Component {
                 this.setState({
                     validatorCount: filteredValidators.length
                 });
-                this.props.onClick(filteredValidators);
-                //addClickListeners();
-                //setResultsCount(counter);
+                this.props.setFilter(filteredValidators);
             });
     }
 
@@ -85,9 +99,9 @@ class SearchBar extends React.Component {
         return (
             <div className="container text-white py-2">
                 <div className="row search-row">
-                    <div className="col col-md-4 position-relative d-flex align-items-center mb-13">
+                    <div className="col col-md-4 position-relative d-flex align-items-center m-bottom-13">
                         <input className="p-2 form-control" type="text" id="vsearch" name='textInput' value={this.state.textInput} placeholder="Search validators..." autoComplete="off" onChange={event => this.doSearch(event.target.name,event.target.value)} onKeyDown={event => this.keyPressed(event)} />
-                        <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(event.target.previousSibling.name)}>
+                        <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(((event.target as HTMLButtonElement).previousSibling as HTMLInputElement).name)}>
                             Clear
                         </button>
                     </div>

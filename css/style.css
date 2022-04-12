@@ -210,15 +210,70 @@ a:hover {
   display:none!important;
 }
 
+.wallet-container .wallet-adapter-button {
+  height:auto;
+  color:#fff;
+  display:flex;
+  align-items:center;
+}
+
+.wallet-container .wallet-adapter-button:not([disabled]):hover {
+  background-color: #fff;
+  color:#000;
+}
+
+.wallet-adapter-modal-wrapper {
+  border-radius:0.3rem;
+  background: #fff;
+  color:#000;
+}
+
+.wallet-adapter-modal-title {
+  color:#000;
+}
+.wallet-adapter-button {
+  color:#000;
+}
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: #6c757d;
+}
+
+.wallet-adapter-modal-button-close {
+  background:transparent;
+}
+.wallet-adapter-modal-button-close svg:hover {
+  fill: #777
+}
+.wallet-adapter-modal-list-more {
+  color:#000;
+}
+.wallet-container .wallet-adapter-button-start-icon { 
+  display:inline-block;
+}
+.wallet-adapter-dropdown-list {
+  border-radius:0;
+  background-color:#fff;
+}
+
+.wallet-adapter-dropdown-list-item:not([disabled]):hover {
+  background:transparent;
+  border:1px solid #000;
+  
+}
+.wallet-adapter-dropdown-list-item {
+  font-weight:normal;
+  border: 1px solid transparent;
+  color:#000;
+}
+
 @media only screen and (max-width: 991px) {
-  .mb-13{
+  .m-bottom-13{
     margin-bottom: 13px;
   }
 }
-
 @media only screen and (max-width: 600px) {
   
-  .mb-13{
+  .m-bottom-13{
     margin-bottom: 0;
   }
   .logo {
@@ -301,7 +356,7 @@ a:hover {
   .searchToggle {
     margin-left:3rem!important;
   }
-  .text-white {
+  .text-modal-white{
     overflow: hidden;
   }
 

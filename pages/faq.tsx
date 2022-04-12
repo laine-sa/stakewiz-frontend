@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {Header, TopBar, Footer} from '../components/common.js'
-import { WizScoreWeightings } from '../components/wizscore.js';
+import {Header, TopBar, Footer} from '../components/common'
+import { WizScoreWeightings } from '../components/wizscore';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -142,7 +142,7 @@ export default function Home() {
                                     How can I submit feedback or get in touch?
                                 </h3>
                                 <p>
-                                    You can find us on Twitter at <Link href="https://twitter.com/laine_sa_" target="_new">@laine_sa_</Link> or <Link href="https://discord.gg/3JXdTavv6x" target="_new">join our Discord</Link>. 
+                                    You can find us on Twitter at <a href="https://twitter.com/laine_sa_" target="_new">@laine_sa_</a> or <a href="https://discord.gg/3JXdTavv6x" target="_new">join our Discord</a>. 
                                 </p>
                                 <hr className="m-3 my-5" />
                                 <h3 className="mb-4" id="faq-wizscore">

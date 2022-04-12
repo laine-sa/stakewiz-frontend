@@ -1,19 +1,19 @@
 import React from 'react';
-import axios from 'axios';
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {Header, TopBar, Footer} from '../components/common.js';
+import {Header, TopBar, Footer} from '../components/common';
 import { useRouter } from 'next/router'
-import { Cancel } from '../components/alert.js';
+import { Activate } from '../components/alert';
 
 export default function Home() {
     
     const router = useRouter()
-    const query = router.query
+    const {token} = router.query
 
-    if(!query.checksum) {
+    if(!token) {
         return ''
     }
     else {
+        let t: string = token as string;
         return (
         <div>
             <Header
@@ -24,7 +24,7 @@ export default function Home() {
             <TopBar />
     
             <div className="container full-height">
-                <Cancel query={query} />
+                <Activate token={t} /> 
             </div>
             
             </main>

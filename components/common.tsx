@@ -1,8 +1,13 @@
 import Head from 'next/head';
-import React from 'react';
+import React, {FC} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
+
+
+interface HeaderProps {
+  title: string;
+}
 
 function Spinner() {
   return (
@@ -14,7 +19,8 @@ function Spinner() {
   )
 }
 
-class Header extends React.Component {
+
+class Header extends React.Component<HeaderProps, {}> {
 
     render() {
         return (
@@ -29,7 +35,10 @@ class Header extends React.Component {
 }
 
 class TopBar extends React.Component {
+    
+
     render() {
+
       return (
               [
                 <Script
@@ -50,17 +59,17 @@ class TopBar extends React.Component {
                   <Container>
                     <Navbar.Brand href="/" className='brand-box'>
                         <img 
-                          src="/images/stakewiz-logo-white.webp" 
+                          src={"/images/stakewiz-logo-white.webp"}
                           className='stakewiz-logo'
                           alt="Stakewiz Logo" 
                         />
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end'>
+                    <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
                       <Nav>
-                        <Nav.Link href="/">Home</Nav.Link>
-                        <Nav.Link href="/faq">FAQs</Nav.Link>
-                        <Nav.Link href="https://laine.co.za/solana" target="_new">Support Laine</Nav.Link>
+                        <Nav.Link href="/" className='text-white'>Home</Nav.Link>
+                        <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
+                        <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
                       </Nav>
                     </Navbar.Collapse>
                   </Container>

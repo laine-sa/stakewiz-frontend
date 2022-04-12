@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Link from 'next/link'
+import { validatorI } from './validator';
 
 const API_URL = process.env.API_BASE_URL;
 
-class Activate extends React.Component {
+interface ActivateProps {
+    token: string;
+}
+
+interface alertI {
+    validator: validatorI;
+    showAlertModal: boolean;
+    hideAlertModal: Function;
+}
+
+interface CancelProps {
+    query: object;
+}
+
+interface AlertFormI {
+    validator: validatorI;
+    hideAlertModal: Function;
+}
+
+class Activate extends React.Component<ActivateProps, {activateResult: ReactNode}> {
     constructor(props) {
         super(props);
         this.state = {
-            activateResult: undefined
+            activateResult: null
         }
         if(this.props.token!=undefined) {
             this.doActivate();
@@ -27,18 +47,15 @@ class Activate extends React.Component {
           });
 
         axios.post(API_URL+config.API_ENDPOINTS.activate, 
-            postData,
-            {
-            crossDomain: true
-        })
+            postData)
             .then(response => {
             let json = response.data;
             
             if(json.message.name!='') {
-                let message = json.message.name
+                var message = json.message.name
             }
             else {
-                let message = json.message.vote_identity;
+                var message = json.message.vote_identity;
             }
 
             let result = (
@@ -73,15 +90,15 @@ class Activate extends React.Component {
             this.state.activateResult
         )
         }
-        else return ''
+        else return null
     }
 }
 
-class Cancel extends React.Component {
+class Cancel extends React.Component<CancelProps, {cancelResult: ReactNode}> {
     constructor(props) {
         super(props);
         this.state = {
-            cancelResult: undefined
+            cancelResult: null
         }
         if(this.props.query!=undefined) {
             this.doCancel();
@@ -95,10 +112,7 @@ class Cancel extends React.Component {
         console.log(postData)
 
         axios.post(API_URL+config.API_ENDPOINTS.cancel, 
-            postData,
-            {
-            crossDomain: true
-        })
+            postData)
             .then(response => {
             let json = response.data;
             
@@ -128,7 +142,7 @@ class Cancel extends React.Component {
             )
 
             this.setState({
-                activateResult: result
+                cancelResult: result
             })
                 
             })
@@ -141,7 +155,7 @@ class Cancel extends React.Component {
                 )
 
                 this.setState({
-                    activateResult: result
+                    cancelResult: result
                 })
             })
 
@@ -149,12 +163,12 @@ class Cancel extends React.Component {
 
 
     render() {
-      if(this.state.activateResult!=undefined) {
+      if(this.state.cancelResult!=undefined) {
         return (
-            this.state.activateResult
+            this.state.cancelResult
         )
         }
-        else return ''
+        else return null
     }
 }
 
@@ -226,7 +240,28 @@ function AlertDelinquencyRadios(props) {
     );
 }
 
-class AlertForm extends React.Component {
+class AlertForm extends React.Component<AlertFormI, {
+    delinquencyRadiosVisible: boolean;
+    alertCommission: boolean;
+    promoOptIn: boolean;
+    alertEmail: string;
+    delinquencyThreshold: number;
+    success: boolean;
+    error: any;
+    deliveryMethod: string;
+    activation_token: string;
+    initial: {
+        delinquencyRadiosVisible: boolean;
+        alertCommission: boolean;
+        promoOptIn: boolean;
+        alertEmail: string;
+        delinquencyThreshold: number;
+        success: boolean;
+        error: any;
+        deliveryMethod: string;
+        activation_token: string;
+        };
+    }> {
     constructor(props) {
         super(props);
 
@@ -237,7 +272,7 @@ class AlertForm extends React.Component {
             alertEmail: '',
             delinquencyThreshold: 60,
             success: false,
-            error: false,
+            error: null,
             deliveryMethod: 'telegram',
             activation_token: null,
             initial: {
@@ -247,7 +282,7 @@ class AlertForm extends React.Component {
                 alertEmail: '',
                 delinquencyThreshold: 60,
                 success: false,
-                error: false,
+                error: null,
                 deliveryMethod: 'telegram',
                 activation_token: null
             }
@@ -261,7 +296,7 @@ class AlertForm extends React.Component {
     }
 
     validate() {
-        const errors = {};
+        const errors: any = {};
         let validEmail = String(this.state.alertEmail)
                             .toLowerCase()
                             .match(
@@ -369,10 +404,10 @@ class AlertForm extends React.Component {
         
         
         this.setState({
-            error:false
+            error:null
         });
 
-        let payload = {alerts: {}};
+        let payload: any = {alerts: {}};
         
         payload.email = values.alertEmailText;
         payload.alerts.delinquency = (values.alertDelinquency) ? values.delinquencyThreshold : false;
@@ -386,10 +421,7 @@ class AlertForm extends React.Component {
 
         axios.post(
                 API_URL+config.API_ENDPOINTS.alert, 
-                JSON.stringify(payload), 
-                {
-                    crossDomain:true
-                })
+                JSON.stringify(payload))
             .then(response => {
               let json = response.data;
               if(json.result=='success') {
@@ -428,7 +460,7 @@ class AlertForm extends React.Component {
     render() {
         const recaptchaRef = React.createRef();
         const close_button = (this.props.hideAlertModal==null) ? '' : (
-            <Button variant="secondary" onClick={this.props.hideAlertModal} className='btn btn-secondary mx-2'>
+            <Button variant="secondary" onClick={() => this.props.hideAlertModal()} className='btn btn-secondary mx-2'>
                  Close   
             </Button>
         );
@@ -458,7 +490,7 @@ class AlertForm extends React.Component {
                     await this.submitHandler(values,recaptchaRef);
                 }}
                 >
-                {({ errors, touched, isSubmitting }) => (
+                {({ errors, touched, isSubmitting }: any) => (
                     <Form>
                         <ReCAPTCHA
                             ref={recaptchaRef}
@@ -604,7 +636,8 @@ class AlertForm extends React.Component {
     }
 }
 
-class Alert extends React.Component {
+
+class Alert extends React.Component<alertI,{}> {
     renderName() {
         
         if(this.props.validator!=null) {
@@ -617,7 +650,7 @@ class Alert extends React.Component {
     
     render() {
         return (
-            <Modal show={this.props.showAlertModal} onHide={this.props.hideAlertModal} dialogClassName='modal-lg'>
+            <Modal show={this.props.showAlertModal} onHide={() => this.props.hideAlertModal()} dialogClassName='modal-lg'>
                 <Modal.Header closeButton>
                     <Modal.Title>{this.renderName()}</Modal.Title>
                 </Modal.Header>

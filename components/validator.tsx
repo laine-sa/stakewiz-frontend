@@ -1,31 +1,142 @@
 import React, { useRef } from 'react';
 import axios from 'axios';
 import config from '../config.json';
-import Search from './search.js';
-import {WizScore, WizScoreBody, WizScoreChart} from './wizscore.js';
-import {Alert, AlertForm} from './alert.js';
+import SearchBar from './search';
+import {WizScore, WizScoreBody, WizScoreChart} from './wizscore';
+import {Alert, AlertForm} from './alert';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import {Spinner} from './common.js'
+import {Spinner} from './common'
 import {Chart} from 'react-google-charts'
 
 const API_URL = process.env.API_BASE_URL;
 
+export interface validatorI {
+    identity: string;
+    vote_identity: string;
+    last_vote: number;
+    root_slot: number;
+    credits: number;
+    epoch_credits: number;
+    activated_stake: number;
+    version: string;
+    delinquent: boolean;
+    skip_rate: number;
+    created_at: string;
+    updated_at: string;
+    oldest_active_stake_pubkey: string;
+    first_epoch_with_stake: number;
+    name: string;
+    keybase: string;
+    description: string;
+    info_pubkey: string;
+    website: string;
+    commission: number;
+    image: string;
+    gossip_ip: string;
+    ip_latitude: string;
+    ip_longitude: string;
+    ip_city: string;
+    ip_country: string;
+    ip_asn: string;
+    ip_org: string;
+    withdraw_authority: string;
+    wiz_score_id: number;
+    ignore: boolean;
+    vote_success: number;
+    vote_success_score: number;
+    skip_rate_score: number;
+    info_score: number;
+    commission_score: number;
+    first_epoch_distance: number;
+    epoch_distance_score: number;
+    stake_weight: number;
+    above_halt_line: boolean;
+    stake_weight_score: number;
+    withdraw_authority_score: number;
+    asn: string;
+    asn_concentration: number;
+    asn_concentration_score: number;
+    uptime: number;
+    uptime_score: number;
+    wiz_score: number;
+    version_valid: boolean;
+    city_concentration: number;
+    city_concentration_score: number;
+    invalid_version_score: number;
+    superminority_penalty: number;
+    score_version: number;
+    no_voting_override: boolean;
+    epoch: number;
+    epoch_slot_height: number;
+    asncity_concentration: number;
+    asncity_concentration_score: number;
+    stake_ratio: number;
+    credit_ratio: number;
+    apy_estimate: number;
+    rank: number;
+};
+
+export interface clusterStatsI {
+    avg_credit_ratio: number;
+    avg_activated_stake: number;
+    avg_commission: number;
+    avg_skip_rate: number;
+    avg_apy: number;
+};
+
+export interface ValidatorBoxPropsI {
+    validator: validatorI;
+    clusterStats: clusterStatsI;
+    showWizModal: Function;
+    showAlertModal: Function;
+
+}
+
+export interface ValidatorListI {
+    clusterStats: clusterStatsI;
+    validators: [validatorI];
+    updateWizModal: Function;
+    updateAlertModal: Function;
+    listSize: number;
+    showWizModal: boolean;
+    wizValidator: validatorI;
+    alertValidator: validatorI;
+    showAlertModal: boolean;
+}
+
+export interface ValidatorListingI {
+    state: {
+        validators: [validatorI],
+        clusterStats: clusterStatsI,
+        filteredValidators: [validatorI],
+        hasData: boolean,
+        visibleCount: number,
+        showWizModal: boolean,
+        wizValidator: validatorI,
+        showAlertModal: boolean,
+        alertValidator: validatorI
+      },
+    updateState: Function;
+}
+
 function RenderImage(props) {
     if(props.img==null) {
-        return '';
+        return null;
     }
     else return (
         <Link href={'/validator/'+props.vote_identity} passHref>
-            <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+            <a>
+                <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
+            </a>
         </Link>
     )
 }
 
 function RenderUrl(props) {
     if(props.url==null || props.url=='') {
-        return '';
+        return null;
     }
     else {
         return (
@@ -36,22 +147,12 @@ function RenderUrl(props) {
     }
 }
 
-class ValidatorBox extends React.Component {
-    static activated_stake;
-    static credit_ratio;
-    
+
+
+class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     constructor(props) {
         super(props);
-        try {
-            this.activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake).toFixed(0));
-            this.credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio).toFixed(1));
-            this.skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate).toFixed(1));
-            
-        }
-        catch (e) {
-            console.log(this.props.validator.identity);
-            console.log(e);
-        }
+        
     }
 
     renderRankColor() {
@@ -94,7 +195,7 @@ class ValidatorBox extends React.Component {
                 <div className="row" key={'stakebar-'+this.props.validator.vote_identity}>                
                     <div className="col mt-1">                    
                         <div className="progress" data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom">                        
-                            <div className={"progress-bar progress-bar-striped progress-bar-animated "+stakeBg} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin="0" aria-valuemax="100" style={{width: stakeWidth+'%'}}>
+                            <div className={"progress-bar progress-bar-striped progress-bar-animated "+stakeBg} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin={0} aria-valuemax={100} style={{width: stakeWidth+'%'}}>
                             </div>                    
                         </div>                
                     </div>            
@@ -104,6 +205,11 @@ class ValidatorBox extends React.Component {
     }
     
     render() {
+
+        const activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake.toFixed(0)));
+        const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
+        const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
+         
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
@@ -116,7 +222,7 @@ class ValidatorBox extends React.Component {
                                 <div className="p-2">{this.props.validator.wiz_score} %</div>                
                             </div>            
                         </div>            
-                        <div className="row wiz-score-button" type="button" onClick={this.props.showWizModal} >                
+                        <div className="row wiz-score-button pointer" onClick={() => {this.props.showWizModal()}} >                
                             <OverlayTrigger
                                     placement="bottom"
                                     overlay={
@@ -184,7 +290,7 @@ class ValidatorBox extends React.Component {
                                         </Tooltip>
                                     } 
                                 >
-                                    <span>◎ {this.activated_stake}</span>
+                                    <span>◎ {activated_stake}</span>
                                 </OverlayTrigger>
                                 <br />                        
                                 <OverlayTrigger
@@ -195,7 +301,7 @@ class ValidatorBox extends React.Component {
                                         </Tooltip>
                                     } 
                                 >
-                                    <span className="cluster_statistic text-secondary">Ø ◎ {new Intl.NumberFormat().format(Number(this.props.clusterStats.avg_activated_stake).toFixed(0))}</span>                
+                                    <span className="cluster_statistic text-secondary">Ø ◎ {new Intl.NumberFormat().format(Number(this.props.clusterStats.avg_activated_stake.toFixed(0)))}</span>                
                                 </OverlayTrigger>
                             </div>            
                         </div>            
@@ -214,7 +320,7 @@ class ValidatorBox extends React.Component {
                                 >
                                     <i className="bi bi-box pe-2"></i>
                                 </OverlayTrigger>
-                                    {this.skip_rate} %
+                                    {skip_rate} %
                                     <OverlayTrigger
                                 placement="right"
                                 overlay={
@@ -239,7 +345,7 @@ class ValidatorBox extends React.Component {
                                 >
                                     <i className="bi bi-pencil-square pe-2"></i>
                                 </OverlayTrigger>
-                                    {this.credit_ratio} %
+                                    {credit_ratio} %
                                 <OverlayTrigger
                                 placement="right"
                                 overlay={
@@ -352,11 +458,11 @@ class ValidatorBox extends React.Component {
                     </div>
                     <div className="col d-grid gap-2">         
                     
-                        <button className="btn btn-outline-success alert-button" onClick={this.props.showAlertModal} >                
+                        <button className="btn btn-outline-success alert-button" onClick={() => this.props.showAlertModal()} >                
                             <i className="bi bi-plus px-1 alert-btn-icon"></i>
                                 Create Alert            
                         </button>  
-                        <button className="btn btn-outline-warning alert-button" onClick={this.props.showWizModal} >                
+                        <button className="btn btn-outline-warning alert-button" onClick={() => this.props.showWizModal()} >                
                                 Scorecard            
                         </button>    
                         <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
@@ -370,8 +476,8 @@ class ValidatorBox extends React.Component {
     }
 }
 
-class ValidatorList extends React.Component {
-  renderValidator(i) {
+class ValidatorList extends React.Component<ValidatorListI, {}> {
+  renderValidator(i:number) {
     return (
             <ValidatorBox 
               key={this.props.validators[i].vote_identity}
@@ -424,12 +530,11 @@ function LoadMoreButton(props) {
         );
     }
     else {
-        return '';
+        return null;
     }
 }
 
-
-class ValidatorListing extends React.Component {
+class ValidatorListing extends React.Component<ValidatorListingI, {}> {
   constructor(props) {
     super(props);
     if(this.props.state.validators==null) this.getValidators();
@@ -438,13 +543,12 @@ class ValidatorListing extends React.Component {
 
   getValidators() {
     axios(API_URL+config.API_ENDPOINTS.validators, {
-      crossDomain: true,
-      headers: {'Content-Type':'application/json'}
+        headers: {'Content-Type':'application/json'}
     })
       .then(response => {
         let json = response.data;
         
-        this.props.onClick({
+        this.props.updateState({
             validators: json,
             filteredValidators: json,
             hasData: true,
@@ -458,13 +562,12 @@ class ValidatorListing extends React.Component {
 
   getClusterStats() {
     axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
-      crossDomain: true,
       headers: {'Content-Type':'application/json'}
     })
       .then(response => {
         let json = response.data;
         
-        this.props.onClick({
+        this.props.updateState({
             clusterStats: json
         });
       })
@@ -475,7 +578,8 @@ class ValidatorListing extends React.Component {
   }
 
   doFilter(filteredValidators) {
-    this.props.onClick({
+
+    this.props.updateState({
         visibleCount: config.DEFAULT_LIST_SIZE,
         filteredValidators: filteredValidators
     });
@@ -483,32 +587,35 @@ class ValidatorListing extends React.Component {
 
   bumpVisibleCount() {
       
-      this.props.onClick({
+      this.props.updateState({
         visibleCount: this.props.state.visibleCount+config.DEFAULT_LIST_SIZE
       });
   }
 
-  updateWizModalVisibility(show,validator=null) {
+  updateWizModalVisibility(show:boolean,validator=null) {
+    console.log(show);
+
       if(validator==null && this.props.state.wizValidator!=null) {
           validator = this.props.state.wizValidator;
       }
-      this.props.onClick({
+      this.props.updateState({
           showWizModal: show,
           wizValidator: validator
       });
   }
 
-  updateAlertModalVisibility(show,validator=null) {
+  updateAlertModalVisibility(show:boolean,validator=null) {
     if(validator==null && this.props.state.alertValidator!=null) {
         validator = this.props.state.alertValidator;
     }
-    this.props.onClick({
+    this.props.updateState({
         showAlertModal: show,
         alertValidator: validator
     });
     }
 
   render() {
+      
     if(!this.props.state.hasData) {
       return (
         <Spinner />
@@ -517,9 +624,9 @@ class ValidatorListing extends React.Component {
     else {
       return (
           [
-            <Search 
+            <SearchBar 
                 validators={this.props.state.validators}
-                onClick={(filteredValidators) => {
+                setFilter={(filteredValidators:[validatorI]) => {
                     return this.doFilter(filteredValidators);
                 }}
                 key='searchBar'
@@ -530,10 +637,10 @@ class ValidatorListing extends React.Component {
                 listSize={this.props.state.visibleCount}
                 key='validatorList'
                 showWizModal={this.props.state.showWizModal}
-                updateWizModal={(show,validator) => this.updateWizModalVisibility(show,validator)}
+                updateWizModal={(show:boolean,validator:validatorI) => this.updateWizModalVisibility(show,validator)}
                 wizValidator={this.props.state.wizValidator}
                 showAlertModal={this.props.state.showAlertModal}
-                updateAlertModal={(show,validator) => this.updateAlertModalVisibility(show,validator)}
+                updateAlertModal={(show:boolean,validator:validatorI) => this.updateAlertModalVisibility(show,validator)}
                 alertValidator={this.props.state.alertValidator}
                 />,
             <LoadMoreButton
@@ -547,7 +654,15 @@ class ValidatorListing extends React.Component {
   }
 }
 
-class ValidatorStakeHistoryChart extends React.PureComponent {
+class ValidatorStakeHistoryChart extends React.PureComponent<
+    {
+        vote_identity: string;
+    }, 
+    {
+        all_stakes: unknown;
+        ten_stakes: unknown;
+        epoch_stakes: unknown;
+    }> {
     constructor(props) {
         super(props);
         this.state = {
@@ -560,7 +675,6 @@ class ValidatorStakeHistoryChart extends React.PureComponent {
 
     getStakeHistory() {
         axios(API_URL+config.API_ENDPOINTS.validator_total_stakes+"/"+this.props.vote_identity, {
-            crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
@@ -647,7 +761,14 @@ class ValidatorStakeHistoryChart extends React.PureComponent {
     };
 }
 
-class ValidatorDelinquencyChart extends React.PureComponent {
+class ValidatorDelinquencyChart extends React.PureComponent<
+    {
+        vote_identity: string;
+    },
+    {
+        delinquencies: unknown;
+    }
+    > {
     constructor(props) {
         super(props);
         this.state = {
@@ -658,7 +779,6 @@ class ValidatorDelinquencyChart extends React.PureComponent {
 
     getDelinquencies() {
         axios(API_URL+config.API_ENDPOINTS.validator_delinquencies+"/"+this.props.vote_identity, {
-            crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
@@ -756,7 +876,16 @@ class ValidatorDelinquencyChart extends React.PureComponent {
     };
 }
 
-class ValidatorEpochStakeChart extends React.PureComponent {
+class ValidatorEpochStakeChart extends React.PureComponent<
+    {
+        vote_identity: string;
+        updateStake: Function;
+    },
+    {
+        stakes: unknown;
+        change: unknown;   
+    }
+    > {
     constructor(props) {
         super(props);
         this.state = {
@@ -766,9 +895,8 @@ class ValidatorEpochStakeChart extends React.PureComponent {
         if(this.state.stakes==null) this.getEpochStakes();
     }
 
-    getEpochStakes(vote_identity) {
+    getEpochStakes() {
         axios(API_URL+config.API_ENDPOINTS.validator_epoch_stakes+"/"+this.props.vote_identity, {
-            crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
@@ -781,7 +909,7 @@ class ValidatorEpochStakeChart extends React.PureComponent {
             let change = json[0].activating_stake-json[0].deactivating_stake;
             
             stakes.push(['Activating',parseFloat(json[0].activating_stake),'#428c57']);
-            stakes.push(['Deactivating',parseFloat(json[0].deactivating_stake*-1), '#d65127']);
+            stakes.push(['Deactivating',parseFloat(json[0].deactivating_stake)*-1, '#d65127']);
             //stakes.push(['Net Change',parseFloat(change), '#27abd6']);
             
             this.props.updateStake(change);
@@ -845,7 +973,21 @@ class ValidatorEpochStakeChart extends React.PureComponent {
     };
 }
 
-class ValidatorLog extends React.PureComponent {
+class ValidatorLog extends React.PureComponent<
+    {
+        vote_identity: string;
+        updateLogLength: Function;
+        log_limit: number;
+        onClick: Function;
+    },
+    {
+        log: [{
+            [dynamic:string]: {
+                value?: unknown
+            }
+        }];
+    }
+    > {
     constructor(props) {
         super(props);
         this.state = {
@@ -854,9 +996,8 @@ class ValidatorLog extends React.PureComponent {
         if(this.state.log==null) this.getValidatorLog();
     }
 
-    getValidatorLog(vote_identity) {
+    getValidatorLog() {
         axios(API_URL+config.API_ENDPOINTS.validator_log+"/"+this.props.vote_identity, {
-            crossDomain: true,
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
@@ -884,7 +1025,7 @@ class ValidatorLog extends React.PureComponent {
             let table = [];
             for(let i=0; i<this.state.log.length && i<this.props.log_limit; i++) {
                 let log = this.state.log[i];
-                let date = new Date(log.created_at);
+                let date = new Date(log.created_at as string);
 
                 let old_data = [];
                 let new_data = [];
@@ -957,7 +1098,7 @@ class ValidatorLog extends React.PureComponent {
 function StakeLabel(props) {
     if(props.stake!=null) {
         let stake = (props.stake<0) ? props.stake*-1 : props.stake;
-        stake = new Intl.NumberFormat().format(Number(stake).toFixed(0));
+        stake = new Intl.NumberFormat().format(Number(stake.toFixed(0)));
         if(props.stake<0) {
             
             return (
@@ -980,7 +1121,14 @@ function StakeLabel(props) {
 
 }
 
-class ValidatorDetail extends React.Component {
+class ValidatorDetail extends React.Component<validatorI, 
+    {
+        log_limit: number;
+        log_length: number;
+        validator: validatorI;
+        stake_change: number;
+        showAlertModal: Function;
+    }> {
     constructor(props) {
         super(props);
         this.state = {
@@ -988,9 +1136,9 @@ class ValidatorDetail extends React.Component {
             stake_change: null,
             log_limit: 25,
             log_length: 0,
-            showAlertModal: false
+            showAlertModal: null
         };
-        if(this.props.vote_identity!='') this.getValidator(this.props.vote_identity);
+        if(this.props.vote_identity!='') this.getValidator();
     }
 
     updateLogLength(length) {
@@ -1011,13 +1159,13 @@ class ValidatorDetail extends React.Component {
         });
     }
 
-    getValidator(vote_identity) {
-        axios(API_URL+config.API_ENDPOINTS.validator+'/'+vote_identity, {
-          crossDomain: true,
+    getValidator() {
+        axios(API_URL+config.API_ENDPOINTS.validator+'/'+this.props.vote_identity, {
           headers: {'Content-Type':'application/json'}
         })
           .then(response => {
-            let json = response.data;
+            let json = response.data as validatorI;
+            
             
             this.setState({
                 validator: json
@@ -1047,31 +1195,31 @@ class ValidatorDetail extends React.Component {
     render() {
     
         const alertFormRef = React.createRef()
-        const scrollToAlertForm = () => alertFormRef.current.scrollIntoView()
+        const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
 
         if(this.state.validator!=null) {
 
             let skipGauge = [
                 ["Label", "Value"],
-                ["Skip Rate", {v: parseFloat(this.state.validator.skip_rate), f: parseFloat(this.state.validator.skip_rate).toFixed(1)+'%'}]
+                ["Skip Rate", {v: this.state.validator.skip_rate, f: this.state.validator.skip_rate+'%'}]
                 
             ];
             let creditGauge = [
                 ["Label", "Value"],
-                ["Vote Credits", {v: parseFloat(this.state.validator.credit_ratio), f: parseFloat(this.state.validator.credit_ratio).toFixed(1)+'%'}]
+                ["Vote Credits", {v: this.state.validator.credit_ratio, f: this.state.validator.credit_ratio.toFixed(1)+'%'}]
             ]
             let wizScoreGauge = [
                 ["Label", "Value"],
-                ["Wiz Score", {v: parseFloat(this.state.validator.wiz_score), f: parseFloat(this.state.validator.wiz_score).toFixed(1)+'%'}]
+                ["Wiz Score", {v: this.state.validator.wiz_score, f: this.state.validator.wiz_score.toFixed(1)+'%'}]
             ]
             let uptimeGauge = [
                 ["Label", "Value"],
-                ["Uptime", {v: parseFloat(this.state.validator.uptime), f: parseFloat(this.state.validator.uptime).toFixed(2)+'%'}]
+                ["Uptime", {v: this.state.validator.uptime, f: this.state.validator.uptime.toFixed(2)+'%'}]
             ]
 
             let updated_at = new Date(this.state.validator.updated_at);
 
-            let activated_stake = new Intl.NumberFormat().format(Number(this.state.validator.activated_stake).toFixed(0));
+            let activated_stake = new Intl.NumberFormat().format(Number(this.state.validator.activated_stake.toFixed(0)));
 
             return ( [
                 <div className='container-sm m-1 mt-5 rounded-top position-relative' key='validator-details-header'>
@@ -1356,7 +1504,7 @@ class ValidatorDetail extends React.Component {
                         </div>
                     </div>
                     <div className='row'>
-                        <div ref={alertFormRef} className='col p-2 text-white border border-white rounded'>
+                        <div ref={alertFormRef as React.RefObject<HTMLDivElement>} className='col p-2 text-white border border-white rounded'>
                             <AlertForm
                                 validator={this.state.validator}
                                 hideAlertModal={null}

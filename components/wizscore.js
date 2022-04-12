@@ -4,7 +4,7 @@ import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap
 import Link from 'next/link';
 import axios from 'axios';
 import {Chart} from 'react-google-charts'
-import {Spinner} from './common.js'
+import {Spinner} from './common.tsx'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -138,7 +138,7 @@ class WizScoreBody extends React.Component {
                             <span id="scorecard-scoreversion">
                                {this.props.validator.score_version}
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
-                            <Link href="/faq#faq-wizscore" target="_new" passHref>here</Link>.
+                            <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
                         </p>
                         <table className="table table-sm"> 
                             <thead>
