@@ -99,7 +99,7 @@ class SearchBar extends React.Component<
         return (
             <div className="container text-white py-2">
                 <div className="row search-row">
-                    <div className="col col-md-4 position-relative d-flex align-items-center">
+                    <div className="col col-md-4 position-relative d-flex align-items-center m-bottom-13">
                         <input className="p-2 form-control" type="text" id="vsearch" name='textInput' value={this.state.textInput} placeholder="Search validators..." autoComplete="off" onChange={event => this.doSearch(event.target.name,event.target.value)} onKeyDown={event => this.keyPressed(event)} />
                         <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(((event.target as HTMLButtonElement).previousSibling as HTMLInputElement).name)}>
                             Clear

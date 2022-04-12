@@ -64,7 +64,7 @@ const Home: NextPage = () => {
       <main>
         <TopBar />
 
-        <div id="vlist" className="container text-white py-2">
+        <div id="vlist" className="container text-white py-2 text-modal-white">
           <Homepage />
         </div>
       </main>
