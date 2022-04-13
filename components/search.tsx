@@ -99,7 +99,7 @@ class SearchBar extends React.Component<
         return (
             <div className="container text-white py-2">
                 <div className="row search-row">
-                    <div className="col col-md-4 position-relative d-flex align-items-center">
+                    <div className="col col-md-4 position-relative d-flex align-items-center m-bottom-13">
                         <input className="p-2 form-control" type="text" id="vsearch" name='textInput' value={this.state.textInput} placeholder="Search validators..." autoComplete="off" onChange={event => this.doSearch(event.target.name,event.target.value)} onKeyDown={event => this.keyPressed(event)} />
                         <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(((event.target as HTMLButtonElement).previousSibling as HTMLInputElement).name)}>
                             Clear
@@ -120,8 +120,8 @@ class SearchBar extends React.Component<
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchSort">
                         <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
                         <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
-                            <option value='rank_asc'>Wiz Score ↑</option>
-                            <option value='rank'>Wiz Score ↓</option>
+                            <option value='rank'>Wiz Score ↑</option>
+                            <option value='rank_asc'>Wiz Score ↓</option>
                             <option value='activated_stake_asc'>Stake ↑</option>
                             <option value='activated_stake'>Stake ↓</option>
                             <option value='apy_estimate'>Estimated APY ↓</option>

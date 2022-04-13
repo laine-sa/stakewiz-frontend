@@ -266,7 +266,16 @@ a:hover {
   color:#000;
 }
 
+@media only screen and (max-width: 991px) {
+  .m-bottom-13{
+    margin-bottom: 13px;
+  }
+}
 @media only screen and (max-width: 600px) {
+  
+  .m-bottom-13{
+    margin-bottom: 0;
+  }
   .logo {
     margin:auto;
     text-align:center;
@@ -346,6 +355,9 @@ a:hover {
 
   .searchToggle {
     margin-left:3rem!important;
+  }
+  .text-modal-white{
+    overflow: hidden;
   }
 
   .searchSort {
@@ -431,3 +443,4 @@ a:hover {
     padding: 0;
   }
 }
+
