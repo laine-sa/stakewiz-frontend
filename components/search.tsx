@@ -120,8 +120,8 @@ class SearchBar extends React.Component<
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchSort">
                         <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
                         <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
-                            <option value='rank_asc'>Wiz Score ↑</option>
-                            <option value='rank'>Wiz Score ↓</option>
+                            <option value='rank'>Wiz Score ↑</option>
+                            <option value='rank_asc'>Wiz Score ↓</option>
                             <option value='activated_stake_asc'>Stake ↑</option>
                             <option value='activated_stake'>Stake ↓</option>
                             <option value='apy_estimate'>Estimated APY ↓</option>
