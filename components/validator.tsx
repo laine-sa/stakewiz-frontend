@@ -76,6 +76,7 @@ export interface validatorI {
     credit_ratio: number;
     apy_estimate: number;
     rank: number;
+    updateTitle: Function;
 };
 
 export interface clusterStatsI {
@@ -1170,6 +1171,11 @@ class ValidatorDetail extends React.Component<validatorI,
             this.setState({
                 validator: json
             })
+
+            let title = this.props.vote_identity;
+            if(json.name!='') title = json.name;
+            
+            this.props.updateTitle(title);
           })
           .catch(e => {
             console.log(e);
