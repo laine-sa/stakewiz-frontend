@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from 'components/common';
 import { useRouter } from 'next/router'
@@ -9,14 +9,25 @@ export default function Home() {
     const router = useRouter()
     const { vote_identity } = router.query
 
+    const [title, setTitle] = useState('Stakewiz');
+
+    const updateTitle = (name) => {
+        setTitle(name);
+    };
+
+    useEffect(() => {
+        document.title = title;
+    }, []);
+
     if(!vote_identity) {
         return ''
     }
     else {
+        console.log(title);
         return (
         <div>
             <Header
-            title="Stakewiz"
+            title={title}
             />
     
             <main>
@@ -25,6 +36,7 @@ export default function Home() {
             <div className="container full-height">
                 <ValidatorDetail
                     vote_identity={vote_identity}
+                    updateTitle={(name) => {updateTitle(name)}}
                 />
             </div>
             
