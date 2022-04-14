@@ -23,7 +23,6 @@ export default function Home() {
         return ''
     }
     else {
-        console.log(title);
         return (
         <div>
             <Header
