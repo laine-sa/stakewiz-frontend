@@ -1207,7 +1207,7 @@ class ValidatorDetail extends React.Component<validatorI,
 
             let skipGauge = [
                 ["Label", "Value"],
-                ["Skip Rate", {v: this.state.validator.skip_rate, f: this.state.validator.skip_rate+'%'}]
+                ["Skip Rate", {v: this.state.validator.skip_rate, f: this.state.validator.skip_rate.toFixed(1)+'%'}]
                 
             ];
             let creditGauge = [
