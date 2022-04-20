@@ -643,6 +643,7 @@ class WizScoreChart extends React.Component {
 
             for(var i in json) {
                 wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
+                //wiz_scores.push([new Date(2022,2,parseInt(i)+1), parseFloat(json[i].avg_wiz_score)]);
             }
 
             this.setState({
@@ -665,8 +666,8 @@ class WizScoreChart extends React.Component {
             return (
                 <Chart 
                     chartType='LineChart'
-                    width="100%"
-                    height="20rem"
+                    width="20em"
+                    height="20em"
                     data={this.state.wiz_scores}
                     options={{
                         backgroundColor: 'none',
@@ -702,8 +703,8 @@ class WizScoreChart extends React.Component {
                         chartArea: {
                             top: 20,
                             left: 30,
-                            width:'100%',
-                            height:'80%'
+                            width:'20em',
+                            height:'20em'
                         }
                     }}
                 />
