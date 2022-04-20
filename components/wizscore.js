@@ -642,7 +642,8 @@ class WizScoreChart extends React.Component {
             wiz_scores.push(['Time', 'Wiz Score']);
 
             for(var i in json) {
-                wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
+                //wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
+                wiz_scores.push([new Date("2022-02-0"+(parseInt(i)+1)), parseFloat(json[i].avg_wiz_score)]);
             }
 
             this.setState({
