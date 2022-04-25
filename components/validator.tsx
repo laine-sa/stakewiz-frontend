@@ -120,6 +120,7 @@ export interface ValidatorListingI {
         alertValidator: validatorI
       },
     updateState: Function;
+    userPubkey: string;
 }
 
 function RenderImage(props) {
@@ -535,11 +536,17 @@ function LoadMoreButton(props) {
     }
 }
 
-class ValidatorListing extends React.Component<ValidatorListingI, {}> {
+class ValidatorListing extends React.Component<ValidatorListingI, {walletValidators: [string]}> {
   constructor(props) {
     super(props);
     if(this.props.state.validators==null) this.getValidators();
     if(this.props.state.clusterStats==null) this.getClusterStats();
+    this.state = {
+        walletValidators: null
+    };
+    
+    if(this.props.userPubkey) this.getWalletValidators(this.props.userPubkey.toString());
+    
   }
 
   getValidators() {
@@ -558,6 +565,23 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       .catch(e => {
         console.log(e);
         setTimeout(() => { this.getValidators() }, 5000);
+      })
+  }
+
+  getWalletValidators(pubkey) {
+    axios(API_URL+config.API_ENDPOINTS.wallet_validators+'/'+pubkey, {
+        headers: {'Content-Type':'application/json'}
+    })
+      .then(response => {
+        let json = response.data;
+        
+        this.setState({
+            walletValidators: json
+        });
+      })
+      .catch(e => {
+        console.log(e);
+        setTimeout(() => { this.getWalletValidators(pubkey) }, 5000);
       })
   }
 
@@ -630,6 +654,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                 setFilter={(filteredValidators:[validatorI]) => {
                     return this.doFilter(filteredValidators);
                 }}
+                walletValidators={this.state.walletValidators}
                 key='searchBar'
                 />,
             <ValidatorList 

@@ -16,7 +16,8 @@
         "alert": "alert",
         "weightings": "wiz_score",
         "activate": "activate",
-        "cancel": "cancel"
+        "cancel": "cancel",
+        "wallet_validators": "stake_validators_by_withdraw_authority"
     },
     "DEFAULT_LIST_SIZE": 25,
     "WIZ_SCORE_RANK_GROUPS": {

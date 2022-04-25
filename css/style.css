@@ -258,7 +258,7 @@ a:hover {
 .wallet-adapter-dropdown-list-item:not([disabled]):hover {
   background:transparent;
   border:1px solid #000;
-  
+
 }
 .wallet-adapter-dropdown-list-item {
   font-weight:normal;
