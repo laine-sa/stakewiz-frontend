@@ -100,6 +100,8 @@ class SearchBar extends React.Component<
     }
 
     render() {
+        let onlyMineActive = (this.props.walletValidators==null || this.props.walletValidators.length==0) ? true : false;
+
         return (
             <div className="container text-white py-2">
                 <div className="row search-row">
@@ -110,15 +112,15 @@ class SearchBar extends React.Component<
                         </button>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
-                        <input className="form-check-input p-2 hideAnonymous vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
+                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
                         <label htmlFor="vhideanonymous">Hide unnamed</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
-                        <input className="form-check-input p-2 hidePrivate vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} />
+                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} disabled={onlyMineActive} />
                         <label htmlFor="vonlymine">Only Mine</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
-                        <input className="form-check-input p-2 hideHStake vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />
+                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />
                         <label htmlFor="vhidestake">Hide high-stake</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchSort">
