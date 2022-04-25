@@ -100,7 +100,7 @@ class SearchBar extends React.Component<
     }
 
     render() {
-        let onlyMineActive = (this.props.walletValidators==null || this.props.walletValidators.length<1) ? true : false;
+        let onlyMineDisabled = (this.props.walletValidators==null || this.props.walletValidators.length<1) ? true : false;
 
         return (
             <div className="container text-white py-2">
@@ -116,7 +116,7 @@ class SearchBar extends React.Component<
                         <label htmlFor="vhideanonymous">Hide unnamed</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
-                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} disabled={onlyMineActive} />
+                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} disabled={onlyMineDisabled} />
                         <label htmlFor="vonlymine">Only Mine</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
