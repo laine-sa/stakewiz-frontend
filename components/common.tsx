@@ -2,6 +2,7 @@ import Head from 'next/head';
 import React, {FC} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
+import Image from 'next/image';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
@@ -114,7 +115,14 @@ class Footer extends React.Component {
                   <a href="https://twitter.com/laine_sa_" target="_new"><i className="bi bi-twitter p-2 pointer"></i></a>
                   </div>
                   <div className="col"> 
-                  This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
+                    This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
+                    <br /><br />
+                    RPC Services powered by
+                    <Image
+                      src='/images/gg-logo.png'
+                      width='267px'
+                      height='30px'
+                    />
                   </div>
               </div>
               </div>
