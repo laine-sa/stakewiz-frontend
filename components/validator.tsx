@@ -783,9 +783,7 @@ class ValidatorDelinquencyChart extends React.PureComponent<
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
-            let json = response.data;
-
-            if(json.length>0) {
+                let json = response.data;
 
                 let delinquencies = [];
                 delinquencies.push([
@@ -803,20 +801,19 @@ class ValidatorDelinquencyChart extends React.PureComponent<
                 }
 
                 
-
-                for(var i in json) {
-                    for(var a in delinquencies) {
-                        if(new Date(delinquencies[a][0]).toLocaleDateString() == new Date(json[i].date).toLocaleDateString()) {
-                            delinquencies[a][1] = parseInt(json[i].delinquent_minutes);
+                if(json.length>0) {
+                    for(var i in json) {
+                        for(var a in delinquencies) {
+                            if(new Date(delinquencies[a][0]).toLocaleDateString() == new Date(json[i].date).toLocaleDateString()) {
+                                delinquencies[a][1] = parseInt(json[i].delinquent_minutes);
+                            }
                         }
                     }
                 }
 
-
                 this.setState({
                     delinquencies: delinquencies
                 });
-            }
             })
             .catch(e => {
             console.log(e);
@@ -825,12 +822,6 @@ class ValidatorDelinquencyChart extends React.PureComponent<
         }
 
     render() {
-        if(this.state.delinquencies==null) {
-            return (
-                <Spinner />
-            )
-        }
-        else {
             return (
                 <Chart 
                     chartType='ColumnChart'
@@ -873,7 +864,6 @@ class ValidatorDelinquencyChart extends React.PureComponent<
                     }}
                 />
             )
-        }
     };
 }
 
