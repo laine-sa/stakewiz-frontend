@@ -61,7 +61,7 @@ const Home: NextPage = () => {
 
   let {connected, publicKey} = useWallet();
 
-return (
+    return (
     
       <div>
         <Header
@@ -81,6 +81,8 @@ return (
         <Footer />
       </div>
     )
+  
+  
 }
 
 export default Home;
