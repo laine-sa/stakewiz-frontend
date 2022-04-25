@@ -117,6 +117,7 @@ class Footer extends React.Component {
                   <div className="col"> 
                     This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
                     <br /><br />
+                    RPC Services powered by
                     <Image
                       src='/images/gg-logo.png'
                       width='267px'
