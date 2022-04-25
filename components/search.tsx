@@ -100,7 +100,7 @@ class SearchBar extends React.Component<
     }
 
     render() {
-        let onlyMineActive = (this.props.walletValidators==null || this.props.walletValidators.length==0) ? true : false;
+        let onlyMineActive = (this.props.walletValidators==null || this.props.walletValidators.length<1) ? true : false;
 
         return (
             <div className="container text-white py-2">
