@@ -102,7 +102,17 @@ class SearchBar extends React.Component<
 
     render() {
         let onlyMineDisabled = (this.props.walletValidators==null || this.props.walletValidators.length<1) ? true : false;
-        let onlyeMineTooltip = (this.props.walletValidators==null || this.props.walletValidators.length<1) ? ' (Connect wallet to enable)' : '';
+        
+        if(this.props.walletValidators==null) {
+            var onlyMineTooltip = 'Connect your wallet to filter for validators you have stakes with.';
+        }
+        else if(this.props.walletValidators.length<1) {
+            var onlyMineTooltip = "You don't have any stakes on this wallet.";
+        }
+        else {
+            var onlyMineTooltip = "Only show validators with which you have stakes.";
+        }
+
 
         return (
             <div className="container text-white py-2">
@@ -119,7 +129,7 @@ class SearchBar extends React.Component<
                     </div>
                     <OverlayTrigger
                             placement='top'    
-                            overlay={<Tooltip>Only show validators you have stakes with. {onlyeMineTooltip}</Tooltip>}
+                            overlay={<Tooltip>{onlyMineTooltip}</Tooltip>}
                         >
                         <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                             <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} disabled={onlyMineDisabled} />
