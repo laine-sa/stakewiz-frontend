@@ -4,12 +4,14 @@ import { clusterStatsI, validatorI, ValidatorListing } from '../components/valid
 import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common'
+import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 
 const API_URL = process.env.API_BASE_URL;
 
-
 class Homepage extends React.Component<
-  {},
+  {
+    userPubkey: string;
+  },
   {
     validators: [validatorI],
     clusterStats: clusterStatsI,
@@ -47,7 +49,8 @@ class Homepage extends React.Component<
             <ValidatorListing
                 state={this.state}
                 updateState={(state) => this.updateState(state)}
-                key='validatorParent'
+                userPubkey={this.props.userPubkey}
+                key={'validatorParent'+this.props.userPubkey}
             />
           ]
   }
@@ -55,23 +58,31 @@ class Homepage extends React.Component<
 
 
 const Home: NextPage = () => {
-  return (
-    <div>
-      <Header
-        title="Stakewiz"
-      />
 
-      <main>
-        <TopBar />
+  let {connected, publicKey} = useWallet();
 
-        <div id="vlist" className="container text-white py-2 text-modal-white">
-          <Homepage />
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  )
+    return (
+    
+      <div>
+        <Header
+          title="Stakewiz"
+        />
+  
+        <main>
+          <TopBar />
+  
+          <div id="vlist" className="container text-white py-2 text-modal-white">
+            <Homepage
+              userPubkey={(connected) ? publicKey.toString() : null}
+            />
+          </div>
+        </main>
+  
+        <Footer />
+      </div>
+    )
+  
+  
 }
 
 export default Home;
