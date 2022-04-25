@@ -4,6 +4,7 @@ import { validatorI } from './validator';
 interface searchI {
     validators: [validatorI];
     setFilter: Function;
+    walletValidators: [string]
 }
 
 class SearchBar extends React.Component<
@@ -11,7 +12,7 @@ class SearchBar extends React.Component<
         {
             textInput:string,
             hideAnonymous:boolean,
-            hidePrivate:boolean,
+            onlyMine:boolean,
             hideHighStake:boolean,
             validatorCount: number;
             sortField: string;
@@ -22,7 +23,7 @@ class SearchBar extends React.Component<
         this.state = {
             textInput: '',
             hideAnonymous: false,
-            hidePrivate: false,
+            onlyMine: false,
             hideHighStake: false,
             validatorCount: this.props.validators.length,
             sortField: 'rank_asc'
@@ -37,28 +38,31 @@ class SearchBar extends React.Component<
             obj[key] = value;
             return obj;
             },() => {
-                const {textInput, hideAnonymous, hidePrivate, hideHighStake } = this.state;
+                const {textInput, hideAnonymous, onlyMine, hideHighStake } = this.state;
                 const list = this.props.validators;
                 var filteredValidators = [];
 
 
                 var counter = 0;
                 // Loop through all list items, and hide those who don't match the search query
+            
                 for (let i = 0; i < list.length; i++) {
             
                     let stakeRatio = list[i].stake_ratio*1000;
                     let commission = list[i].commission;
                     let name = list[i].name;
                     let txtValue = list[i].name + list[i].identity + list[i].vote_identity;
-                
+                    let vote_identity = list[i].vote_identity;
                     
                     if (txtValue.toUpperCase().indexOf(textInput.toUpperCase()) > -1 ) {
                         
-                        if((name=='' && hideAnonymous===true) || (hidePrivate && commission==100) || (hideHighStake && stakeRatio>=100)) {
+                        if((name=='' && hideAnonymous===true) || (hideHighStake && stakeRatio>=100)) {
                             continue;
                         }
                         else {
-                            
+                            if(onlyMine && this.props.walletValidators!=null) {
+                                if(!this.props.walletValidators.includes(vote_identity)) continue;
+                            }
                             filteredValidators.push(list[i]);
                             
                             counter ++;
@@ -110,8 +114,8 @@ class SearchBar extends React.Component<
                         <label htmlFor="vhideanonymous">Hide unnamed</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
-                        <input className="form-check-input p-2 hidePrivate vcheckbox mx-1" type="checkbox" name="hidePrivate" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hidePrivate} />
-                        <label htmlFor="vhideprivate" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Validators with 100% Commission">Hide private</label>
+                        <input className="form-check-input p-2 hidePrivate vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} />
+                        <label htmlFor="vonlymine">Only Mine</label>
                     </div>
                     <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 hideHStake vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />

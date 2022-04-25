@@ -71,13 +71,16 @@ class TopBar extends React.Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
                       <Nav>
-                        <div className='wallet-container'>
-                          <WalletMultiButton />
-                        </div>
+                        
                         <Nav.Link href="/" className='text-white'>Home</Nav.Link>
                         <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
                         <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
                       </Nav>
+                      <div className='wallet-container'>
+                          <WalletMultiButton
+                            className='btn btn-outline-light'
+                          />
+                        </div>
                     </Navbar.Collapse>
                   </Container>
                 </Navbar>
