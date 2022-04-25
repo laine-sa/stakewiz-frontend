@@ -226,7 +226,7 @@ class WizScoreBody extends React.Component {
                                     inverse='true'
                                 />
                                 <WizScoreRow
-                                    label={'ASN Concentration ('+this.props.validator.ip_asn+')'}
+                                    label={`ASN Concentration (${(this.props.validator.ip_asn) ? this.props.validator.ip_asn : 'N/A'})`}
                                     tooltip="Stake concentration by ASN (ASN can comprise multiple physical locations). Penalty applied relative to the highest-staked ASN (which incurs the max penalty)."
                                     value={this.props.validator.asn_concentration+'%'}
                                     score={this.props.validator.asn_concentration_score}
@@ -236,7 +236,7 @@ class WizScoreBody extends React.Component {
                                     inverse='true'
                                 />
                                 <WizScoreRow
-                                    label={'City Concentration ('+this.props.validator.ip_city+')'}
+                                    label={`City Concentration (${(this.props.validator.ip_city) ? this.props.validator.ip_city : 'N/A'})`}
                                     tooltip="Stake concentration by City (city can comprise multiple data centres). Penalty applied relative to the highest-staked city (which incurs the max penalty)."
                                     value={this.props.validator.city_concentration+'%'}
                                     score={this.props.validator.city_concentration_score}
@@ -246,7 +246,7 @@ class WizScoreBody extends React.Component {
                                     inverse='true'
                                 />
                                 <WizScoreRow
-                                    label={'ASN + City Concentration ('+this.props.validator.ip_asn+' + '+this.props.validator.ip_city+')'}
+                                    label={`ASN + City Concentration (${(this.props.validator.ip_asn) ? this.props.validator.ip_asn : 'N/A'} + ${(this.props.validator.ip_city) ? this.props.validator.ip_city : 'N/A' })`}
                                     tooltip="Stake concentration by City (city can comprise multiple data centres). Penalty applied relative to the highest-staked city (which incurs the max penalty)."
                                     value={this.props.validator.asncity_concentration+'%'}
                                     score={this.props.validator.asncity_concentration_score}
@@ -640,9 +640,9 @@ class WizScoreChart extends React.Component {
             
             let wiz_scores = [];
             wiz_scores.push(['Time', 'Wiz Score']);
-
             for(var i in json) {
-                wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
+                let timeZone = json[i].created_at.slice(-3)+':00';
+                wiz_scores.push([new Date(json[i].created_at.substring(0, 19).replace(/-/g, "/")+timeZone), parseFloat(json[i].avg_wiz_score)]);
             }
 
             this.setState({
