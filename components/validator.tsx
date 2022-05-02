@@ -118,7 +118,8 @@ export interface ValidatorListingI {
         showWizModal: boolean,
         wizValidator: validatorI,
         showAlertModal: boolean,
-        alertValidator: validatorI
+        alertValidator: validatorI,
+        walletValidators: [string]
       },
     updateState: Function;
     userPubkey: string;
@@ -213,6 +214,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
         const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
         const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
          
+        console.log(this.props.clusterStats);
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
@@ -537,16 +539,16 @@ function LoadMoreButton(props) {
     }
 }
 
-class ValidatorListing extends React.Component<ValidatorListingI, {walletValidators: [string]}> {
+class ValidatorListing extends React.Component<ValidatorListingI, {}> {
   constructor(props) {
     super(props);
     if(this.props.state.validators==null) this.getValidators();
     if(this.props.state.clusterStats==null) this.getClusterStats();
-    this.state = {
-        walletValidators: null
-    };
     
-    if(this.props.userPubkey) this.getWalletValidators(this.props.userPubkey.toString());
+    if(this.props.userPubkey) {
+        this.checkSolflareEnabled(this.props.userPubkey.toString());
+        this.getWalletValidators(this.props.userPubkey.toString());
+    }
     
   }
 
@@ -576,7 +578,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
       .then(response => {
         let json = response.data;
         
-        this.setState({
+        this.props.updateState({
             walletValidators: json
         });
       })
@@ -586,13 +588,35 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
       })
   }
 
+  checkSolflareEnabled(pubkey) {
+    axios(API_URL+config.API_ENDPOINTS.solflare_check+'/'+pubkey, {
+        headers: {'Content-Type':'application/json'}
+    })
+      .then(response => {
+        let json = response.data;
+
+        if(json.message!='Not found') {
+
+            this.props.updateState({
+                solflareNotificationsEnabled: true
+            });
+        }
+
+        
+      })
+      .catch(e => {
+        console.log(e);
+        setTimeout(() => { this.checkSolflareEnabled(pubkey) }, 5000);
+      })
+  }
+
   getClusterStats() {
     axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
       headers: {'Content-Type':'application/json'}
     })
       .then(response => {
         let json = response.data;
-        
+
         this.props.updateState({
             clusterStats: json
         });
@@ -642,7 +666,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
 
   render() {
       
-    if(!this.props.state.hasData) {
+    if(!this.props.state.hasData || this.props.state.clusterStats == null) {
       return (
         <Spinner />
         );
@@ -655,7 +679,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
                 setFilter={(filteredValidators:[validatorI]) => {
                     return this.doFilter(filteredValidators);
                 }}
-                walletValidators={this.state.walletValidators}
+                walletValidators={this.props.state.walletValidators}
                 key='searchBar'
                 />,
             <ValidatorList 

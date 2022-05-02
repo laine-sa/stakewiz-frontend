@@ -21,7 +21,9 @@ class Homepage extends React.Component<
     showWizModal: boolean,
     wizValidator: validatorI,
     showAlertModal: boolean,
-    alertValidator: validatorI
+    alertValidator: validatorI,
+    walletValidators: [string],
+    solflareNotificationsEnabled: boolean;
   }> {
   constructor(props) {
     super(props);
@@ -35,7 +37,9 @@ class Homepage extends React.Component<
       showWizModal: false,
       wizValidator: null,
       showAlertModal: false,
-      alertValidator: null
+      alertValidator: null,
+      walletValidators: null,
+      solflareNotificationsEnabled: false
     };
 
   }
