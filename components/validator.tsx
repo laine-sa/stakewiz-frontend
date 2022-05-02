@@ -35,6 +35,7 @@ export interface validatorI {
     commission: number;
     image: string;
     gossip_ip: string;
+    mod: boolean;
     ip_latitude: string;
     ip_longitude: string;
     ip_city: string;
@@ -254,7 +255,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                     <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
                                         <span className="vlist-name-inner pointer">{this.props.validator.name}</span>  
                                     </Link>              
-                                
+                                    
                             </div>            
                         </div>        
                     </div>
