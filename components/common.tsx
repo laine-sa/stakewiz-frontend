@@ -14,6 +14,7 @@ const API_URL = process.env.API_BASE_URL;
 
 interface HeaderProps {
   title: string;
+
 }
 
 function Spinner() {
@@ -35,6 +36,10 @@ class Header extends React.Component<HeaderProps, {}> {
                 <title>{this.props.title}</title>
                 <meta name="description" content="Validator monitoring and alerting" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta property="og:title" content={this.props.title} />
+                <meta property="og:description" content="Validator analytics, monitoring and alerting for Solana." />
+                <meta property="og:url" content="https://stakewiz.com" />
+                <meta property="og:image" content="https://stakewiz.com/images/wiz-square.webp" />
                 <link rel="icon" href="/images/wiz-square.webp" />
             </Head>
         )
