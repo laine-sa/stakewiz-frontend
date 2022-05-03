@@ -5,10 +5,12 @@ import Link from 'next/link'
 import Image from 'next/image';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-
+import axios from 'axios';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import config from '../config.json'
 
+const API_URL = process.env.API_BASE_URL;
 
 interface HeaderProps {
   title: string;
@@ -131,4 +133,30 @@ class Footer extends React.Component {
   }
 }
 
-export {Header, TopBar, Footer, Spinner}
+const checkSolflareEnabled = async (pubkey: string): Promise<boolean> => {
+
+  
+  let result = await axios(API_URL+config.API_ENDPOINTS.solflare_check+'/'+pubkey, {
+      headers: {'Content-Type':'application/json'}
+  })
+    .then(response => {
+      let json = response.data;
+
+      if(json.message!='Not found') {
+
+          return true
+      }
+
+      
+    })
+    .catch(e => {
+      console.log(e);
+      return false;
+    });
+
+
+  return result;
+  
+}
+
+export {Header, TopBar, Footer, Spinner, checkSolflareEnabled}

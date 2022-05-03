@@ -6,6 +6,7 @@ import { Formik, Field, Form } from 'formik';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Link from 'next/link'
 import { validatorI } from './validator';
+import { checkSolflareEnabled } from './common';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -17,6 +18,8 @@ interface alertI {
     validator: validatorI;
     showAlertModal: boolean;
     hideAlertModal: Function;
+    userPubkey: string;
+    solflareEnabled: boolean;
 }
 
 interface CancelProps {
@@ -26,6 +29,8 @@ interface CancelProps {
 interface AlertFormI {
     validator: validatorI;
     hideAlertModal: Function;
+    userPubkey: string;
+    solflareEnabled: boolean;
 }
 
 class Activate extends React.Component<ActivateProps, {activateResult: ReactNode}> {
@@ -289,6 +294,7 @@ class AlertForm extends React.Component<AlertFormI, {
         };
         
         this.state = initialState;
+
     }
 
     resetState() {
@@ -416,8 +422,7 @@ class AlertForm extends React.Component<AlertFormI, {
         payload.vote_identity = values.alertValidator;
         payload.opt_in = values.alertOptIn;
         payload.recaptcha_token = token;
-
-        
+        payload.publicKey = (values.deliveryMethod=='solflare') ? this.props.userPubkey : false;
 
         axios.post(
                 API_URL+config.API_ENDPOINTS.alert, 
@@ -469,6 +474,12 @@ class AlertForm extends React.Component<AlertFormI, {
                  New Alert   
             </Button>
         );
+
+        const ConditionalWrapper = ({
+            condition,
+            wrapper,
+            children,
+        }) => (condition ? wrapper(children) : children);
 
         const form = (
             
@@ -528,6 +539,32 @@ class AlertForm extends React.Component<AlertFormI, {
                                 <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delEmail">
                                     Email
                                 </label>
+                                <ConditionalWrapper
+                                    condition={(!this.props.solflareEnabled || !this.props.userPubkey) ? true : false}
+                                    wrapper={children => (
+                                        <OverlayTrigger
+                                            placement="right"
+                                            overlay={
+                                                <Tooltip>
+                                                    Connect Solflare to receive alerts in your wallet (doesn&apos;t support Ledger).
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            {children}
+                                        </OverlayTrigger>
+                                    )}
+                                >
+                                    <div className='d-inline-block'>
+                                        <Field key='solflare-alert-button' className="btn-check" type="radio" name="deliveryMethod" id="delSolflare" autoComplete="off" value="solflare"
+                                            disabled={(this.props.solflareEnabled && this.props.userPubkey) ? false : true}
+                                            checked={(this.state.deliveryMethod == 'solflare' && this.props.solflareEnabled && this.props.userPubkey) ? true : false}
+                                            onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
+                                        />
+                                        <label key='solflare-alert-label' className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delSolflare">
+                                            Solflare
+                                        </label>
+                                    </div>
+                                </ConditionalWrapper>
                             </div>
                         </div>
                             {this.renderEmail(errors,touched)}
@@ -605,7 +642,7 @@ class AlertForm extends React.Component<AlertFormI, {
         if(!this.state.success) {
             return form;
         }
-        else if(this.state.activation_token!=null) {
+        else if(this.state.activation_token!=null && this.state.deliveryMethod=='telegram') {
             return (
                 <div className="container p-0 pt-2" id="alertAlert">
                     <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
@@ -619,6 +656,17 @@ class AlertForm extends React.Component<AlertFormI, {
                             {reset_button}
                         </span>
                     </div>
+                </div>
+            )
+        }
+        else if(this.state.deliveryMethod=='solflare') {
+            return (
+                <div className="container p-0 pt-2" id="alertAlert">
+                    <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
+                        Alert activated!<br />
+                        {reset_button}
+                    </div>
+                    
                 </div>
             )
         }
@@ -658,6 +706,8 @@ class Alert extends React.Component<alertI,{}> {
                     <AlertForm 
                         validator={this.props.validator}
                         hideAlertModal={() => this.props.hideAlertModal()}
+                        userPubkey={this.props.userPubkey}
+                        solflareEnabled={this.props.solflareEnabled}
                     />
                 </Modal.Body>
             </Modal>
