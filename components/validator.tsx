@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import {Spinner} from './common'
 import {Chart} from 'react-google-charts'
+import { PublicKey } from '@solana/web3.js';
+import { checkSolflareEnabled } from './common';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -35,6 +37,7 @@ export interface validatorI {
     commission: number;
     image: string;
     gossip_ip: string;
+    mod: boolean;
     ip_latitude: string;
     ip_longitude: string;
     ip_city: string;
@@ -77,6 +80,8 @@ export interface validatorI {
     apy_estimate: number;
     rank: number;
     updateTitle: Function;
+    userPubkey: string;
+    solflareEnabled: boolean;
 };
 
 export interface clusterStatsI {
@@ -105,6 +110,8 @@ export interface ValidatorListI {
     wizValidator: validatorI;
     alertValidator: validatorI;
     showAlertModal: boolean;
+    userPubkey: string;
+    solflareEnabled: boolean;
 }
 
 export interface ValidatorListingI {
@@ -117,7 +124,9 @@ export interface ValidatorListingI {
         showWizModal: boolean,
         wizValidator: validatorI,
         showAlertModal: boolean,
-        alertValidator: validatorI
+        alertValidator: validatorI,
+        walletValidators: [string],
+        solflareNotificationsEnabled: boolean,
       },
     updateState: Function;
     userPubkey: string;
@@ -211,7 +220,6 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
         const activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake.toFixed(0)));
         const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
         const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
-         
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
@@ -254,7 +262,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                     <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
                                         <span className="vlist-name-inner pointer">{this.props.validator.name}</span>  
                                     </Link>              
-                                
+                                    
                             </div>            
                         </div>        
                     </div>
@@ -496,6 +504,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
     for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
       list.push(this.renderValidator(i));
     }
+
     return (
         [
             list,
@@ -510,6 +519,8 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 showAlertModal={this.props.showAlertModal}
                 hideAlertModal={() => this.props.updateAlertModal(false)}
                 validator={this.props.alertValidator}
+                userPubkey={this.props.userPubkey}
+                solflareEnabled={this.props.solflareEnabled}
             />
         ]
     );
@@ -536,16 +547,15 @@ function LoadMoreButton(props) {
     }
 }
 
-class ValidatorListing extends React.Component<ValidatorListingI, {walletValidators: [string]}> {
+class ValidatorListing extends React.Component<ValidatorListingI, {}> {
   constructor(props) {
     super(props);
     if(this.props.state.validators==null) this.getValidators();
     if(this.props.state.clusterStats==null) this.getClusterStats();
-    this.state = {
-        walletValidators: null
-    };
     
-    if(this.props.userPubkey) this.getWalletValidators(this.props.userPubkey.toString());
+    if(this.props.userPubkey) {
+        this.getWalletValidators(this.props.userPubkey);
+    }
     
   }
 
@@ -575,7 +585,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
       .then(response => {
         let json = response.data;
         
-        this.setState({
+        this.props.updateState({
             walletValidators: json
         });
       })
@@ -591,7 +601,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
     })
       .then(response => {
         let json = response.data;
-        
+
         this.props.updateState({
             clusterStats: json
         });
@@ -641,7 +651,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
 
   render() {
       
-    if(!this.props.state.hasData) {
+    if(!this.props.state.hasData || this.props.state.clusterStats == null) {
       return (
         <Spinner />
         );
@@ -654,7 +664,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
                 setFilter={(filteredValidators:[validatorI]) => {
                     return this.doFilter(filteredValidators);
                 }}
-                walletValidators={this.state.walletValidators}
+                walletValidators={this.props.state.walletValidators}
                 key='searchBar'
                 />,
             <ValidatorList 
@@ -668,6 +678,8 @@ class ValidatorListing extends React.Component<ValidatorListingI, {walletValidat
                 showAlertModal={this.props.state.showAlertModal}
                 updateAlertModal={(show:boolean,validator:validatorI) => this.updateAlertModalVisibility(show,validator)}
                 alertValidator={this.props.state.alertValidator}
+                userPubkey={this.props.userPubkey}
+                solflareEnabled={this.props.state.solflareNotificationsEnabled}
                 />,
             <LoadMoreButton
                 key='loadMoreButton'
@@ -1218,6 +1230,8 @@ class ValidatorDetail extends React.Component<validatorI,
         const alertFormRef = React.createRef()
         const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
 
+        const solflareEnabled = checkSolflareEnabled(this.props.userPubkey);
+
         if(this.state.validator!=null) {
 
             let skipGauge = [
@@ -1529,6 +1543,8 @@ class ValidatorDetail extends React.Component<validatorI,
                             <AlertForm
                                 validator={this.state.validator}
                                 hideAlertModal={null}
+                                userPubkey={this.props.userPubkey}
+                                solflareEnabled={this.props.solflareEnabled}
                             />
                         </div>
                     </div>
