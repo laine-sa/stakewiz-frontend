@@ -642,7 +642,7 @@ class AlertForm extends React.Component<AlertFormI, {
         if(!this.state.success) {
             return form;
         }
-        else if(this.state.activation_token!=null) {
+        else if(this.state.activation_token!=null && this.state.deliveryMethod=='telegram') {
             return (
                 <div className="container p-0 pt-2" id="alertAlert">
                     <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
@@ -656,6 +656,17 @@ class AlertForm extends React.Component<AlertFormI, {
                             {reset_button}
                         </span>
                     </div>
+                </div>
+            )
+        }
+        else if(this.state.deliveryMethod=='solflare') {
+            return (
+                <div className="container p-0 pt-2" id="alertAlert">
+                    <div className="alert alert-dismissible alert-success fade show text-center" role="alert">
+                        Alert activated!<br />
+                        {reset_button}
+                    </div>
+                    
                 </div>
             )
         }
