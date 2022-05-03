@@ -5,6 +5,7 @@ import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
+import { checkSolflareEnabled } from '../components/common'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -42,10 +43,19 @@ class Homepage extends React.Component<
       solflareNotificationsEnabled: false
     };
 
+    if(this.props.userPubkey) this.checkSolflare(this.props.userPubkey);
   }
 
   updateState(state) {
     this.setState(state);
+  }
+
+  async checkSolflare(pubkey) {
+    let enabled = await checkSolflareEnabled(pubkey);
+    
+    this.setState({
+        solflareNotificationsEnabled: enabled
+    });
   }
 
   render() {
@@ -77,6 +87,7 @@ const Home: NextPage = () => {
   
           <div id="vlist" className="container text-white py-2 text-modal-white">
             <Homepage
+              key={(publicKey) ? 'homepage'+publicKey.toString() : 'homepage'}
               userPubkey={(connected) ? publicKey.toString() : null}
             />
           </div>

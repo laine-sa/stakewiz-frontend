@@ -3,6 +3,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from 'components/common';
 import { useRouter } from 'next/router'
 import { ValidatorDetail } from '../../components/validator'
+import { checkSolflareEnabled } from '../../components/common';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export default function Home() {
     
@@ -11,6 +13,8 @@ export default function Home() {
 
     const [title, setTitle] = useState('Stakewiz');
 
+    const [solflareEnabled, setSolflareEnabled] = useState(false);
+
     const updateTitle = (name) => {
         setTitle(name);
     };
@@ -18,6 +22,13 @@ export default function Home() {
     useEffect(() => {
         document.title = title;
     }, []);
+
+    let {connected, publicKey} = useWallet();
+
+    if(publicKey) checkSolflareEnabled(publicKey.toString()).then(bool => {
+        
+        setSolflareEnabled(bool);
+    });
 
     if(!vote_identity) {
         return ''
@@ -36,6 +47,8 @@ export default function Home() {
                 <ValidatorDetail
                     vote_identity={vote_identity}
                     updateTitle={(name) => {updateTitle(name)}}
+                    userPubkey={(connected) ? publicKey.toString() : null}
+                    solflareEnabled={solflareEnabled}
                 />
             </div>
             
