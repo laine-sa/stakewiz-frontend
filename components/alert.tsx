@@ -546,7 +546,7 @@ class AlertForm extends React.Component<AlertFormI, {
                                             placement="right"
                                             overlay={
                                                 <Tooltip>
-                                                    Connect Solflare to receive alerts in your wallet (doesn't support Ledger).
+                                                    Connect Solflare to receive alerts in your wallet (doesn&apos;t support Ledger).
                                                 </Tooltip>
                                             } 
                                         >
