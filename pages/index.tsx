@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import React from 'react'
-import { clusterStatsI, validatorI, ValidatorListing } from '../components/validator'
+import { ValidatorListing } from '../components/validator'
+import { clusterStatsI, validatorI } from '../components/validator/interfaces'
 import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common'
