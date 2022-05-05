@@ -5,7 +5,7 @@ import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap
 import { Formik, Field, Form } from 'formik';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Link from 'next/link'
-import { validatorI } from './validator';
+import { validatorI } from './validator/interfaces';
 import { checkSolflareEnabled } from './common';
 
 const API_URL = process.env.API_BASE_URL;

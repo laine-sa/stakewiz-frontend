@@ -5,7 +5,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import {Chart} from 'react-google-charts'
 import {Spinner} from './common'
-import { validatorI } from './validator';
+import { validatorI } from './validator/interfaces';
 
 const API_URL = process.env.API_BASE_URL;
 

@@ -6,12 +6,14 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { checkSolflareEnabled } from '../components/common'
+import { Connection } from '@solana/web3.js'
 
 const API_URL = process.env.API_BASE_URL;
 
 class Homepage extends React.Component<
   {
     userPubkey: string;
+    connection: Connection;
   },
   {
     validators: [validatorI],
@@ -64,6 +66,7 @@ class Homepage extends React.Component<
                 state={this.state}
                 updateState={(state) => this.updateState(state)}
                 userPubkey={this.props.userPubkey}
+                connection={this.props.connection}
                 key={'validatorParent'+this.props.userPubkey}
             />
           ]
@@ -73,6 +76,7 @@ class Homepage extends React.Component<
 
 const Home: NextPage = () => {
 
+  let {connection} = useConnection();
   let {connected, publicKey} = useWallet();
 
     return (
@@ -89,6 +93,7 @@ const Home: NextPage = () => {
             <Homepage
               key={(publicKey) ? 'homepage'+publicKey.toString() : 'homepage'}
               userPubkey={(connected) ? publicKey.toString() : null}
+              connection={(connected) ? connection : null }
             />
           </div>
         </main>

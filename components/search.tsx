@@ -1,5 +1,5 @@
 import React from 'react';
-import { validatorI } from './validator';
+import { validatorI } from './validator/interfaces';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 interface searchI {

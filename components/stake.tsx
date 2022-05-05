@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
-import { validatorI } from './validator'
+import { validatorI } from './validator/interfaces'
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ConnectionContextState } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 const GetBalance = (connection,publicKey) => {
     useCallback(async (connection, publicKey) => {
@@ -20,8 +20,8 @@ class StakeDialog extends React.Component<{
     validator: validatorI;
     showStakeModal: boolean;
     hideStakeModal: Function;
-    connection: ConnectionContextState;
-    userPubkey: PublicKey;
+    connection: Connection;
+    userPubkey: string;
 },
 {}> {
     renderName() {
