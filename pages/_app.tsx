@@ -17,15 +17,18 @@ import { FC, useMemo } from 'react';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('bootstrap/dist/css/bootstrap.css');
+require('react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css')
 require("../css/style.css");
 
 
 const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-  const network = WalletAdapterNetwork.Devnet;
+  const network = WalletAdapterNetwork.Mainnet;
+  
 
   // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  //const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = 'https://ssc-dao.genesysgo.net/';
 
   // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
   // Only the wallets you configure here will be compiled into your application, and only the dependencies

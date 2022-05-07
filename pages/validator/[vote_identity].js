@@ -4,7 +4,7 @@ import {Header, TopBar, Footer} from 'components/common';
 import { useRouter } from 'next/router'
 import { ValidatorDetail } from '../../components/validator'
 import { checkSolflareEnabled } from '../../components/common';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
 export default function Home() {
     
@@ -23,6 +23,7 @@ export default function Home() {
         document.title = title;
     }, []);
 
+    let { connection } = useConnection();
     let {connected, publicKey} = useWallet();
 
     if(publicKey) checkSolflareEnabled(publicKey.toString()).then(bool => {
@@ -49,6 +50,7 @@ export default function Home() {
                     updateTitle={(name) => {updateTitle(name)}}
                     userPubkey={(connected) ? publicKey.toString() : null}
                     solflareEnabled={solflareEnabled}
+                    connection={(connected) ? connection : null}
                 />
             </div>
             

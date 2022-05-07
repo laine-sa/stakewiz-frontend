@@ -16,7 +16,8 @@ import { DelinquencyChart } from './validator/delinquency'
 import { StakeLabel, RenderUrl, RenderImage } from './validator/common'
 import { Gauges } from './validator/gauges';
 import { EpochStakeChart } from './validator/epoch_stake'
-import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI } from './validator/interfaces'
+import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
+import { StakeDialog } from './stake';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -120,6 +121,16 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
           showAlertModal: show,
           alertValidator: validator
       });
+    }
+
+    updateStakeModalVisibility(show:boolean,validator=null) {
+        if(validator==null && this.props.state.stakeValidator!=null) {
+            validator = this.props.state.stakeValidator;
+        }
+        this.props.updateState({
+            showStakeModal: show,
+            stakeValidator: validator
+        });
       }
   
     render() {
@@ -150,6 +161,9 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   wizValidator={this.props.state.wizValidator}
                   showAlertModal={this.props.state.showAlertModal}
                   updateAlertModal={(show:boolean,validator:validatorI) => this.updateAlertModalVisibility(show,validator)}
+                  showStakeModal={this.props.state.showStakeModal}
+                  updateStakeModal={(show:boolean,validator:validatorI) => this.updateStakeModalVisibility(show,validator)}
+                  stakeValidator={this.props.state.stakeValidator}
                   alertValidator={this.props.state.alertValidator}
                   userPubkey={this.props.userPubkey}
                   solflareEnabled={this.props.state.solflareNotificationsEnabled}
@@ -187,21 +201,28 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
   
       return (
           [
-              list,
-              <WizScore 
-                  key='wizScoreModal'  
-                  showWizModal={this.props.showWizModal}
-                  hideWizModal={() => this.props.updateWizModal(false)}
-                  validator={this.props.wizValidator}
-              />,
-              <Alert 
-                  key='alertModal'  
-                  showAlertModal={this.props.showAlertModal}
-                  hideAlertModal={() => this.props.updateAlertModal(false)}
-                  validator={this.props.alertValidator}
-                  userPubkey={this.props.userPubkey}
-                  solflareEnabled={this.props.solflareEnabled}
-              />
+            list,
+            <WizScore 
+                key='wizScoreModal'  
+                showWizModal={this.props.showWizModal}
+                hideWizModal={() => this.props.updateWizModal(false)}
+                validator={this.props.wizValidator}
+            />,
+            <Alert 
+                key='alertModal'  
+                showAlertModal={this.props.showAlertModal}
+                hideAlertModal={() => this.props.updateAlertModal(false)}
+                validator={this.props.alertValidator}
+                userPubkey={this.props.userPubkey}
+                solflareEnabled={this.props.solflareEnabled}
+            />,
+            <StakeDialog
+                key='stakeModal'
+                validator={this.props.stakeValidator}
+                showStakeModal={this.props.showStakeModal}
+                hideStakeModal={() => this.props.updateStakeModal(false)}
+                clusterStats={this.props.clusterStats}
+            />
           ]
       );
     }
@@ -555,42 +576,23 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     }
 }
 
-class ValidatorDetail extends React.Component<validatorI, 
+class ValidatorDetail extends React.Component<validatorDetailI, 
     {
-        log_limit: number;
-        log_length: number;
         validator: validatorI;
         stake_change: number;
-        showAlertModal: Function;
+        showStakeModal: boolean;
+        clusterStats: clusterStatsI;
     }> {
     constructor(props) {
         super(props);
         this.state = {
             validator: null,
             stake_change: null,
-            log_limit: 25,
-            log_length: 0,
-            showAlertModal: null
+            showStakeModal: false,
+            clusterStats: null
         };
         if(this.props.vote_identity!='') this.getValidator();
-    }
-
-    updateLogLength(length) {
-        this.setState({
-            log_length: length
-        });
-    }
-
-    bumpLogLimit() {
-        this.setState({
-            log_limit: this.state.log_limit+25
-        })
-    }
-
-    updateAlertModalVisibility(show) {
-        this.setState({
-            showAlertModal: show
-        });
+        if(this.state.clusterStats==null) this.getClusterStats();
     }
 
     getValidator() {
@@ -616,6 +618,23 @@ class ValidatorDetail extends React.Component<validatorI,
           })
     }
 
+    getClusterStats() {
+        axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
+          headers: {'Content-Type':'application/json'}
+        })
+          .then(response => {
+            let json = response.data;
+    
+            this.setState({
+                clusterStats: json
+            });
+          })
+          .catch(e => {
+            console.log(e);
+            setTimeout(() => { this.getClusterStats() }, 5000);
+          })
+      }
+
     renderName() {
         if(this.state.validator.name=='') {
             return this.state.validator.vote_identity;
@@ -628,8 +647,6 @@ class ValidatorDetail extends React.Component<validatorI,
             stake_change: change
         });
     }
-
-    
 
     render() {
     
@@ -664,10 +681,12 @@ class ValidatorDetail extends React.Component<validatorI,
                         <div className='col text-white text-center p-2'>
                             <h2>{this.renderName()}</h2>
                             
-                            <button className='btn btn-outline-success' onClick={scrollToAlertForm}>
+                            <button className='btn btn-outline-success mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
-                        
+                            <button className='btn btn-outline-success mx-1' onClick={() => this.setState({showStakeModal:true})}>
+                                + Stake
+                            </button>
                         </div>
                     </div>
                 </div>,
@@ -884,7 +903,15 @@ class ValidatorDetail extends React.Component<validatorI,
                     <div className='text-secondary fst-italic text-end my-1'>
                         Updated: {updated_at.toLocaleString()}
                     </div>
-                </div>]
+                </div>,
+                <StakeDialog
+                    key='stakeModal'
+                    validator={this.state.validator}
+                    showStakeModal={this.state.showStakeModal}
+                    hideStakeModal={() => this.setState({showStakeModal:false})}
+                    clusterStats={this.state.clusterStats}
+                />
+            ]
             )
         }
         else {

@@ -28,6 +28,8 @@ class Homepage extends React.Component<
     alertValidator: validatorI,
     walletValidators: [string],
     solflareNotificationsEnabled: boolean;
+    stakeValidator: validatorI,
+    showStakeModal: boolean
   }> {
   constructor(props) {
     super(props);
@@ -43,7 +45,9 @@ class Homepage extends React.Component<
       showAlertModal: false,
       alertValidator: null,
       walletValidators: null,
-      solflareNotificationsEnabled: false
+      solflareNotificationsEnabled: false,
+      stakeValidator: null,
+      showStakeModal: false
     };
 
     if(this.props.userPubkey) this.checkSolflare(this.props.userPubkey);
