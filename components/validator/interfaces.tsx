@@ -96,6 +96,9 @@ export interface ValidatorListI {
     wizValidator: validatorI;
     alertValidator: validatorI;
     showAlertModal: boolean;
+    stakeValidator: validatorI;
+    showStakeModal: boolean;
+    updateStakeModal: Function;
     userPubkey: string;
     solflareEnabled: boolean;
     connection: Connection;
@@ -112,10 +115,20 @@ export interface ValidatorListingI {
         wizValidator: validatorI,
         showAlertModal: boolean,
         alertValidator: validatorI,
+        stakeValidator: validatorI,
+        showStakeModal: boolean,
         walletValidators: [string],
         solflareNotificationsEnabled: boolean,
       },
     updateState: Function;
     userPubkey: string;
+    connection: Connection;
+}
+
+export interface validatorDetailI {
+    vote_identity: string;
+    updateTitle: Function;
+    userPubkey: string;
+    solflareEnabled: boolean;
     connection: Connection;
 }
