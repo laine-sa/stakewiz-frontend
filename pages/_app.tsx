@@ -28,7 +28,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
 
   // You can also provide a custom RPC endpoint
   //const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const endpoint = 'https://ssc-dao.genesysgo.net/';
+  const endpoint = 'https://solana-api.projectserum.com';
 
   // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
   // Only the wallets you configure here will be compiled into your application, and only the dependencies

@@ -190,6 +190,16 @@ a:hover {
   font-size:inherit!important;
 }
 
+.stake-modal-modal {
+  margin-top: 60px;
+}
+
+.stake-modal-modal .modal-content {
+  background-color:#212529;
+  color:#fff;
+  border: 2px solid #6c757d 
+}
+
 .validator-logo {
   margin-top:-50px;
 }

@@ -18,7 +18,8 @@
         "activate": "activate",
         "cancel": "cancel",
         "wallet_validators": "stake_validators_by_withdraw_authority",
-        "solflare_check": "solflare_check"
+        "solflare_check": "solflare_check",
+        "epoch_info": "epoch_info"
     },
     "DEFAULT_LIST_SIZE": 25,
     "WIZ_SCORE_RANK_GROUPS": {
@@ -29,5 +30,6 @@
         "HIGH": 0.1,
         "MEDIUM": 0.025
     },
-    "RECAPTCHA_SITE_KEY": "6LefDqYdAAAAACgv6tMS0h5f6Y9YHslRBtW5nZNf"
+    "RECAPTCHA_SITE_KEY": "6LefDqYdAAAAACgv6tMS0h5f6Y9YHslRBtW5nZNf",
+    "TX_RESERVE_LAMPORTS": 100000
 }

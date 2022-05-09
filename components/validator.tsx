@@ -684,9 +684,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                             <button className='btn btn-outline-success mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
+                            {(this.props.connected) ? (
                             <button className='btn btn-outline-success mx-1' onClick={() => this.setState({showStakeModal:true})}>
                                 + Stake
                             </button>
+                            ) : null}
                         </div>
                     </div>
                 </div>,

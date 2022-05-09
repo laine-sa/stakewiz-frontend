@@ -164,4 +164,24 @@ const checkSolflareEnabled = async (pubkey: string): Promise<boolean> => {
   
 }
 
-export {Header, TopBar, Footer, Spinner, checkSolflareEnabled}
+const getEpochInfo = async (): Promise<Object> => {
+
+  
+  let result = await axios(API_URL+config.API_ENDPOINTS.epoch_info, {
+      headers: {'Content-Type':'application/json'}
+  })
+    .then(response => {
+      if(response.status==200) return response.data;
+      else return false;
+
+      
+    })
+    .catch(e => {
+      console.log(e);
+      return false;
+    });
+
+  return result;
+}
+
+export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo}

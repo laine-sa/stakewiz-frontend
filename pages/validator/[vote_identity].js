@@ -26,6 +26,7 @@ export default function Home() {
     let { connection } = useConnection();
     let {connected, publicKey} = useWallet();
 
+
     if(publicKey) checkSolflareEnabled(publicKey.toString()).then(bool => {
         
         setSolflareEnabled(bool);
@@ -51,6 +52,7 @@ export default function Home() {
                     userPubkey={(connected) ? publicKey.toString() : null}
                     solflareEnabled={solflareEnabled}
                     connection={(connected) ? connection : null}
+                    connected={connected}
                 />
             </div>
             

@@ -33,15 +33,17 @@ export const RenderImage: FC<
     {
         img:string,
         vote_identity:string,
-        size:number
-    }> = ({ img, vote_identity, size }) => {
+        size:number,
+        className?: string
+    }> = ({ img, vote_identity, size, className }) => {
+        
     if(img==null) {
         return null;
     }
     else return (
         <Link href={'/validator/'+vote_identity} passHref>
             <a>
-                <Image className="rounded-circle pointer" src={img} width={size} height={size} loading="lazy" alt={vote_identity+"-logo"} />
+                <Image className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} src={img} width={size} height={size} loading="lazy" alt={vote_identity+"-logo"} />
             </a>
         </Link>
     )

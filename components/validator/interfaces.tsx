@@ -1,3 +1,4 @@
+import { ConnectionContextState } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 
 export interface validatorI {
@@ -131,4 +132,14 @@ export interface validatorDetailI {
     userPubkey: string;
     solflareEnabled: boolean;
     connection: Connection;
+    connected: boolean;
+}
+
+export interface EpochInfoI {
+    epoch: number;
+    duration_seconds: number;
+    epochs_per_year: number;
+    slot_height: number;
+    start_slot: number;
+    start_time: string;
 }
