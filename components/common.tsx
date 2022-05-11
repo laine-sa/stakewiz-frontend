@@ -17,14 +17,24 @@ interface HeaderProps {
 
 }
 
-function Spinner() {
-  return (
-    <div className="container text-center" id='loading-spinner'>
-        <div className='spinner-grow text-light' role="status">
-            <span className='visually-hidden'>Loading...</span>
-        </div>
-    </div>
-  )
+const Spinner: FC<{wrapper?: boolean}> = ({wrapper}) => {
+  
+  if(wrapper==undefined) {
+    return (
+      <div className="container text-center" id='loading-spinner'>
+          <div className='spinner-grow text-light' role="status">
+              <span className='visually-hidden'>Loading...</span>
+          </div>
+      </div>
+    )
+  }
+  else {
+    return (
+      <div className='spinner-grow text-light' role="status">
+          <span className='visually-hidden'>Loading...</span>
+      </div>
+    )
+  }
 }
 
 

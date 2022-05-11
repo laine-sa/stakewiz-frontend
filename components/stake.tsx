@@ -6,7 +6,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram, Transaction } from '@solana/web3.js';
 import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage } from './validator/common';
-import { getEpochInfo } from './common';
+import { getEpochInfo, Spinner } from './common';
 
 
 const StakeInput: FC<{
@@ -28,8 +28,8 @@ const StakeInput: FC<{
 
 
     return (
-        <div className='row my-2 d-flex align-items-center'>
-            <div className='col col-md-1'>
+        <div className='row my-2 d-flex align-items-center pe-0'>
+            <div className='col col-md-1 me-1'>
                 <span onClick={() => processUpdate(minStakeAmount/LAMPORTS_PER_SOL)} className='pointer'>Min</span>
             </div>
             <div className='col'>
@@ -43,7 +43,7 @@ const StakeInput: FC<{
                     variant='light'
                 />
             </div>
-            <div className='col col-md-1 text-right'>
+            <div className='col col-md-1 text-end px-0'>
                 <span onClick={() => processUpdate((balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL)} className='pointer'>Max</span>
             </div>
         </div>
@@ -62,7 +62,7 @@ export const StakeDialog: FC<{
     const { connection } = useConnection();
     const {connected, publicKey, sendTransaction} = useWallet();
 
-    const [stakeRentExemptAmount, setStakeRentExemptAmount] = useState(0);
+    const [stakeRentExemptAmount, setStakeRentExemptAmount] = useState(config.DEFAULT_STAKE_RENT_LAMPORTS);
     const [stakeAmount, setStakeAmount] = useState(null);
     const [balance, setBalance] = useState(0);
 
@@ -72,7 +72,12 @@ export const StakeDialog: FC<{
     const [epochReturn, setEpochReturn] = useState(0);
     const [monthReturn, setMonthReturn] = useState(0);
 
-    const [submitError, setSubmitError] = useState();
+    const [submitError, setSubmitError] = useState<string>();
+    const [submitted, setSubmitted] = useState(false);
+    const [signed, setSigned] = useState(false);
+    const [processed, setProcessed] = useState(false);
+    const [confirmed, setConfirmed] = useState(false);
+    const [signature, setSignature] = useState<string>();
 
     const calculateReturns = async () => {
         let epoch;
@@ -80,7 +85,7 @@ export const StakeDialog: FC<{
             epoch = await getEpochInfo();
             setEpochInfo(epoch);
         }
-        if(epochInfo!=undefined || epoch != undefined) {
+        if((epochInfo!=undefined || epoch != undefined) && validator!=null) {
 
             if(epoch == undefined) epoch = epochInfo;
         
@@ -148,9 +153,22 @@ export const StakeDialog: FC<{
         }
     }
 
+    const doHide = () => {
+        hideStakeModal();
+        setSubmitted(false);
+        setSigned(false);
+        setProcessed(false);
+        setConfirmed(false);
+        setEpochInfo(null);
+        setSubmitError(undefined);
+        setStakeAmount(null);
+    }
+
+    
     const doStake = async () => {
 
         setSubmitError(undefined);
+        setSubmitted(true);
 
         try {
             
@@ -186,22 +204,40 @@ export const StakeDialog: FC<{
             stakeTx.sign(stakeKeys);
 
             let signature = await sendTransaction(stakeTx, connection);
+            setSigned(true);
 
-            console.log(signature);
+            setSignature(signature);
 
-            await connection.confirmTransaction(signature, 'processed');
+            let proc = await connection.confirmTransaction(signature, 'processed');
+            if(proc.value.err==null) {
+                setProcessed(true);
+                let conf = await connection.confirmTransaction(signature, 'confirmed');
+                if(conf.value.err==null) {
+                    setConfirmed(true);    
+                }
+                else { 
+                    throw new Object({error:{message:'Error confirming your transaction, check your transaction history'}});
+                }
+            }
+            else {
+                throw new Object({error:{message:'Error confirming your transaction, check your transaction history'}});
+            }
         }
         catch(error) {
+            setSubmitted(false);
+            setSigned(false);
+            setProcessed(false);
+            setConfirmed(false);
             setSubmitError(error.message);
         }
 
     };
 
-    if(validator!=null && clusterStats !=null) {
+    const renderStakeForm = () => {
+        getBalance();
         return (
-            <Modal show={showStakeModal} onHide={() => hideStakeModal()} dialogClassName='modal-md stake-modal-modal'>
-                <Modal.Body className='py-0'>
-                    {(validator.image!='') ? (
+            <div>
+                {(validator.image!='') ? (
                     <div className='d-flex justify-content-center validator-logo'>
                         <div className='fw-bold fs-5 mb-2'>
                             <RenderImage
@@ -301,10 +337,9 @@ export const StakeDialog: FC<{
                         </div>
                         <div className="balance-sm text-end text-secondary">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
                     </div>,
-                    <div className='row m-2'  key='stakeInputDiv3'>
-                        <div className='col text-center'>
+                    <div className='border rounded border-1 border-secondary m-2 p-2 text-center' key='stakeInputDiv3'>
                             The maximum stake is your balance minus ◎ {config.TX_RESERVE_LAMPORTS/LAMPORTS_PER_SOL}, to ensure you have some SOL left for future transactions.
-                        </div>
+                        
                     </div>
                     ]) : (
                         <div className='fs-3 text-danger text-center'>
@@ -315,7 +350,7 @@ export const StakeDialog: FC<{
                     )}
                     <div className='row'>
                         
-                        <div className='col fs-5 m-2'>
+                        <div className='col fs-5 m-2 text-center'>
                             Projected Returns
                         </div>
                     </div>
@@ -372,40 +407,142 @@ export const StakeDialog: FC<{
                         </table>
                     </div>
                     {(submitError!=undefined) ? (
-                        <div className='bg-danger rounded m-1 p-2 text-white text-center'>
+                        <div className='bg-danger rounded my-1 p-2 text-white text-center text-truncate'>
                             {submitError}. Please try again.
                         </div>
                     ) : null}
-                </Modal.Body>
-                <Modal.Footer className='d-flex justify-content-center flex-column border-0'>
-                    {(balance > stakeRentExemptAmount) ? ([
-                        
-                            <Button 
-                                variant="success" 
-                                onClick={() => doStake()}
-                                className='w-75 btn-lg'
-                                key='stake-confirm-button'
+                    <div className='d-flex justify-content-center my-2 flex-column text-center'>
+                        {(balance > stakeRentExemptAmount) ? ([
+
+                                <Button 
+                                    variant="success" 
+                                    onClick={() => doStake()}
+                                    className='w-100 btn-lg'
+                                    key='stake-confirm-button'
+                                    disabled={submitted}
+                                    >
+                                        Stake
+                                </Button>
+                            ,
+                            <div 
+                                className='text-secondary pointer mt-3' 
+                                onClick={() => doHide()}
+                                key='stake-cancel-button'
                                 >
-                                Stake
+                                Cancel
+                            </div>
+                        ]) : (
+                            <Button 
+                                variant="secondary" 
+                                onClick={() => doHide()}
+                                className='w-75 btn-lg'
+                                >
+                                Cancel
                             </Button>
-                        ,
-                        <div 
-                            className='text-secondary pointer' 
-                            onClick={() => hideStakeModal()}
-                            key='stake-cancel-button'
-                            >
-                            Cancel
-                        </div>
-                    ]) : (
-                        <Button 
-                            variant="secondary" 
-                            onClick={() => hideStakeModal()}
-                            className='w-75 btn-lg'
-                            >
-                            Cancel
-                        </Button>
+                        )}
+                    </div>
+                </div>
+        )
+    }
+
+
+    if(validator!=null && clusterStats !=null) {
+        return (
+            <Modal show={showStakeModal} onHide={() => doHide()} dialogClassName='modal-md stake-modal-modal'>
+                <Modal.Body className='py-0'>
+                    {(!signed) ? renderStakeForm() : (
+                            <div className='d-flex flex-column align-items-center text-center m-2 my-3'>
+                                    <div>
+                                        {(!confirmed) ? <i className='bi bi-piggy-bank text-light' style={{fontSize:'3rem'}}></i> : (
+                                            <i className='bi bi-piggy-bank text-success' style={{fontSize:'3rem'}}></i> 
+                                        )}
+                                    </div>
+                                    <div className='fs-6 fw-bold'>Staking ◎ {stakeAmount} with {renderName()}</div>
+                                    <div className='container my-2'>
+                                        <div className='row lh-1'>
+                                            <div className='col col-md-4'>
+                                                <i className='ms-2 bi bi-check text-success' style={{fontSize:'2rem'}}></i>    
+                                            </div>
+                                            <div className='col col-md-4'>
+                                                {(!processed) ? (
+                                                <div className="spinner-border spinner-border-sm mt-2" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                                ) : (
+                                                    <i className='ms-2 bi bi-check text-success' style={{fontSize:'2rem'}}></i>    
+                                                )}
+                                            </div>
+                                            <div className='col col-md-4'>
+                                            {(!confirmed) ? (
+                                                <div className="spinner-border spinner-border-sm mt-2" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                                ) : (
+                                                    <i className='ms-2 bi bi-check text-success' style={{fontSize:'2rem'}}></i>    
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className='row'>
+                                            <div className='col col-md-4'>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            Sent to the blockchain
+                                                        </Tooltip>
+                                                    } 
+                                                >
+                                                    <span>Submitted</span>
+                                                </OverlayTrigger>
+                                            </div>
+                                            <div className='col col-md-4'>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            At least one confirmation by the queried node
+                                                        </Tooltip>
+                                                    } 
+                                                >
+                                                    <span>Processed</span>
+                                                </OverlayTrigger>
+                                            </div>
+                                            <div className='col col-md-4'>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            At least one confirmation by the entire cluster
+                                                        </Tooltip>
+                                                    } 
+                                                >
+                                                    <span>Confirmed</span>
+                                                </OverlayTrigger>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <a href={config.EXPLORER_TX_BASE+signature} target="_blank">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>
+                                        
+                                    </div>
+
+                                    <div className='border rounded border-1 border-secondary m-2 p-2'>
+                                        Consider setting up some alerts, that way you'll be notified should your chosen validator change their commission or be delinquent for an extended period.
+                                    </div>
+                                    <div className='mt-2'>
+                                        <Button 
+                                            variant="secondary" 
+                                            onClick={() => doHide()}
+                                            disabled={!confirmed}
+                                            >
+                                            Close
+                                        </Button>
+                                    </div>
+                                    
+                            </div> 
                     )}
-                </Modal.Footer>
+                </Modal.Body>
             </Modal>
         );
     }

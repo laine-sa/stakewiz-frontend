@@ -593,6 +593,9 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         };
         if(this.props.vote_identity!='') this.getValidator();
         if(this.state.clusterStats==null) this.getClusterStats();
+
+        const alertFormRef = React.createRef()
+        const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
     }
 
     getValidator() {
@@ -649,10 +652,8 @@ class ValidatorDetail extends React.Component<validatorDetailI,
     }
 
     render() {
-    
         const alertFormRef = React.createRef()
         const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
-
         const solflareEnabled = checkSolflareEnabled(this.props.userPubkey);
 
         if(this.state.validator!=null) {
