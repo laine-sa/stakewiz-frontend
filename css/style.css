@@ -198,10 +198,14 @@ a:hover {
   margin-top: 60px;
 }
 
-.stake-modal-modal .modal-content {
+.modal-dialog .modal-content {
   background-color:#212529;
   color:#fff;
-  border: 1px solid #6c757d 
+  border: 1px solid #6c757d;
+}
+
+.modal-dialog .btn-close {
+  filter:invert(1);
 }
 
 .validator-logo {

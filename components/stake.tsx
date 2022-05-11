@@ -56,8 +56,9 @@ export const StakeDialog: FC<{
     validator: validatorI, 
     showStakeModal: boolean, 
     hideStakeModal: Function,
-    clusterStats: clusterStatsI
-}> = ({validator,showStakeModal,hideStakeModal,clusterStats}) => {
+    clusterStats: clusterStatsI,
+    allowAlertDialog?: boolean
+}> = ({validator,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog}) => {
 
     const { connection } = useConnection();
     const {connected, publicKey, sendTransaction} = useWallet();
@@ -111,7 +112,7 @@ export const StakeDialog: FC<{
             connection.getBalance(publicKey)
             .then((resolved) => {
                 setBalance(resolved);
-                if(stakeAmount==null) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
+                if(stakeAmount==null && resolved > config.TX_RESERVE_LAMPORTS) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
                 calculateReturns();
             })
             .catch((error) => {
@@ -153,15 +154,18 @@ export const StakeDialog: FC<{
         }
     }
 
-    const doHide = () => {
-        hideStakeModal();
-        setSubmitted(false);
-        setSigned(false);
-        setProcessed(false);
-        setConfirmed(false);
-        setEpochInfo(null);
-        setSubmitError(undefined);
-        setStakeAmount(null);
+    const doHide = (alert) => {
+        hideStakeModal(alert,validator);
+        setTimeout(() => {
+            setSubmitted(false);
+            setSigned(false);
+            setProcessed(false);
+            setConfirmed(false);
+            setEpochInfo(null);
+            setSubmitError(undefined);
+            setStakeAmount(null);
+        },500);
+        
     }
 
     
@@ -315,7 +319,7 @@ export const StakeDialog: FC<{
                         <StakeInput
                             key={'range-slider-'+stakeAmount}
                             balance={balance}
-                            minStakeAmount={stakeRentExemptAmount}
+                            minStakeAmount={stakeRentExemptAmount+1}
                             stakeAmount={stakeAmount}
                             updateAmount={(amount) => validateAmount(amount)}
                         />
@@ -344,7 +348,7 @@ export const StakeDialog: FC<{
                     ]) : (
                         <div className='fs-3 text-danger text-center'>
                             Insufficient funds to stake.
-                            <div className='fs-6 text-secondary px-2'>You need at least ◎ {stakeRentExemptAmount/LAMPORTS_PER_SOL} for rent plus the amount you&apos;d like to stake.</div>
+                            <div className='fs-6 text-secondary px-2'>You need at least ◎ {stakeRentExemptAmount/LAMPORTS_PER_SOL} for rent plus the amount you&apos;d like to stake. Your balance is ◎ {balance / LAMPORTS_PER_SOL}</div>
                         </div>
 
                     )}
@@ -426,7 +430,7 @@ export const StakeDialog: FC<{
                             ,
                             <div 
                                 className='text-secondary pointer mt-3' 
-                                onClick={() => doHide()}
+                                onClick={() => doHide(false)}
                                 key='stake-cancel-button'
                                 >
                                 Cancel
@@ -434,8 +438,8 @@ export const StakeDialog: FC<{
                         ]) : (
                             <Button 
                                 variant="secondary" 
-                                onClick={() => doHide()}
-                                className='w-75 btn-lg'
+                                onClick={() => doHide(false)}
+                                className='w-100 btn-lg'
                                 >
                                 Cancel
                             </Button>
@@ -448,7 +452,7 @@ export const StakeDialog: FC<{
 
     if(validator!=null && clusterStats !=null) {
         return (
-            <Modal show={showStakeModal} onHide={() => doHide()} dialogClassName='modal-md stake-modal-modal'>
+            <Modal show={showStakeModal} onHide={() => doHide(false)} dialogClassName='modal-md stake-modal-modal'>
                 <Modal.Body className='py-0'>
                     {(!signed) ? renderStakeForm() : (
                             <div className='d-flex flex-column align-items-center text-center m-2 my-3'>
@@ -533,11 +537,23 @@ export const StakeDialog: FC<{
                                     <div className='mt-2'>
                                         <Button 
                                             variant="secondary" 
-                                            onClick={() => doHide()}
+                                            onClick={() => doHide(false)}
                                             disabled={!confirmed}
+                                            className='mx-1'
                                             >
                                             Close
                                         </Button>
+                                        {(allowAlertDialog) ? (
+                                            <Button 
+                                            variant="success" 
+                                            onClick={() => doHide(true)}
+                                            disabled={!confirmed}
+                                            className='mx-1'
+                                            >
+                                            <i className="bi bi-plus px-1 alert-btn-icon"></i> 
+                                            Create Alert 
+                                        </Button>
+                                        ): null}
                                     </div>
                                     
                             </div> 

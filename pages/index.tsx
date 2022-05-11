@@ -15,6 +15,7 @@ class Homepage extends React.Component<
   {
     userPubkey: string;
     connection: Connection;
+    connected: boolean;
   },
   {
     validators: [validatorI],
@@ -72,6 +73,7 @@ class Homepage extends React.Component<
                 updateState={(state) => this.updateState(state)}
                 userPubkey={this.props.userPubkey}
                 connection={this.props.connection}
+                connected={this.props.connected}
                 key={'validatorParent'+this.props.userPubkey}
             />
           ]
@@ -99,6 +101,7 @@ const Home: NextPage = () => {
               key={(publicKey) ? 'homepage'+publicKey.toString() : 'homepage'}
               userPubkey={(connected) ? publicKey.toString() : null}
               connection={(connected) ? connection : null }
+              connected={connected}
             />
           </div>
         </main>

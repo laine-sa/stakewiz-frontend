@@ -84,7 +84,8 @@ export interface ValidatorBoxPropsI {
     clusterStats: clusterStatsI;
     showWizModal: Function;
     showAlertModal: Function;
-
+    showStakeModal: Function;
+    connected: boolean;
 }
 
 export interface ValidatorListI {
@@ -103,6 +104,7 @@ export interface ValidatorListI {
     userPubkey: string;
     solflareEnabled: boolean;
     connection: Connection;
+    connected: boolean;
 }
 
 export interface ValidatorListingI {
@@ -124,6 +126,7 @@ export interface ValidatorListingI {
     updateState: Function;
     userPubkey: string;
     connection: Connection;
+    connected: boolean;
 }
 
 export interface validatorDetailI {

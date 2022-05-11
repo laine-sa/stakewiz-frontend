@@ -148,6 +148,12 @@ class Footer extends React.Component {
   }
 }
 
+const ConditionalWrapper = ({
+  condition,
+  wrapper,
+  children,
+}) => (condition ? wrapper(children) : children);
+
 const checkSolflareEnabled = async (pubkey: string): Promise<boolean> => {
 
   
@@ -194,4 +200,4 @@ const getEpochInfo = async (): Promise<Object> => {
   return result;
 }
 
-export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo}
+export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper}

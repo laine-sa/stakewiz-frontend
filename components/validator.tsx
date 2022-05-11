@@ -7,7 +7,7 @@ import {Alert, AlertForm} from './alert';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import {Spinner} from './common'
+import {ConditionalWrapper, Spinner} from './common'
 import {Chart} from 'react-google-charts'
 import { Connection, ConnectionConfig, PublicKey } from '@solana/web3.js';
 import { checkSolflareEnabled } from './common';
@@ -168,6 +168,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   userPubkey={this.props.userPubkey}
                   solflareEnabled={this.props.state.solflareNotificationsEnabled}
                   connection={this.props.connection}
+                  connected={this.props.connected}
                   />,
               <LoadMoreButton
                   key='loadMoreButton'
@@ -189,6 +190,8 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 validator={this.props.validators[i]} 
                 showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
                 showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
+                showStakeModal={() => this.props.updateStakeModal(true,this.props.validators[i])}
+                connected={this.props.connected}
               />
       );
     }
@@ -220,8 +223,12 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 key='stakeModal'
                 validator={this.props.stakeValidator}
                 showStakeModal={this.props.showStakeModal}
-                hideStakeModal={() => this.props.updateStakeModal(false)}
+                hideStakeModal={(alert,validator) => {
+                    this.props.updateStakeModal(false)
+                    if(alert) this.props.updateAlertModal(true, validator);
+                }}
                 clusterStats={this.props.clusterStats}
+                allowAlertDialog={true}
             />
           ]
       );
@@ -313,7 +320,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
-                    <div className="col my-1 mt-3">            
+                    <div className="col my-1">            
                         <div className="row">                
                             <div className="col apy-value text-center">         
                                 <span className={"cluster_statistic rounded-pill text-white fw-bold p-2 px-3 mx-1 "+this.renderRankColor()}>
@@ -322,7 +329,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                 <div className="p-2">{this.props.validator.wiz_score} %</div>                
                             </div>            
                         </div>            
-                        <div className="row wiz-score-button pointer" onClick={() => {this.props.showWizModal()}} >                
+                        <div className="row wiz-score-button py-1 px-2">                
                             <OverlayTrigger
                                     placement="bottom"
                                     overlay={
@@ -331,7 +338,9 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                         </Tooltip>
                                     } 
                                 >
-                                <div className="col apy-label text-center mb-1 vlist-label text-warning fst-italic">WIZ SCORE</div>            
+                                <button className="btn btn-outline-warning btn-sm" onClick={() => this.props.showWizModal()} >                
+                                        Wiz Score            
+                                </button>
                             </OverlayTrigger>
                         </div>        
                     </div>
@@ -562,9 +571,32 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                             <i className="bi bi-plus px-1 alert-btn-icon"></i>
                                 Create Alert            
                         </button>  
-                        <button className="btn btn-outline-warning alert-button" onClick={() => this.props.showWizModal()} >                
-                                Scorecard            
-                        </button>    
+                        <ConditionalWrapper
+                                    condition={(!this.props.connected) ? true : false}
+                                    wrapper={children => (
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Tooltip>
+                                                    Connect wallet to enable
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            {children}
+                                        </OverlayTrigger>
+                                    )}
+                            >
+                            <span className='d-grid'>
+                                <button 
+                                    className="btn btn-outline-success alert-button" 
+                                    onClick={() => this.props.showStakeModal()} 
+                                    disabled={!this.props.connected}
+                                >               
+                                <i className="bi bi-plus px-1 alert-btn-icon"></i> 
+                                    Stake            
+                                </button> 
+                            </span>   
+                        </ConditionalWrapper>
                         <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
                             <button className="btn btn-outline-light alert-button">                
                                     More Info            
@@ -593,9 +625,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         };
         if(this.props.vote_identity!='') this.getValidator();
         if(this.state.clusterStats==null) this.getClusterStats();
-
-        const alertFormRef = React.createRef()
-        const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
     }
 
     getValidator() {
@@ -685,11 +714,31 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                             <button className='btn btn-outline-success mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
-                            {(this.props.connected) ? (
-                            <button className='btn btn-outline-success mx-1' onClick={() => this.setState({showStakeModal:true})}>
-                                + Stake
-                            </button>
-                            ) : null}
+                            <ConditionalWrapper
+                                    condition={(!this.props.connected) ? true : false}
+                                    wrapper={children => (
+                                        <OverlayTrigger
+                                            placement="right"
+                                            overlay={
+                                                <Tooltip>
+                                                    Connect wallet to enable
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            {children}
+                                        </OverlayTrigger>
+                                    )}
+                            >
+                                <span>
+                                    <button 
+                                        className='btn btn-outline-success mx-1' 
+                                        onClick={() => this.setState({showStakeModal:true})}
+                                        disabled={!this.props.connected}
+                                        >
+                                        + Stake
+                                    </button>
+                                </span>
+                            </ConditionalWrapper>
                         </div>
                     </div>
                 </div>,

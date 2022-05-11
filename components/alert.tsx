@@ -6,7 +6,7 @@ import { Formik, Field, Form } from 'formik';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Link from 'next/link'
 import { validatorI } from './validator/interfaces';
-import { checkSolflareEnabled } from './common';
+import { checkSolflareEnabled, ConditionalWrapper } from './common';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -474,12 +474,6 @@ class AlertForm extends React.Component<AlertFormI, {
                  New Alert   
             </Button>
         );
-
-        const ConditionalWrapper = ({
-            condition,
-            wrapper,
-            children,
-        }) => (condition ? wrapper(children) : children);
 
         const form = (
             
