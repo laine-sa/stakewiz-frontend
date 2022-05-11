@@ -414,7 +414,7 @@ export const StakeDialog: FC<{
                     {(submitError!=undefined) ? (
                         <div className='bg-danger rounded my-1 p-2 text-white text-center text-truncate'>
                             {submitError}<br /> Please try again.
-                            {(signed) ? [<br />,<a href={config.EXPLORER_TX_BASE+signature} target="_blank" rel="noreferrer">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>] : null}
+                            {(signed) ? <span><br /><a href={config.EXPLORER_TX_BASE+signature} target="_blank" rel="noreferrer">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a></span> : null}
                         </div>
                     ) : null}
                     <div className='d-flex justify-content-center my-2 flex-column text-center'>
