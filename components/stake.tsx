@@ -71,7 +71,7 @@ export const StakeDialog: FC<{
     const [epochReturn, setEpochReturn] = useState(0);
     const [monthReturn, setMonthReturn] = useState(0);
 
-    const [submitError, setSubmitError] = useState<string>();
+    const [submitError, setSubmitError] = useState<string>(undefined);
     const [submitted, setSubmitted] = useState(false);
     const [signed, setSigned] = useState(false);
     const [processed, setProcessed] = useState(false);
@@ -414,6 +414,7 @@ export const StakeDialog: FC<{
                     {(submitError!=undefined) ? (
                         <div className='bg-danger rounded my-1 p-2 text-white text-center text-truncate'>
                             {submitError}<br /> Please try again.
+                            {(signed) ? [<br />,<a href={config.EXPLORER_TX_BASE+signature} target="_blank" rel="noreferrer">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>] : null}
                         </div>
                     ) : null}
                     <div className='d-flex justify-content-center my-2 flex-column text-center'>
