@@ -16,8 +16,6 @@ const StakeInput: FC<{
     updateAmount: Function;
 }> = ({balance, minStakeAmount, stakeAmount, updateAmount}) => {
     
-    const { connection } = useConnection();
-    const {connected, publicKey} = useWallet();
 
     const [sliderValue, setSliderValue] = useState(stakeAmount);
 
@@ -61,7 +59,7 @@ export const StakeDialog: FC<{
 }> = ({validator,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog}) => {
 
     const { connection } = useConnection();
-    const {connected, publicKey, sendTransaction} = useWallet();
+    const {connected, publicKey, sendTransaction, signTransaction} = useWallet();
 
     const [stakeRentExemptAmount, setStakeRentExemptAmount] = useState(config.DEFAULT_STAKE_RENT_LAMPORTS);
     const [stakeAmount, setStakeAmount] = useState(null);
@@ -205,9 +203,12 @@ export const StakeDialog: FC<{
 
             stakeTx.feePayer = publicKey;
             stakeTx.recentBlockhash = recentBlockhash.blockhash;
-            stakeTx.sign(stakeKeys);
+            stakeTx.partialSign(stakeKeys);
 
-            let signature = await sendTransaction(stakeTx, connection);
+            let signedTx = await signTransaction(stakeTx);
+
+            let signature = await connection.sendRawTransaction(signedTx.serialize());
+            console.log('Submitted transaction signature: '+signature);
             setSigned(true);
 
             setSignature(signature);
@@ -412,7 +413,7 @@ export const StakeDialog: FC<{
                     </div>
                     {(submitError!=undefined) ? (
                         <div className='bg-danger rounded my-1 p-2 text-white text-center text-truncate'>
-                            {submitError}. Please try again.
+                            {submitError}<br /> Please try again.
                         </div>
                     ) : null}
                     <div className='d-flex justify-content-center my-2 flex-column text-center'>
