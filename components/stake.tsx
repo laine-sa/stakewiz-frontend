@@ -344,7 +344,7 @@ export const StakeDialog: FC<{
                     ]) : (
                         <div className='fs-3 text-danger text-center'>
                             Insufficient funds to stake.
-                            <div className='fs-6 text-secondary px-2'>You need at least ◎ {stakeRentExemptAmount/LAMPORTS_PER_SOL} for rent plus the amount you'd like to stake.</div>
+                            <div className='fs-6 text-secondary px-2'>You need at least ◎ {stakeRentExemptAmount/LAMPORTS_PER_SOL} for rent plus the amount you&apos;d like to stake.</div>
                         </div>
 
                     )}
@@ -523,12 +523,12 @@ export const StakeDialog: FC<{
                                     </div>
 
                                     <div>
-                                        <a href={config.EXPLORER_TX_BASE+signature} target="_blank">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>
+                                        <a href={config.EXPLORER_TX_BASE+signature} target="_blank" rel="noreferrer">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>
                                         
                                     </div>
 
                                     <div className='border rounded border-1 border-secondary m-2 p-2'>
-                                        Consider setting up some alerts, that way you'll be notified should your chosen validator change their commission or be delinquent for an extended period.
+                                        Consider setting up some alerts, that way you&apos;ll be notified should your chosen validator change their commission or be delinquent for an extended period.
                                     </div>
                                     <div className='mt-2'>
                                         <Button 
