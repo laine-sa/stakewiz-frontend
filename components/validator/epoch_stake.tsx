@@ -23,6 +23,7 @@ export const EpochStakeChart: FC<{vote_identity: string, updateStake: Function}>
     
                 let change = json[0].activating_stake-json[0].deactivating_stake;
                 
+                
                 stakes.push(['Activating',parseFloat(json[0].activating_stake),'#428c57']);
                 stakes.push(['Deactivating',parseFloat(json[0].deactivating_stake)*-1, '#d65127']);
                 //stakes.push(['Net Change',parseFloat(change), '#27abd6']);
