@@ -76,22 +76,31 @@ const TopBar: FC = () => {
       if(epochInfo!=null) {
         console.log(epochInfo);
 
-        let days = Math.floor(epochInfo.duration_seconds/(60*60*24));
-        let hours = Math.floor((epochInfo.duration_seconds - (days*60*60*24)) / (60*60));
-        let minutes = Math.floor((epochInfo.duration_seconds - (days*60*60*24) - (hours*60*60)) /(60));
+        let d_days = Math.floor(epochInfo.duration_seconds/(60*60*24));
+        let d_hours = Math.floor((epochInfo.duration_seconds - (d_days*60*60*24)) / (60*60));
+        let d_minutes = Math.floor((epochInfo.duration_seconds - (d_days*60*60*24) - (d_hours*60*60)) /(60));
+
+        let r_days = Math.floor(epochInfo.remaining_seconds/(60*60*24));
+        let r_hours = Math.floor((epochInfo.remaining_seconds - (r_days*60*60*24)) / (60*60));
+        let r_minutes = Math.floor((epochInfo.remaining_seconds - (r_days*60*60*24) - (r_hours*60*60)) /(60));
 
         return (
-          <div className='w-50 d-flex flex-row align-items-center epoch-progress-container'>
-            <div className='text-light text-center w-50 epoch-progress-text'>
-              <span className='fw-bold'>Epoch {epochInfo.epoch}</span>
-              <br />
-              {days}d {hours}h {minutes}m
-            </div>
-            <div className="progress w-100">
-              <div className="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style={{width:'10%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
-              <span className='epoch-progress-value'>{(epochInfo.slot_height/config.SLOTS_PER_EPOCH*100).toFixed(1)} %</span>
+          <div className='position-absolute start-0 justify-content-center text-center d-flex align-items-center epoch-progress-container'>
+            <div>
+              <div className='text-light text-center epoch-progress-text'>
+                Epoch {epochInfo.epoch}
+              </div>
+              <div className="progress epoch-progress w-100">
+                <div className="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style={{width:'10%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
+                </div>
+              </div>
+              <div className='epoch-progress-label text-secondary'>
+                {(epochInfo.slot_height/config.SLOTS_PER_EPOCH*100).toFixed(1)} % complete
+                &nbsp;
+                ({(r_days>0) ? <span>{r_days}d</span> : null} {(r_hours>0) ? <span>{r_hours}h</span> : null} {r_minutes}m of {d_days}d {d_hours}h {d_minutes}m remaining)
               </div>
             </div>
+            
           </div>
         )
       }
@@ -127,7 +136,7 @@ const TopBar: FC = () => {
                 />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
+            <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
               {renderEpochProgress()}
               <Nav>
                 

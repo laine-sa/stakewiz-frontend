@@ -145,4 +145,6 @@ export interface EpochInfoI {
     slot_height: number;
     start_slot: number;
     start_time: string;
+    remaining_seconds: number;
+    elapsed_seconds: number;
 }

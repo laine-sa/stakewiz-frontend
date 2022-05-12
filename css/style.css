@@ -284,6 +284,15 @@ a:hover {
   color:#000;
 }
 
+.epoch-progress {
+  height:1.5rem;
+  background-color:#666;
+}
+
+.epoch-progress-label {
+  font-size:12px;
+}
+
 @media only screen and (max-width: 991px) {
   .m-bottom-13{
     margin-bottom: 13px;
@@ -306,7 +315,7 @@ a:hover {
   }
 
   .navbar-collapse {
-    position: absolute;
+    position: absolute!important;
     top:3.5rem;
     right:1rem;
     padding:5px;
@@ -326,10 +335,24 @@ a:hover {
   .epoch-progress-container {
     width:100%!important;
     flex-direction:column!important;
+    position:unset!important;
   }
 
   .epoch-progress-text {
     width:100%!important;
+  }
+
+  .wallet-container {
+    text-align:center;
+  }
+
+  .wallet-adapter-dropdown {
+    width:100%!important;
+  }
+
+  .wallet-adapter-button {
+    width:100%!important;
+    justify-content: center;
   }
 
   .m-bottom-13{
