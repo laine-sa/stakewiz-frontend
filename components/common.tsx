@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
+import { EpochInfoI } from './validator/interfaces';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -50,24 +51,12 @@ class Header extends React.Component<HeaderProps, {}> {
                 <meta property="og:description" content="Validator analytics, monitoring and alerting for Solana." />
                 <meta property="og:url" content="https://stakewiz.com" />
                 <meta property="og:image" content="https://stakewiz.com/images/wiz-square.webp" />
-                <link rel="icon" href="/images/wiz-square.webp" />
-            </Head>
-        )
-    }
-}
-
-class TopBar extends React.Component {
-    
-
-    render() {
-
-      return (
-              [
+                <link rel="icon" href="/images/wiz-square.webp" />.
                 <Script
                   key='gtag-script'
                   src="https://www.googletagmanager.com/gtag/js?id=G-L7C5EZ0C4F"
                   strategy="afterInteractive"
-                />,
+                />
                 <Script key='ga-script' id="google-analytics" strategy="afterInteractive">
                   {`
                     window.dataLayer = window.dataLayer || [];
@@ -76,35 +65,84 @@ class TopBar extends React.Component {
 
                     gtag('config', 'G-L7C5EZ0C4F');
                   `}
-                </Script>,
-                <Navbar key='navbar' bg="none" variant="dark" expand="lg">
-                  <Container>
-                    <Navbar.Brand href="/" className='brand-box'>
-                        <img 
-                          src={"/images/stakewiz-logo-white.webp"}
-                          className='stakewiz-logo'
-                          alt="Stakewiz Logo" 
-                        />
-                    </Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
-                      <Nav>
-                        
-                        <Nav.Link href="/" className='text-white'>Home</Nav.Link>
-                        <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
-                        <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
-                      </Nav>
-                      <div className='wallet-container'>
-                          <WalletMultiButton
-                            className='btn btn-outline-light'
-                          />
-                        </div>
-                    </Navbar.Collapse>
-                  </Container>
-                </Navbar>
-              ]
-      )
+                </Script>
+            </Head>
+        )
     }
+}
+
+const TopBar: FC = () => {
+    const [epochInfo, setEpochInfo] = useState<EpochInfoI | null>(null);
+    
+    useEffect(() => {
+        
+      getEpochInfo()
+      .then((epoch: EpochInfoI) => {
+        console.log(epoch);
+        setEpochInfo(epoch);
+        
+      });
+      
+    }, [])
+
+    const renderEpochProgress = () => {
+      if(epochInfo!=null) {
+        console.log(epochInfo);
+
+        let days = Math.floor(epochInfo.duration_seconds/(60*60*24));
+        let hours = Math.floor((epochInfo.duration_seconds - (days*60*60*24)) / (60*60));
+        let minutes = Math.floor((epochInfo.duration_seconds - (days*60*60*24) - (hours*60*60)) /(60));
+
+        return (
+          <div className='w-50 d-flex flex-row align-items-center epoch-progress-container'>
+            <div className='text-light text-center w-50 epoch-progress-text'>
+              <span className='fw-bold'>Epoch {epochInfo.epoch}</span>
+              <br />
+              {days}d {hours}h {minutes}m
+            </div>
+            <div className="progress w-100">
+              <div className="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style={{width:'10%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
+              <span className='epoch-progress-value'>{(epochInfo.slot_height/config.SLOTS_PER_EPOCH*100).toFixed(1)} %</span>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      else return null;
+
+    }
+    
+
+
+    return (
+              <Navbar key='navbar' bg="none" variant="dark" expand="lg">
+                <Container className='navbar-flex-container'>
+                  <Navbar.Brand href="/" className='brand-box'>
+                      <img 
+                        src={"/images/stakewiz-logo-white.webp"}
+                        className='stakewiz-logo'
+                        alt="Stakewiz Logo" 
+                      />
+                  </Navbar.Brand>
+                  <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                  <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
+                    {renderEpochProgress()}
+                    <Nav>
+                      
+                      <Nav.Link href="/" className='text-white'>Home</Nav.Link>
+                      <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
+                      <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
+                    </Nav>
+                    <div className='wallet-container'>
+                        <WalletMultiButton
+                          className='btn btn-outline-light'
+                        />
+                    </div>
+                  </Navbar.Collapse>
+                </Container>
+              </Navbar>
+    )
+    
 }
 
 class Footer extends React.Component {
