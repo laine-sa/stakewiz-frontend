@@ -10,6 +10,7 @@ import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
 import { EpochInfoI } from './validator/interfaces';
+import { JsxElement } from 'typescript';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -52,20 +53,6 @@ class Header extends React.Component<HeaderProps, {}> {
                 <meta property="og:url" content="https://stakewiz.com" />
                 <meta property="og:image" content="https://stakewiz.com/images/wiz-square.webp" />
                 <link rel="icon" href="/images/wiz-square.webp" />.
-                <Script
-                  key='gtag-script'
-                  src="https://www.googletagmanager.com/gtag/js?id=G-L7C5EZ0C4F"
-                  strategy="afterInteractive"
-                />
-                <Script key='ga-script' id="google-analytics" strategy="afterInteractive">
-                  {`
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){window.dataLayer.push(arguments);}
-                    gtag('js', new Date());
-
-                    gtag('config', 'G-L7C5EZ0C4F');
-                  `}
-                </Script>
             </Head>
         )
     }
@@ -115,32 +102,48 @@ const TopBar: FC = () => {
 
 
     return (
-              <Navbar key='navbar' bg="none" variant="dark" expand="lg">
-                <Container className='navbar-flex-container'>
-                  <Navbar.Brand href="/" className='brand-box'>
-                      <img 
-                        src={"/images/stakewiz-logo-white.webp"}
-                        className='stakewiz-logo'
-                        alt="Stakewiz Logo" 
-                      />
-                  </Navbar.Brand>
-                  <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                  <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
-                    {renderEpochProgress()}
-                    <Nav>
-                      
-                      <Nav.Link href="/" className='text-white'>Home</Nav.Link>
-                      <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
-                      <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
-                    </Nav>
-                    <div className='wallet-container'>
-                        <WalletMultiButton
-                          className='btn btn-outline-light'
-                        />
-                    </div>
-                  </Navbar.Collapse>
-                </Container>
-              </Navbar>
+      <div>
+        <Script
+          key='gtag-script'
+          src="https://www.googletagmanager.com/gtag/js?id=G-L7C5EZ0C4F"
+          strategy="afterInteractive"
+        />
+        <Script key='ga-script' id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-L7C5EZ0C4F');
+          `}
+        </Script>
+        <Navbar key='navbar' bg="none" variant="dark" expand="lg">
+          <Container className='navbar-flex-container'>
+            <Navbar.Brand href="/" className='brand-box'>
+                <img 
+                  src={"/images/stakewiz-logo-white.webp"}
+                  className='stakewiz-logo'
+                  alt="Stakewiz Logo" 
+                />
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
+              {renderEpochProgress()}
+              <Nav>
+                
+                <Nav.Link href="/" className='text-white'>Home</Nav.Link>
+                <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
+                <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
+              </Nav>
+              <div className='wallet-container'>
+                  <WalletMultiButton
+                    className='btn btn-outline-light'
+                  />
+              </div>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      </div>         
     )
     
 }
