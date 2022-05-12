@@ -5,7 +5,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import {Chart} from 'react-google-charts'
 import {Spinner} from './common'
-import { validatorI } from './validator';
+import { validatorI } from './validator/interfaces';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -25,18 +25,18 @@ function WizScoreRow(props) {
     else if(props.color=='red') {
         thresholdColor = 'text-danger';
     }
-    let color = 'text-black';
+    let color = null;
     if(props.inverse) {
-        color = (props.score < props.threshold) ? thresholdColor : 'text-black';
+        color = (props.score < props.threshold) ? thresholdColor : null;
     }
     else {
-        color = (props.score > props.threshold) ? thresholdColor : 'text-black';
+        color = (props.score > props.threshold) ? thresholdColor : null;
     }
     let score = (props.addPercent) ? props.score+'%' : props.score;
     if(props.sign!=undefined) score = props.sign+score;
     return (
                 <tr> 
-                    <th scope="row">
+                    <td>
                         {props.label}
                         <OverlayTrigger
                             placement='right'    
@@ -44,7 +44,7 @@ function WizScoreRow(props) {
                         >
                             <i className="bi bi-info ps-2"></i>
                         </OverlayTrigger>
-                    </th>
+                    </td>
                     <td>
                         {props.value}
                     </td>
@@ -144,7 +144,7 @@ class WizScoreBody extends React.Component<{
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
                             <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
                         </p>
-                        <table className="table table-sm"> 
+                        <table className="table table-sm table-dark"> 
                             <thead>
                                 <tr> 
                                     <th scope="col">

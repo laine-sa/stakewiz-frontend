@@ -7,158 +7,255 @@ import {Alert, AlertForm} from './alert';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import {Spinner} from './common'
+import {ConditionalWrapper, Spinner} from './common'
 import {Chart} from 'react-google-charts'
-import { PublicKey } from '@solana/web3.js';
+import { Connection, ConnectionConfig, PublicKey } from '@solana/web3.js';
 import { checkSolflareEnabled } from './common';
+import { StakeHistoryChart } from './validator/stake_history'
+import { DelinquencyChart } from './validator/delinquency'
+import { StakeLabel, RenderUrl, RenderImage } from './validator/common'
+import { Gauges } from './validator/gauges';
+import { EpochStakeChart } from './validator/epoch_stake'
+import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
+import { StakeDialog } from './stake';
 
 const API_URL = process.env.API_BASE_URL;
 
-export interface validatorI {
-    identity: string;
-    vote_identity: string;
-    last_vote: number;
-    root_slot: number;
-    credits: number;
-    epoch_credits: number;
-    activated_stake: number;
-    version: string;
-    delinquent: boolean;
-    skip_rate: number;
-    created_at: string;
-    updated_at: string;
-    oldest_active_stake_pubkey: string;
-    first_epoch_with_stake: number;
-    name: string;
-    keybase: string;
-    description: string;
-    info_pubkey: string;
-    website: string;
-    commission: number;
-    image: string;
-    gossip_ip: string;
-    mod: boolean;
-    ip_latitude: string;
-    ip_longitude: string;
-    ip_city: string;
-    ip_country: string;
-    ip_asn: string;
-    ip_org: string;
-    withdraw_authority: string;
-    wiz_score_id: number;
-    ignore: boolean;
-    vote_success: number;
-    vote_success_score: number;
-    skip_rate_score: number;
-    info_score: number;
-    commission_score: number;
-    first_epoch_distance: number;
-    epoch_distance_score: number;
-    stake_weight: number;
-    above_halt_line: boolean;
-    stake_weight_score: number;
-    withdraw_authority_score: number;
-    asn: string;
-    asn_concentration: number;
-    asn_concentration_score: number;
-    uptime: number;
-    uptime_score: number;
-    wiz_score: number;
-    version_valid: boolean;
-    city_concentration: number;
-    city_concentration_score: number;
-    invalid_version_score: number;
-    superminority_penalty: number;
-    score_version: number;
-    no_voting_override: boolean;
-    epoch: number;
-    epoch_slot_height: number;
-    asncity_concentration: number;
-    asncity_concentration_score: number;
-    stake_ratio: number;
-    credit_ratio: number;
-    apy_estimate: number;
-    rank: number;
-    updateTitle: Function;
-    userPubkey: string;
-    solflareEnabled: boolean;
-};
-
-export interface clusterStatsI {
-    avg_credit_ratio: number;
-    avg_activated_stake: number;
-    avg_commission: number;
-    avg_skip_rate: number;
-    avg_apy: number;
-};
-
-export interface ValidatorBoxPropsI {
-    validator: validatorI;
-    clusterStats: clusterStatsI;
-    showWizModal: Function;
-    showAlertModal: Function;
-
-}
-
-export interface ValidatorListI {
-    clusterStats: clusterStatsI;
-    validators: [validatorI];
-    updateWizModal: Function;
-    updateAlertModal: Function;
-    listSize: number;
-    showWizModal: boolean;
-    wizValidator: validatorI;
-    alertValidator: validatorI;
-    showAlertModal: boolean;
-    userPubkey: string;
-    solflareEnabled: boolean;
-}
-
-export interface ValidatorListingI {
-    state: {
-        validators: [validatorI],
-        clusterStats: clusterStatsI,
-        filteredValidators: [validatorI],
-        hasData: boolean,
-        visibleCount: number,
-        showWizModal: boolean,
-        wizValidator: validatorI,
-        showAlertModal: boolean,
-        alertValidator: validatorI,
-        walletValidators: [string],
-        solflareNotificationsEnabled: boolean,
-      },
-    updateState: Function;
-    userPubkey: string;
-}
-
-function RenderImage(props) {
-    if(props.img==null) {
-        return null;
+class ValidatorListing extends React.Component<ValidatorListingI, {}> {
+    constructor(props) {
+      super(props);
+      if(this.props.state.validators==null) this.getValidators();
+      if(this.props.state.clusterStats==null) this.getClusterStats();
+      
+      if(this.props.userPubkey) {
+          this.getWalletValidators(this.props.userPubkey);
+      }
+      
     }
-    else return (
-        <Link href={'/validator/'+props.vote_identity} passHref>
-            <a>
-                <Image className="rounded-circle pointer" src={props.img} width={props.size} height={props.size} loading="lazy" alt={props.vote_identity+"-logo"} />
-            </a>
-        </Link>
-    )
-}
-
-function RenderUrl(props) {
-    if(props.url==null || props.url=='') {
-        return null;
+  
+    getValidators() {
+      axios(API_URL+config.API_ENDPOINTS.validators, {
+          headers: {'Content-Type':'application/json'}
+      })
+        .then(response => {
+          let json = response.data;
+          
+          this.props.updateState({
+              validators: json,
+              filteredValidators: json,
+              hasData: true,
+          });
+        })
+        .catch(e => {
+          console.log(e);
+          setTimeout(() => { this.getValidators() }, 5000);
+        })
     }
-    else {
+  
+    getWalletValidators(pubkey) {
+      axios(API_URL+config.API_ENDPOINTS.wallet_validators+'/'+pubkey, {
+          headers: {'Content-Type':'application/json'}
+      })
+        .then(response => {
+          let json = response.data;
+          
+          this.props.updateState({
+              walletValidators: json
+          });
+        })
+        .catch(e => {
+          console.log(e);
+          setTimeout(() => { this.getWalletValidators(pubkey) }, 5000);
+        })
+    }
+  
+    getClusterStats() {
+      axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
+        headers: {'Content-Type':'application/json'}
+      })
+        .then(response => {
+          let json = response.data;
+  
+          this.props.updateState({
+              clusterStats: json
+          });
+        })
+        .catch(e => {
+          console.log(e);
+          setTimeout(() => { this.getClusterStats() }, 5000);
+        })
+    }
+  
+    doFilter(filteredValidators) {
+  
+      this.props.updateState({
+          visibleCount: config.DEFAULT_LIST_SIZE,
+          filteredValidators: filteredValidators
+      });
+    }
+  
+    bumpVisibleCount() {
+        
+        this.props.updateState({
+          visibleCount: this.props.state.visibleCount+config.DEFAULT_LIST_SIZE
+        });
+    }
+  
+    updateWizModalVisibility(show:boolean,validator=null) {
+      console.log(show);
+  
+        if(validator==null && this.props.state.wizValidator!=null) {
+            validator = this.props.state.wizValidator;
+        }
+        this.props.updateState({
+            showWizModal: show,
+            wizValidator: validator
+        });
+    }
+  
+    updateAlertModalVisibility(show:boolean,validator=null) {
+      if(validator==null && this.props.state.alertValidator!=null) {
+          validator = this.props.state.alertValidator;
+      }
+      this.props.updateState({
+          showAlertModal: show,
+          alertValidator: validator
+      });
+    }
+
+    updateStakeModalVisibility(show:boolean,validator=null) {
+        if(validator==null && this.props.state.stakeValidator!=null) {
+            validator = this.props.state.stakeValidator;
+        }
+        this.props.updateState({
+            showStakeModal: show,
+            stakeValidator: validator
+        });
+      }
+  
+    render() {
+        
+      if(!this.props.state.hasData || this.props.state.clusterStats == null) {
         return (
-            <a href={props.url} target="_new">
-                <span className="fst-normal text-white pointer" >{props.url}</span>
-            </a>
+          <Spinner />
+          );
+      }
+      else {
+        return (
+            [
+              <SearchBar 
+                  validators={this.props.state.validators}
+                  setFilter={(filteredValidators:[validatorI]) => {
+                      return this.doFilter(filteredValidators);
+                  }}
+                  walletValidators={this.props.state.walletValidators}
+                  key='searchBar'
+                  />,
+              <ValidatorList 
+                  validators={this.props.state.filteredValidators}
+                  clusterStats={this.props.state.clusterStats}
+                  listSize={this.props.state.visibleCount}
+                  key='validatorList'
+                  showWizModal={this.props.state.showWizModal}
+                  updateWizModal={(show:boolean,validator:validatorI) => this.updateWizModalVisibility(show,validator)}
+                  wizValidator={this.props.state.wizValidator}
+                  showAlertModal={this.props.state.showAlertModal}
+                  updateAlertModal={(show:boolean,validator:validatorI) => this.updateAlertModalVisibility(show,validator)}
+                  showStakeModal={this.props.state.showStakeModal}
+                  updateStakeModal={(show:boolean,validator:validatorI) => this.updateStakeModalVisibility(show,validator)}
+                  stakeValidator={this.props.state.stakeValidator}
+                  alertValidator={this.props.state.alertValidator}
+                  userPubkey={this.props.userPubkey}
+                  solflareEnabled={this.props.state.solflareNotificationsEnabled}
+                  connection={this.props.connection}
+                  connected={this.props.connected}
+                  />,
+              <LoadMoreButton
+                  key='loadMoreButton'
+                  viewDelta={this.props.state.filteredValidators.length - this.props.state.visibleCount}
+                  onClick={() => this.bumpVisibleCount()}
+                  />
+            ]
         );
+      }
     }
 }
 
-
+class ValidatorList extends React.Component<ValidatorListI, {}> {
+    renderValidator(i:number) {
+      return (
+              <ValidatorBox 
+                key={this.props.validators[i].vote_identity}
+                clusterStats={this.props.clusterStats}
+                validator={this.props.validators[i]} 
+                showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
+                showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
+                showStakeModal={() => this.props.updateStakeModal(true,this.props.validators[i])}
+                connected={this.props.connected}
+              />
+      );
+    }
+  
+    render() {
+      let list = [];
+      for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
+        list.push(this.renderValidator(i));
+      }
+  
+      return (
+          [
+            list,
+            <WizScore 
+                key='wizScoreModal'  
+                showWizModal={this.props.showWizModal}
+                hideWizModal={() => this.props.updateWizModal(false)}
+                validator={this.props.wizValidator}
+            />,
+            <Alert 
+                key='alertModal'  
+                showAlertModal={this.props.showAlertModal}
+                hideAlertModal={() => this.props.updateAlertModal(false)}
+                validator={this.props.alertValidator}
+                userPubkey={this.props.userPubkey}
+                solflareEnabled={this.props.solflareEnabled}
+            />,
+            <StakeDialog
+                key='stakeModal'
+                validator={this.props.stakeValidator}
+                showStakeModal={this.props.showStakeModal}
+                hideStakeModal={(alert,validator) => {
+                    this.props.updateStakeModal(false)
+                    if(alert) this.props.updateAlertModal(true, validator);
+                }}
+                clusterStats={this.props.clusterStats}
+                allowAlertDialog={true}
+            />
+          ]
+      );
+    }
+  }
+  
+  function LoadMoreButton(props) {
+      
+      if(props.viewDelta>0) {
+          return (
+                  <div className="container my-3 text-center">
+                      <button className="px-5 btn btn-outline-light btn-lg" 
+                              type="button" 
+                              id="load-more-btn" 
+                              onClick={() => props.onClick()}
+                      >
+                          Load More...
+                      </button>
+                  </div>
+          );
+      }
+      else {
+          return null;
+      }
+}
+  
+  
 
 class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     constructor(props) {
@@ -223,7 +320,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
         
         return (
                 <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
-                    <div className="col my-1 mt-3">            
+                    <div className="col my-1">            
                         <div className="row">                
                             <div className="col apy-value text-center">         
                                 <span className={"cluster_statistic rounded-pill text-white fw-bold p-2 px-3 mx-1 "+this.renderRankColor()}>
@@ -232,7 +329,7 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                 <div className="p-2">{this.props.validator.wiz_score} %</div>                
                             </div>            
                         </div>            
-                        <div className="row wiz-score-button pointer" onClick={() => {this.props.showWizModal()}} >                
+                        <div className="row wiz-score-button py-1 px-2">                
                             <OverlayTrigger
                                     placement="bottom"
                                     overlay={
@@ -241,7 +338,9 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                                         </Tooltip>
                                     } 
                                 >
-                                <div className="col apy-label text-center mb-1 vlist-label text-warning fst-italic">WIZ SCORE</div>            
+                                <button className="btn btn-outline-warning btn-sm" onClick={() => this.props.showWizModal()} >                
+                                        Wiz Score            
+                                </button>
                             </OverlayTrigger>
                         </div>        
                     </div>
@@ -472,9 +571,32 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
                             <i className="bi bi-plus px-1 alert-btn-icon"></i>
                                 Create Alert            
                         </button>  
-                        <button className="btn btn-outline-warning alert-button" onClick={() => this.props.showWizModal()} >                
-                                Scorecard            
-                        </button>    
+                        <ConditionalWrapper
+                                    condition={(!this.props.connected) ? true : false}
+                                    wrapper={children => (
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Tooltip>
+                                                    Connect wallet to enable
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            {children}
+                                        </OverlayTrigger>
+                                    )}
+                            >
+                            <span className='d-grid'>
+                                <button 
+                                    className="btn btn-outline-success alert-button" 
+                                    onClick={() => this.props.showStakeModal()} 
+                                    disabled={!this.props.connected}
+                                >               
+                                <i className="bi bi-plus px-1 alert-btn-icon"></i> 
+                                    Stake            
+                                </button> 
+                            </span>   
+                        </ConditionalWrapper>
                         <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
                             <button className="btn btn-outline-light alert-button">                
                                     More Info            
@@ -486,705 +608,23 @@ class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     }
 }
 
-class ValidatorList extends React.Component<ValidatorListI, {}> {
-  renderValidator(i:number) {
-    return (
-            <ValidatorBox 
-              key={this.props.validators[i].vote_identity}
-              clusterStats={this.props.clusterStats}
-              validator={this.props.validators[i]} 
-              showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
-              showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
-            />
-    );
-  }
-
-  render() {
-    let list = [];
-    for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
-      list.push(this.renderValidator(i));
-    }
-
-    return (
-        [
-            list,
-            <WizScore 
-                key='wizScoreModal'  
-                showWizModal={this.props.showWizModal}
-                hideWizModal={() => this.props.updateWizModal(false)}
-                validator={this.props.wizValidator}
-            />,
-            <Alert 
-                key='alertModal'  
-                showAlertModal={this.props.showAlertModal}
-                hideAlertModal={() => this.props.updateAlertModal(false)}
-                validator={this.props.alertValidator}
-                userPubkey={this.props.userPubkey}
-                solflareEnabled={this.props.solflareEnabled}
-            />
-        ]
-    );
-  }
-}
-
-function LoadMoreButton(props) {
-    
-    if(props.viewDelta>0) {
-        return (
-                <div className="container my-3 text-center">
-                    <button className="px-5 btn btn-outline-light btn-lg" 
-                            type="button" 
-                            id="load-more-btn" 
-                            onClick={() => props.onClick()}
-                    >
-                        Load More...
-                    </button>
-                </div>
-        );
-    }
-    else {
-        return null;
-    }
-}
-
-class ValidatorListing extends React.Component<ValidatorListingI, {}> {
-  constructor(props) {
-    super(props);
-    if(this.props.state.validators==null) this.getValidators();
-    if(this.props.state.clusterStats==null) this.getClusterStats();
-    
-    if(this.props.userPubkey) {
-        this.getWalletValidators(this.props.userPubkey);
-    }
-    
-  }
-
-  getValidators() {
-    axios(API_URL+config.API_ENDPOINTS.validators, {
-        headers: {'Content-Type':'application/json'}
-    })
-      .then(response => {
-        let json = response.data;
-        
-        this.props.updateState({
-            validators: json,
-            filteredValidators: json,
-            hasData: true,
-        });
-      })
-      .catch(e => {
-        console.log(e);
-        setTimeout(() => { this.getValidators() }, 5000);
-      })
-  }
-
-  getWalletValidators(pubkey) {
-    axios(API_URL+config.API_ENDPOINTS.wallet_validators+'/'+pubkey, {
-        headers: {'Content-Type':'application/json'}
-    })
-      .then(response => {
-        let json = response.data;
-        
-        this.props.updateState({
-            walletValidators: json
-        });
-      })
-      .catch(e => {
-        console.log(e);
-        setTimeout(() => { this.getWalletValidators(pubkey) }, 5000);
-      })
-  }
-
-  getClusterStats() {
-    axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
-      headers: {'Content-Type':'application/json'}
-    })
-      .then(response => {
-        let json = response.data;
-
-        this.props.updateState({
-            clusterStats: json
-        });
-      })
-      .catch(e => {
-        console.log(e);
-        setTimeout(() => { this.getClusterStats() }, 5000);
-      })
-  }
-
-  doFilter(filteredValidators) {
-
-    this.props.updateState({
-        visibleCount: config.DEFAULT_LIST_SIZE,
-        filteredValidators: filteredValidators
-    });
-  }
-
-  bumpVisibleCount() {
-      
-      this.props.updateState({
-        visibleCount: this.props.state.visibleCount+config.DEFAULT_LIST_SIZE
-      });
-  }
-
-  updateWizModalVisibility(show:boolean,validator=null) {
-    console.log(show);
-
-      if(validator==null && this.props.state.wizValidator!=null) {
-          validator = this.props.state.wizValidator;
-      }
-      this.props.updateState({
-          showWizModal: show,
-          wizValidator: validator
-      });
-  }
-
-  updateAlertModalVisibility(show:boolean,validator=null) {
-    if(validator==null && this.props.state.alertValidator!=null) {
-        validator = this.props.state.alertValidator;
-    }
-    this.props.updateState({
-        showAlertModal: show,
-        alertValidator: validator
-    });
-    }
-
-  render() {
-      
-    if(!this.props.state.hasData || this.props.state.clusterStats == null) {
-      return (
-        <Spinner />
-        );
-    }
-    else {
-      return (
-          [
-            <SearchBar 
-                validators={this.props.state.validators}
-                setFilter={(filteredValidators:[validatorI]) => {
-                    return this.doFilter(filteredValidators);
-                }}
-                walletValidators={this.props.state.walletValidators}
-                key='searchBar'
-                />,
-            <ValidatorList 
-                validators={this.props.state.filteredValidators}
-                clusterStats={this.props.state.clusterStats}
-                listSize={this.props.state.visibleCount}
-                key='validatorList'
-                showWizModal={this.props.state.showWizModal}
-                updateWizModal={(show:boolean,validator:validatorI) => this.updateWizModalVisibility(show,validator)}
-                wizValidator={this.props.state.wizValidator}
-                showAlertModal={this.props.state.showAlertModal}
-                updateAlertModal={(show:boolean,validator:validatorI) => this.updateAlertModalVisibility(show,validator)}
-                alertValidator={this.props.state.alertValidator}
-                userPubkey={this.props.userPubkey}
-                solflareEnabled={this.props.state.solflareNotificationsEnabled}
-                />,
-            <LoadMoreButton
-                key='loadMoreButton'
-                viewDelta={this.props.state.filteredValidators.length - this.props.state.visibleCount}
-                onClick={() => this.bumpVisibleCount()}
-                />
-          ]
-      );
-    }
-  }
-}
-
-class ValidatorStakeHistoryChart extends React.PureComponent<
+class ValidatorDetail extends React.Component<validatorDetailI, 
     {
-        vote_identity: string;
-    }, 
-    {
-        all_stakes: unknown;
-        ten_stakes: unknown;
-        epoch_stakes: unknown;
-    }> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            all_stakes: null,
-            ten_stakes: null,
-            epoch_stakes: null
-        };
-        if(this.state.all_stakes==null) this.getStakeHistory();
-    }
-
-    getStakeHistory() {
-        axios(API_URL+config.API_ENDPOINTS.validator_total_stakes+"/"+this.props.vote_identity, {
-            headers: {'Content-Type':'application/json'}
-        })
-            .then(response => {
-            let json = response.data;
-
-            
-            if(json.length>0) {
-
-                let stake = [];
-                stake.push([
-                    'Epoch',
-                    'Stake'
-                ]);
-
-                for(var i in json) {
-                    stake.push([
-                        json[i].epoch,
-                        json[i].stake
-                    ]);
-                    
-
-                }
-
-                this.setState({
-                    all_stakes: stake
-                });
-            }
-            })
-            .catch(e => {
-            console.log(e);
-            setTimeout(() => { this.getStakeHistory() }, 5000);
-            })
-        }
-
-    render() {
-        if(this.state.all_stakes==null) {
-            return (
-                <Spinner />
-            )
-        }
-        else {
-            return (
-                <Chart 
-                    chartType='LineChart'
-                    width="100%"
-                    height="20rem"
-                    data={this.state.all_stakes}
-                    options={{
-                        backgroundColor: 'none',
-                        curveType: "function",
-                        colors: ['#fff', '#fff', '#fff'],
-                        lineWidth: 2,
-                        legend:{
-                            position:'none'
-                        },
-                        vAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            },
-                            format: 'short'
-                        },
-                        hAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            }
-                        },
-                        chartArea: {
-                            top: 20,
-                            left: 50,
-                            width:'100%',
-                            height:'80%'
-                        },
-                        allowAsync: true
-                    }}
-                />
-            )
-        }
-    };
-}
-
-class ValidatorDelinquencyChart extends React.PureComponent<
-    {
-        vote_identity: string;
-    },
-    {
-        delinquencies: unknown;
-    }
-    > {
-    constructor(props) {
-        super(props);
-        this.state = {
-            delinquencies: null
-        };
-        if(this.state.delinquencies==null) this.getDelinquencies();
-    }
-
-    getDelinquencies() {
-        axios(API_URL+config.API_ENDPOINTS.validator_delinquencies+"/"+this.props.vote_identity, {
-            headers: {'Content-Type':'application/json'}
-        })
-            .then(response => {
-                let json = response.data;
-
-                let delinquencies = [];
-                delinquencies.push([
-                    'Date', 'Delinquent Minutes'
-                ]);
-
-                let d = new Date();
-                for(let a = 1; a <= 30; a++) {
-                    
-                    delinquencies.push([
-                        new Date(d.getTime()),
-                        0
-                    ]);
-                    d.setDate(d.getDate() - 1);
-                }
-
-                
-                if(json.length>0) {
-                    for(var i in json) {
-                        for(var a in delinquencies) {
-                            if(new Date(delinquencies[a][0]).toLocaleDateString() == new Date(json[i].date).toLocaleDateString()) {
-                                delinquencies[a][1] = parseInt(json[i].delinquent_minutes);
-                            }
-                        }
-                    }
-                }
-
-                this.setState({
-                    delinquencies: delinquencies
-                });
-            })
-            .catch(e => {
-            console.log(e);
-            setTimeout(() => { this.getDelinquencies() }, 5000);
-            })
-        }
-
-    render() {
-            return (
-                <Chart 
-                    chartType='ColumnChart'
-                    width="100%"
-                    height="20rem"
-                    data={this.state.delinquencies}
-                    options={{
-                        backgroundColor: 'none',
-                        curveType: "function",
-                        colors: ['#fff', '#fff', '#fff'],
-                        lineWidth: 2,
-                        legend:{
-                            position:'none'
-                        },
-                        vAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            },
-                            format: 'short',
-                            maxValue: 30
-                        },
-                        hAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            }
-                        },
-                        chartArea: {
-                            top: 20,
-                            left: 50,
-                            width:'100%',
-                            height:'80%'
-                        },
-                        allowAsync: true
-                    }}
-                />
-            )
-    };
-}
-
-class ValidatorEpochStakeChart extends React.PureComponent<
-    {
-        vote_identity: string;
-        updateStake: Function;
-    },
-    {
-        stakes: unknown;
-        change: unknown;   
-    }
-    > {
-    constructor(props) {
-        super(props);
-        this.state = {
-            stakes: null,
-            change: null
-        };
-        if(this.state.stakes==null) this.getEpochStakes();
-    }
-
-    getEpochStakes() {
-        axios(API_URL+config.API_ENDPOINTS.validator_epoch_stakes+"/"+this.props.vote_identity, {
-            headers: {'Content-Type':'application/json'}
-        })
-            .then(response => {
-            let json = response.data;
-            
-
-            let stakes = [];
-            stakes.push(['Label','Stake',{role: 'style'}]);
-
-            let change = json[0].activating_stake-json[0].deactivating_stake;
-            
-            stakes.push(['Activating',parseFloat(json[0].activating_stake),'#428c57']);
-            stakes.push(['Deactivating',parseFloat(json[0].deactivating_stake)*-1, '#d65127']);
-            //stakes.push(['Net Change',parseFloat(change), '#27abd6']);
-            
-            this.props.updateStake(change);
-
-            this.setState({
-                stakes: stakes,
-                change: change
-            });
-            })
-            .catch(e => {
-            console.log(e);
-            setTimeout(() => { this.getEpochStakes() }, 5000);
-            })
-        }
-
-    render() {
-        if(this.state.stakes==null) {
-            return (
-                <Spinner />
-            )
-        }
-        else {
-
-            return ([
-                <Chart 
-                    key='epoch-stake-chart'
-                    chartType='BarChart'
-                    width="100%"
-                    height="20rem"
-                    data={this.state.stakes}
-                    options={{
-                        backgroundColor: 'none',
-                        lineWidth: 1,
-                        bars: 'horizontal',
-                        legend:{
-                            position:'none'
-                        },
-                        vAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            },
-                            format: 'short',
-                            label: 'none'
-                        },
-                        hAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            }
-                        },
-                        allowAsync: true
-                    }}
-                />]
-            )
-        }
-    };
-}
-
-class ValidatorLog extends React.PureComponent<
-    {
-        vote_identity: string;
-        updateLogLength: Function;
-        log_limit: number;
-        onClick: Function;
-    },
-    {
-        log: [{
-            [dynamic:string]: {
-                value?: unknown
-            }
-        }];
-    }
-    > {
-    constructor(props) {
-        super(props);
-        this.state = {
-            log: null
-        };
-        if(this.state.log==null) this.getValidatorLog();
-    }
-
-    getValidatorLog() {
-        axios(API_URL+config.API_ENDPOINTS.validator_log+"/"+this.props.vote_identity, {
-            headers: {'Content-Type':'application/json'}
-        })
-            .then(response => {
-            let json = response.data;
-            
-            this.props.updateLogLength(json.length);
-
-            this.setState({
-                log: json
-            });
-            })
-            .catch(e => {
-            console.log(e);
-            setTimeout(() => { this.getValidatorLog() }, 5000);
-            })
-    }
-
-    render() {
-        if(this.state.log==null) {
-            return (
-                <Spinner />
-            )
-        }
-        else {
-            let table = [];
-            for(let i=0; i<this.state.log.length && i<this.props.log_limit; i++) {
-                let log = this.state.log[i];
-                let date = new Date(log.created_at as string);
-
-                let old_data = [];
-                let new_data = [];
-
-                for(var key in log.old_data) {
-                    if(log.old_data.hasOwnProperty(key)) {
-                        let data = log.old_data[key];
-                        if(key=='activated_stake') data *= config.SOL_PER_LAMPORT;
-                        if(key=='delinquent') {
-                            data = (data) ? 'true' : 'false';
-                        }
-
-
-                        old_data.push(
-                            <p><span className='fw-bold'>{key}:</span><br />{data}<br /></p>
-                        )
-                    }
-                }
-                for(var key in log.new_data) {
-                    if(log.new_data.hasOwnProperty(key)) {
-                        let data = log.new_data[key];
-                        if(key=='activated_stake') data = data*config.SOL_PER_LAMPORT;
-                        if(key=='delinquent') {
-                            data = (data) ? 'true' : 'false';
-                        }
-
-                        new_data.push(
-                            <p><span className='fw-bold'>{key}:</span><br />{data}<br /></p>
-                        )
-                    }
-                }
-                
-                table.push(
-                    <tr>
-                        <th scope="row" className='text-nowrap'>
-                            {date.toLocaleString()}
-                        </th>
-                        <td className='text-wrap validator-log-data'>
-                            {old_data}
-                        </td>
-                        <td className='text-wrap validator-log-data'>
-                            {new_data}
-                        </td>
-                    </tr>
-                )
-            }
-
-            return ([
-                <table className='table table-striped table-dark table-sm' key='validator-log-table'>
-                    <thead>
-                        <th scope='col'>Date</th>
-                        <th scope='col'>Old Data</th>
-                        <th scope='col'>New Data</th>
-                    </thead>
-                    <tbody>
-                        {table}
-                    </tbody>
-                </table>,
-                <LoadMoreButton 
-                    key='log-more-button'
-                    viewDelta={this.state.log.length - this.props.log_limit}
-                    onClick={() => this.props.onClick()}
-                    />
-            ]
-            )
-        }
-    };
-}
-
-function StakeLabel(props) {
-    if(props.stake!=null) {
-        let stake = (props.stake<0) ? props.stake*-1 : props.stake;
-        stake = new Intl.NumberFormat().format(Number(stake.toFixed(0)));
-        if(props.stake<0) {
-            
-            return (
-                <span className="text-danger ms-1">
-                    - ◎ {stake}
-                </span>
-            );
-        }
-        else {
-            return (
-                <span className="text-success ms-1">
-                    + ◎ {stake}
-                </span>
-            );
-        }
-    }
-    else {
-        return null;
-    }
-
-}
-
-class ValidatorDetail extends React.Component<validatorI, 
-    {
-        log_limit: number;
-        log_length: number;
         validator: validatorI;
         stake_change: number;
-        showAlertModal: Function;
+        showStakeModal: boolean;
+        clusterStats: clusterStatsI;
     }> {
     constructor(props) {
         super(props);
         this.state = {
             validator: null,
             stake_change: null,
-            log_limit: 25,
-            log_length: 0,
-            showAlertModal: null
+            showStakeModal: false,
+            clusterStats: null
         };
         if(this.props.vote_identity!='') this.getValidator();
-    }
-
-    updateLogLength(length) {
-        this.setState({
-            log_length: length
-        });
-    }
-
-    bumpLogLimit() {
-        this.setState({
-            log_limit: this.state.log_limit+25
-        })
-    }
-
-    updateAlertModalVisibility(show) {
-        this.setState({
-            showAlertModal: show
-        });
+        if(this.state.clusterStats==null) this.getClusterStats();
     }
 
     getValidator() {
@@ -1210,6 +650,23 @@ class ValidatorDetail extends React.Component<validatorI,
           })
     }
 
+    getClusterStats() {
+        axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
+          headers: {'Content-Type':'application/json'}
+        })
+          .then(response => {
+            let json = response.data;
+    
+            this.setState({
+                clusterStats: json
+            });
+          })
+          .catch(e => {
+            console.log(e);
+            setTimeout(() => { this.getClusterStats() }, 5000);
+          })
+      }
+
     renderName() {
         if(this.state.validator.name=='') {
             return this.state.validator.vote_identity;
@@ -1223,34 +680,14 @@ class ValidatorDetail extends React.Component<validatorI,
         });
     }
 
-    
-
     render() {
-    
         const alertFormRef = React.createRef()
         const scrollToAlertForm = () => (alertFormRef.current as HTMLElement).scrollIntoView()
-
         const solflareEnabled = checkSolflareEnabled(this.props.userPubkey);
 
         if(this.state.validator!=null) {
 
-            let skipGauge = [
-                ["Label", "Value"],
-                ["Skip Rate", {v: this.state.validator.skip_rate, f: this.state.validator.skip_rate.toFixed(1)+'%'}]
-                
-            ];
-            let creditGauge = [
-                ["Label", "Value"],
-                ["Vote Credits", {v: this.state.validator.credit_ratio, f: this.state.validator.credit_ratio.toFixed(1)+'%'}]
-            ]
-            let wizScoreGauge = [
-                ["Label", "Value"],
-                ["Wiz Score", {v: this.state.validator.wiz_score, f: this.state.validator.wiz_score.toFixed(1)+'%'}]
-            ]
-            let uptimeGauge = [
-                ["Label", "Value"],
-                ["Uptime", {v: this.state.validator.uptime, f: this.state.validator.uptime.toFixed(2)+'%'}]
-            ]
+            
 
             let updated_at = new Date(this.state.validator.updated_at);
 
@@ -1274,10 +711,34 @@ class ValidatorDetail extends React.Component<validatorI,
                         <div className='col text-white text-center p-2'>
                             <h2>{this.renderName()}</h2>
                             
-                            <button className='btn btn-outline-success' onClick={scrollToAlertForm}>
+                            <button className='btn btn-outline-success mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
-                        
+                            <ConditionalWrapper
+                                    condition={(!this.props.connected) ? true : false}
+                                    wrapper={children => (
+                                        <OverlayTrigger
+                                            placement="right"
+                                            overlay={
+                                                <Tooltip>
+                                                    Connect wallet to enable
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            {children}
+                                        </OverlayTrigger>
+                                    )}
+                            >
+                                <span>
+                                    <button 
+                                        className='btn btn-outline-success mx-1' 
+                                        onClick={() => this.setState({showStakeModal:true})}
+                                        disabled={!this.props.connected}
+                                        >
+                                        + Stake
+                                    </button>
+                                </span>
+                            </ConditionalWrapper>
                         </div>
                     </div>
                 </div>,
@@ -1286,69 +747,12 @@ class ValidatorDetail extends React.Component<validatorI,
                     <div className='row'>
                         <div className='col text-white p-2 m-1 d-flex justify-content-center mobile-gauge-container'>
                                 <div className='row mobile-gauges justify-content-center'>
-                                    <Chart
-                                        chartType="Gauge"
-                                        width="10rem"
-                                        height="10rem"
-                                        data={skipGauge}
-                                        options={{
-                                            greenFrom: 0,
-                                            greenTo: 5,
-                                            yellowFrom: 5,
-                                            yellowTo: 10,
-                                            minorTicks: 5,
-                                            min:0,
-                                            max:20,
-                                            allowAsync: true
-                                        }}
-                                    />
-                                    <Chart
-                                        chartType="Gauge"
-                                        width="10rem"
-                                        height="10rem"
-                                        data={creditGauge}
-                                        options={{
-                                            greenFrom: 85,
-                                            greenTo: 100,
-                                            yellowFrom: 75,
-                                            yellowTo: 85,
-                                            minorTicks: 5,
-                                            min:50,
-                                            max:100,
-                                            allowAsync: true
-                                        }}
-                                    />
-                                    <Chart
-                                        chartType="Gauge"
-                                        width="10rem"
-                                        height="10rem"
-                                        data={wizScoreGauge}
-                                        options={{
-                                            greenFrom: 85,
-                                            greenTo: 100,
-                                            yellowFrom: 70,
-                                            yellowTo: 85,
-                                            minorTicks: 5,
-                                            min:50,
-                                            max:100,
-                                            allowAsync: true
-                                        }}
-                                    />
-                                    <Chart
-                                        chartType="Gauge"
-                                        width="10rem"
-                                        height="10rem"
-                                        data={uptimeGauge}
-                                        options={{
-                                            greenFrom: 99.5,
-                                            greenTo: 100,
-                                            yellowFrom: 98.5,
-                                            yellowTo:99.5,
-                                            minorTicks: 5,
-                                            min: 95,
-                                            max: 100,
-                                            allowAsync: true
-                                        }}
+                                    <Gauges
+                                        skip_rate={this.state.validator.skip_rate}
+                                        credit_ratio={this.state.validator.credit_ratio}
+                                        wiz_score={this.state.validator.wiz_score}
+                                        uptime={this.state.validator.uptime}
+
                                     />
                                 </div>
 
@@ -1495,7 +899,7 @@ class ValidatorDetail extends React.Component<validatorI,
                         <div className='col p-2 m-1 text-white text-center'>
                         
                             <h3>Active Stake (20 epochs)</h3>
-                            <ValidatorStakeHistoryChart 
+                            <StakeHistoryChart
                                 vote_identity={this.state.validator.vote_identity}
                             />
                         </div>
@@ -1512,7 +916,7 @@ class ValidatorDetail extends React.Component<validatorI,
                         <div className='col p-2 m-1 text-white text-center'>
                             <div>
                                 <h3>Delinquencies (30 days)</h3>
-                                <ValidatorDelinquencyChart
+                                <DelinquencyChart
                                     vote_identity={this.state.validator.vote_identity}
                                 />
                             </div>
@@ -1523,7 +927,7 @@ class ValidatorDetail extends React.Component<validatorI,
                                         stake={this.state.stake_change}
                                     />
                                 </h3>
-                                <ValidatorEpochStakeChart 
+                                <EpochStakeChart 
                                     vote_identity={this.state.validator.vote_identity}
                                     updateStake={(change) => this.updateStakeChange(change)}
                                 />
@@ -1551,7 +955,15 @@ class ValidatorDetail extends React.Component<validatorI,
                     <div className='text-secondary fst-italic text-end my-1'>
                         Updated: {updated_at.toLocaleString()}
                     </div>
-                </div>]
+                </div>,
+                <StakeDialog
+                    key='stakeModal'
+                    validator={this.state.validator}
+                    showStakeModal={this.state.showStakeModal}
+                    hideStakeModal={() => this.setState({showStakeModal:false})}
+                    clusterStats={this.state.clusterStats}
+                />
+            ]
             )
         }
         else {

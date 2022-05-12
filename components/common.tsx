@@ -17,14 +17,24 @@ interface HeaderProps {
 
 }
 
-function Spinner() {
-  return (
-    <div className="container text-center" id='loading-spinner'>
-        <div className='spinner-grow text-light' role="status">
-            <span className='visually-hidden'>Loading...</span>
-        </div>
-    </div>
-  )
+const Spinner: FC<{wrapper?: boolean}> = ({wrapper}) => {
+  
+  if(wrapper==undefined) {
+    return (
+      <div className="container text-center" id='loading-spinner'>
+          <div className='spinner-grow text-light' role="status">
+              <span className='visually-hidden'>Loading...</span>
+          </div>
+      </div>
+    )
+  }
+  else {
+    return (
+      <div className='spinner-grow text-light' role="status">
+          <span className='visually-hidden'>Loading...</span>
+      </div>
+    )
+  }
 }
 
 
@@ -138,6 +148,12 @@ class Footer extends React.Component {
   }
 }
 
+const ConditionalWrapper = ({
+  condition,
+  wrapper,
+  children,
+}) => (condition ? wrapper(children) : children);
+
 const checkSolflareEnabled = async (pubkey: string): Promise<boolean> => {
 
   
@@ -164,4 +180,24 @@ const checkSolflareEnabled = async (pubkey: string): Promise<boolean> => {
   
 }
 
-export {Header, TopBar, Footer, Spinner, checkSolflareEnabled}
+const getEpochInfo = async (): Promise<Object> => {
+
+  
+  let result = await axios(API_URL+config.API_ENDPOINTS.epoch_info, {
+      headers: {'Content-Type':'application/json'}
+  })
+    .then(response => {
+      if(response.status==200) return response.data;
+      else return false;
+
+      
+    })
+    .catch(e => {
+      console.log(e);
+      return false;
+    });
+
+  return result;
+}
+
+export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper}

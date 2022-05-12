@@ -1,17 +1,21 @@
 import type { NextPage } from 'next'
 import React from 'react'
-import { clusterStatsI, validatorI, ValidatorListing } from '../components/validator'
+import { ValidatorListing } from '../components/validator'
+import { clusterStatsI, validatorI } from '../components/validator/interfaces'
 import config from '../config.json'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { checkSolflareEnabled } from '../components/common'
+import { Connection } from '@solana/web3.js'
 
 const API_URL = process.env.API_BASE_URL;
 
 class Homepage extends React.Component<
   {
     userPubkey: string;
+    connection: Connection;
+    connected: boolean;
   },
   {
     validators: [validatorI],
@@ -25,6 +29,8 @@ class Homepage extends React.Component<
     alertValidator: validatorI,
     walletValidators: [string],
     solflareNotificationsEnabled: boolean;
+    stakeValidator: validatorI,
+    showStakeModal: boolean
   }> {
   constructor(props) {
     super(props);
@@ -40,7 +46,9 @@ class Homepage extends React.Component<
       showAlertModal: false,
       alertValidator: null,
       walletValidators: null,
-      solflareNotificationsEnabled: false
+      solflareNotificationsEnabled: false,
+      stakeValidator: null,
+      showStakeModal: false
     };
 
     if(this.props.userPubkey) this.checkSolflare(this.props.userPubkey);
@@ -64,6 +72,8 @@ class Homepage extends React.Component<
                 state={this.state}
                 updateState={(state) => this.updateState(state)}
                 userPubkey={this.props.userPubkey}
+                connection={this.props.connection}
+                connected={this.props.connected}
                 key={'validatorParent'+this.props.userPubkey}
             />
           ]
@@ -73,6 +83,7 @@ class Homepage extends React.Component<
 
 const Home: NextPage = () => {
 
+  let {connection} = useConnection();
   let {connected, publicKey} = useWallet();
 
     return (
@@ -89,6 +100,8 @@ const Home: NextPage = () => {
             <Homepage
               key={(publicKey) ? 'homepage'+publicKey.toString() : 'homepage'}
               userPubkey={(connected) ? publicKey.toString() : null}
+              connection={(connected) ? connection : null }
+              connected={connected}
             />
           </div>
         </main>
