@@ -284,6 +284,15 @@ a:hover {
   color:#000;
 }
 
+.epoch-progress {
+  height:1.5rem;
+  background-color:#666;
+}
+
+.epoch-progress-label {
+  font-size:12px;
+}
+
 @media only screen and (max-width: 991px) {
   .m-bottom-13{
     margin-bottom: 13px;
@@ -291,6 +300,61 @@ a:hover {
 }
 @media only screen and (max-width: 600px) {
   
+  .navbar-flex-container {
+    flex-direction:column;
+  }
+
+  .navbar-text {
+    width:100%!important;
+  }
+
+  .navbar-toggler {
+    position:absolute;
+    top:1rem;
+    right:1rem;
+  }
+
+  .navbar-collapse {
+    position: absolute!important;
+    top:3.5rem;
+    right:1rem;
+    padding:5px;
+    background-color:#333;
+    border-radius:3px;
+    z-index:9999;
+  }
+
+  .navbar-nav {
+    text-align:center;
+  }
+
+  .epoch-progress-value { 
+    display:none;
+  }
+
+  .epoch-progress-container {
+    width:100%!important;
+    flex-direction:column!important;
+    position:unset!important;
+  }
+
+  .epoch-progress-text {
+    width:100%!important;
+  }
+
+  .wallet-container {
+    text-align:center;
+  }
+
+  .wallet-adapter-dropdown {
+    width:100%!important;
+  }
+
+  .wallet-adapter-button {
+    width:100%!important;
+    justify-content: center;
+  }
+
   .m-bottom-13{
     margin-bottom: 0;
   }

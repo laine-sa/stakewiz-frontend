@@ -10,7 +10,7 @@ export const StakeLabel: FC<{stake: number}> = ({stake}) => {
         
         s = parseFloat(n);
         
-        if(s<0) {
+        if(stake<0) {
             
             return (
                 <span className="text-danger ms-1">
