@@ -501,11 +501,19 @@ a:hover {
   .search:focus {
     width: 77vw;
   }
+  .src-active {
+    width: 77vw;
+  }
+  .elastic-search-result-div {width: 678px;}
 }
 @media only screen and (max-width: 767px) {
     .search:focus {
       width: 77vw;
   }
+  .src-active {
+    width: 77vw;
+  }
+  .elastic-search-result-div {width: 338px;}
 }
 /*--------*/
 @media only screen and (max-width: 991px) {

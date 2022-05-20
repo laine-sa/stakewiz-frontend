@@ -155,6 +155,7 @@ const TopBar: FC = () => {
         </Navbar>
         <Container key="mobile-search-container">
           <Search mobilehide="mobile-visible tablet-on" key="searchValidatorMobile" elementID="searchValidatorMobile" />,
+          <div className="clrFix"></div>
         </Container>
       </div>         
     )
