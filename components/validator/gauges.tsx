@@ -29,7 +29,7 @@ export const Gauges: FC<{
     ]
 
     return (
-        <div className='d-flex'>
+        <div className='d-flex flex-wrap justify-content-center'>
             <Chart
                 chartType="Gauge"
                 width="10rem"

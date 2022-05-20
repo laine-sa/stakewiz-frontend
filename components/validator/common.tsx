@@ -3,22 +3,25 @@ import Link from "next/link";
 import Image from "next/image";
 
 export const StakeLabel: FC<{stake: number}> = ({stake}) => {
+    
     if(stake!=null) {
         let s = (stake<0) ? stake*-1 : stake;
         let n = new Intl.NumberFormat().format(Number(s.toFixed(0)));
-        s = parseInt(n);
-        if(s<0) {
+        
+        s = parseFloat(n);
+        
+        if(stake<0) {
             
             return (
                 <span className="text-danger ms-1">
-                    - ◎ {s}
+                    - ◎ {n}
                 </span>
             );
         }
         else {
             return (
                 <span className="text-success ms-1">
-                    + ◎ {s}
+                    + ◎ {n}
                 </span>
             );
         }

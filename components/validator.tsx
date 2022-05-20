@@ -675,6 +675,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
     }
 
     updateStakeChange(change) {
+        
         this.setState({
             stake_change: change
         });

@@ -1,7 +1,8 @@
 import React, {useState, FC} from 'react';
 import Link from 'next/link';
-import { ValidatorData, WalletValidator } from 'lib/validator_data';
+import { ValidatorData, WalletValidator } from './common';
 import { useWallet} from '@solana/wallet-adapter-react'
+import config from '../config.json';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -24,18 +25,20 @@ interface ValidatorData {
             passHref
             >
             <a>
+            {(props.filterValidator.image) && 
               <div className="product-img">
                 <img
                   src= {(props.filterValidator.image)}
                   alt=""
                 />
               </div>
+            }
               <div className="product-info">
                 <div className="product-title">
                     {props.filterValidator.name}
                   
                 </div>
-                <div className="scroll-description">
+                <div className={`scroll-description ${(!props.filterValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
                   <span className="product-description text-truncate">
                     <b>Identity:</b>&nbsp;{props.filterValidator.identity}
                   </span>
@@ -88,7 +91,7 @@ interface ValidatorData {
     const doSearch = async(key, searchTitle) => {
         setSearchInput(searchTitle)
         const filteredValidators = [];
-        if(searchTitle.length > 2){
+        if(searchTitle.length > config.DEFAULT_SEARCH_KEY_COUNT){
           for (let i = 0; i < searchValidators.length; i++) {
             
             let stakeRatio = searchValidators[i].stake_ratio*1000;
@@ -126,24 +129,13 @@ interface ValidatorData {
         }
     }
  
-  const list = () => searchValidators.map((validator) => {
-    return (
-      <ValidatorFilterData
-        key={validator.identity}
-        filterValidator={validator}
-      />
-    );
-  });
   return (
     <>
       <div className={`search-container ${props.mobilehide}`} >
-        <form action="#" method="get">
           <input className={`search expandright ${(showSearchValidators) ? 'src-active' : ''}`} id={props.elementID} type="search" name="search" placeholder="Search validators..."        
             onFocus={(e) => {getValidator()}} onChange={(e) => {doSearch(e.target.name, e.target.value)}}  autoComplete="off" value={searchInput} />
           <label className="btnSearch searchbtn" htmlFor={props.elementID}>
             <span className="mglass">⚲</span></label>
-        </form>
-
         {(hasFilterData && showSearchValidators) ?
             <div className="elastic-search-result-div scrollSrc">
                   <ul className="products-list product-list-in-box">
@@ -155,11 +147,10 @@ interface ValidatorData {
                       />
                     )}
                   </ul>
-                <button className="load-item">Load More</button>
             </div>
             : (!hasFilterData && showSearchValidators) ? 
                 <div className="elastic-search-result-div scrollSrc">
-                    No Data Found
+                   No Results Found
                 </div>
             : null
         }
