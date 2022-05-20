@@ -11,7 +11,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
 import { EpochInfoI } from './validator/interfaces';
 import { JsxElement } from 'typescript';
-import NavbarSearch from "./navbar-search";
+import Search from "./navbar-search";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -140,7 +140,7 @@ const TopBar: FC = () => {
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
               {renderEpochProgress()}
               <Nav>
-              <NavbarSearch mobilehide="mobile-col-hide tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop" />
+              <Search mobilehide="mobile-col-hide tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop" />
                 <Nav.Link href="/" className='text-white'>Home</Nav.Link>
                 <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
                 <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
@@ -154,7 +154,7 @@ const TopBar: FC = () => {
           </Container>
         </Navbar>
         <Container key="mobile-search-container">
-          <NavbarSearch mobilehide="mobile-visible tablet-on" key="searchValidatorMobile" elementID="searchValidatorMobile" />,
+          <Search mobilehide="mobile-visible tablet-on" key="searchValidatorMobile" elementID="searchValidatorMobile" />,
         </Container>
       </div>         
     )

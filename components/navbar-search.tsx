@@ -10,13 +10,14 @@ interface ValidatorData {
   name: string;
   vote_identity: string;
   identity: string,
-  activated_stake : string,
+  activated_stake : number,
   image : string
 }
 
   export const ValidatorFilterData: FC<{
     filterValidator: ValidatorData; 
   }> = (props) => {
+    const activated_stake = new Intl.NumberFormat().format(Number(props.filterValidator.activated_stake.toFixed(0)));
     return (
       <>
         <li className="item">
@@ -48,7 +49,7 @@ interface ValidatorData {
                   </span>
                   <span className="product-description">
                     <b>Activated Stake:</b>&nbsp;
-                    {props.filterValidator.activated_stake}
+                    {activated_stake}
                   </span>
                 </div>
               </div>
@@ -61,7 +62,7 @@ interface ValidatorData {
 
   }
 
-  const NavbarSearch: FC<{
+  const Search: FC<{
     mobilehide : string,
     elementID : string,
     validatorList : string[],
@@ -159,4 +160,4 @@ interface ValidatorData {
   )
 
 }
-export default NavbarSearch;
+export default Search;
