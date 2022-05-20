@@ -65,9 +65,9 @@ interface ValidatorData {
   const Search: FC<{
     mobilehide : string,
     elementID : string,
-    validatorList : string[],
-    showSearchValidators : boolean,
-    onFocusApiLoaded : boolean
+    validatorList ? : string[],
+    showSearchValidators ? : boolean,
+    onFocusApiLoaded ? : boolean
     }> = (props) => {
     const [hasFilterData, setHasFilterData] = useState(false);
     const [searchValidators, setSearchValidators] = useState([]);
