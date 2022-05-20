@@ -283,7 +283,218 @@ a:hover {
   border: 1px solid transparent;
   color:#000;
 }
+/* navbar search css start */
+.btnSearch {
+  display: inline-block;
+  margin: 4px 2px;
+  background-color: #444;
+  font-size: 14px;
+  padding-left: 32px;
+  padding-right: 32px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 
+.btnSearch:hover {
+  transition-duration: 0.4s;
+  -moz-transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+  background-color: white;
+  color: black;
+}
+
+.search-container {
+  position: relative;
+  display: inline-block;
+  margin: 4px 2px;
+  height: 50px;
+  width: 50px;
+  vertical-align: bottom;
+  float: right;
+  color: #000;
+}
+
+.mglass {
+  display: inline-block;
+  pointer-events: none;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+}
+.searchbtn {
+  position: absolute;
+  font-size: 22px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.search:focus + .searchbtn {
+  transition-duration: 0.4s;
+  -moz-transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+  background-color: white;
+  color: black;
+}
+.search {
+  position: absolute;
+  left: 49px;
+  background-color: white;
+  outline: none;
+  border: none;
+  padding: 0;
+  width: 0;
+  height: 100%;
+  z-index: 10;
+  transition-duration: 0.4s;
+  -moz-transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+}
+.search:focus {
+  width: 363px;
+  padding: 0 16px 0 0;
+}
+
+.expandright {
+  left: auto;
+  right: 49px;
+}
+.scrollSrc {
+  left: auto;
+  right: 0;
+}
+
+.expandright:focus {
+  padding: 0 0 0 16px;
+}
+
+.top-search-box::placeholder {
+  color: #ccc;
+}
+.elastic-search-result-div {
+  position: absolute;
+  max-height: 535px;
+  overflow: auto;
+  width: 411px;
+  background: #ffffff;
+  margin-top: 55px;
+  border-left: 1px solid #a6a6a6;
+  border-bottom: 1px solid #a6a6a6;
+  border-right: 1px solid #a6a6a6;
+  border-radius: 0 0 5px 5px;
+  z-index: 1000;
+  overflow-x: hidden;
+  padding: 5px;
+}
+.elastic-search-result-div .box {
+  margin-bottom: 0;
+}
+.search-result-li {
+  padding: 0 !important;
+}
+.search-result-li:hover {
+  background: #f7f7f7 none repeat scroll 0 0;
+}
+.search-result-li a {
+  display: table;
+  padding: 4px 0;
+  width: 100%;
+  height: inherit;
+}
+.switch-loader {
+  position: absolute;
+  left: 75px;
+  top: 13px;
+}
+/* navbar search css end */
+.navbar-nav {
+  align-items: center;
+}
+.elastic-search-result-div:focus {
+  width: 363px;
+  padding: 0 16px 0 0;
+}
+.elastic-search-result-div:focus {
+  padding: 0 0 0 16px;
+}
+.products-list .product-img {
+  float: left;
+  width: 30%;
+}
+.products-list .product-img img {
+  width: 100%;
+  height: 88px;
+  object-fit: cover;
+  border: 1px solid #efefef;
+}
+.products-list .product-info {
+  margin-left: 8px;
+  float: left;
+  width: 67%;
+}
+.scroll-description {
+  width: 100%;
+}
+.scrollSrc ul {
+  margin-bottom: 0;
+  padding: 0 8px;
+}
+.scrollSrc li {
+  list-style-type: none;
+  border-bottom: 1px solid #efefef;
+  padding: 8px 0 !important;
+  display: flex;
+  align-items: center;
+}
+.clrFix {
+  clear: both;
+}
+.products-list .product-description {
+  display: block;
+  color: #999;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 23px;
+}
+.load-item {
+  width: 100%;
+  border: none;
+  color: #000;
+  text-align: center;
+  background: transparent;
+  font-size: 16px;
+  padding: 8px;
+}
+.src-active {
+  width: 363px;
+  padding: 0 0 0 16px;
+}
+@media only screen and (max-width: 991px) {
+  .tablet-on {display: block !important;}
+  .tablet-off {display: none;}
+  .search:focus {
+    width: 77vw;
+  }
+}
+@media only screen and (max-width: 767px) {
+    .search:focus {
+      width: 77vw;
+  }
+}
+/*---------*/
 @media only screen and (max-width: 991px) {
   .m-bottom-13{
     margin-bottom: 13px;
@@ -461,4 +672,3 @@ a:hover {
     padding: 0;
   }
 }
-

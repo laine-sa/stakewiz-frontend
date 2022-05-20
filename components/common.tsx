@@ -9,6 +9,7 @@ import axios from 'axios';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
+import NavbarSearch from "./navbar-search";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -89,7 +90,7 @@ class TopBar extends React.Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className='justify-content-end align-items-center text-white'>
                       <Nav>
-                        
+                        <NavbarSearch mobilehide="mobile-col-hide tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop"  />
                         <Nav.Link href="/" className='text-white'>Home</Nav.Link>
                         <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
                         <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
@@ -101,7 +102,10 @@ class TopBar extends React.Component {
                         </div>
                     </Navbar.Collapse>
                   </Container>
-                </Navbar>
+                </Navbar>,
+                <Container key="mobile-search-container">
+                  <NavbarSearch mobilehide="mobile-visible tablet-on" key="searchValidatorMobile" elementID="searchValidatorMobile" />,
+                </Container>
               ]
       )
     }
