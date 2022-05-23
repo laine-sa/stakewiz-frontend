@@ -296,7 +296,7 @@ a:hover {
 .btnSearch {
   display: inline-block;
   margin: 4px 2px;
-  background-color: #444;
+  background-color: transparent;
   font-size: 14px;
   padding-left: 32px;
   padding-right: 32px;
@@ -318,8 +318,8 @@ a:hover {
   -moz-transition-duration: 0.4s;
   -webkit-transition-duration: 0.4s;
   -o-transition-duration: 0.4s;
-  background-color: white;
-  color: black;
+  background-color: transparent;
+  color: #fff;
 }
 
 .search-container {
