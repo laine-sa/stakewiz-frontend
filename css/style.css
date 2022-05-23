@@ -303,7 +303,7 @@ a:hover {
   height: 50px;
   line-height: 50px;
   text-align: center;
-  color: white;
+  color: #fff;
   text-decoration: none;
   cursor: pointer;
   -moz-user-select: none;
@@ -347,6 +347,14 @@ a:hover {
   width: 100%;
   margin: 0;
   padding: 0;
+}
+.btnSearch-active{
+  background-color: #fff;
+  color: #000
+}
+.btnSearch-active:hover{
+  background-color: #fff;
+  color: #000
 }
 .search:focus + .searchbtn {
   transition-duration: 0.4s;
@@ -494,6 +502,7 @@ a:hover {
   width: 363px;
   padding: 0 0 0 16px;
 }
+
 @media only screen and (max-width: 991px) {
   .tablet-on {display: block !important;}
   .tablet-off {display: none;}

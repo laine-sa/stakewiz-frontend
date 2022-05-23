@@ -133,7 +133,7 @@ interface ValidatorData {
       <div className={`search-container ${props.mobilehide}`} >
           <input className={`search expandright ${(showSearchValidators) ? 'src-active' : ''}`} id={props.elementID} type="search" name="search" placeholder="Search validators..."        
           onChange={(e) => {doSearch(e.target.name, e.target.value)}}  autoComplete="off" value={searchInput} />
-          <label className="btnSearch searchbtn" htmlFor={props.elementID}>
+          <label className={`btnSearch searchbtn ${(showSearchValidators) ? 'btnSearch-active' : ''}`} htmlFor={props.elementID}>
             <span className="mglass">⚲</span></label>
         {(hasFilterData && showSearchValidators) ?
             <div className="elastic-search-result-div scrollSrc">
