@@ -73,7 +73,6 @@ interface ValidatorData {
         const validatorList:any = await ValidatorData();
         const pubkey = (connected) ? publicKey.toString() : null
         const validatorWalletList:any = await WalletValidator(pubkey);
-        console.log("DATA OF API...",validatorList)
         setSearchValidators(validatorList)
         setSearchWalletValidators(validatorWalletList)
       }
