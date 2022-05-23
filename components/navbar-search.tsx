@@ -1,4 +1,4 @@
-import React, {useState, FC} from 'react';
+import React, {useState, useEffect, FC} from 'react';
 import Link from 'next/link';
 import { ValidatorData, WalletValidator } from './common';
 import { useWallet} from '@solana/wallet-adapter-react'
@@ -66,28 +66,27 @@ interface ValidatorData {
     mobilehide : string,
     elementID : string,
     validatorList ? : string[],
-    showSearchValidators ? : boolean,
-    onFocusApiLoaded ? : boolean
+    showSearchValidators ? : boolean
     }> = (props) => {
+    useEffect(() => {
+    const getValidator = async() => {
+        const validatorList:any = await ValidatorData();
+        const pubkey = (connected) ? publicKey.toString() : null
+        const validatorWalletList:any = await WalletValidator(pubkey);
+        console.log("DATA OF API...",validatorList)
+        setSearchValidators(validatorList)
+        setSearchWalletValidators(validatorWalletList)
+      }
+      getValidator()
+    }, []);
     const [hasFilterData, setHasFilterData] = useState(false);
     const [searchValidators, setSearchValidators] = useState([]);
     const [searchFilterValidators, setSearchFilterValidators] = useState([]);
     const [searchWalletValidators, setSearchWalletValidators] = useState([]);
     const [showSearchValidators, setShowSearchValidators] = useState(false);
-    const [onFocusApiLoaded, setOnFocusApiLoaded] = useState(false);
     const [searchInput, setSearchInput] = useState('');
 
     let {connected, publicKey} = useWallet();
-    const getValidator = async() => {
-      if(!onFocusApiLoaded){
-        const validatorList:any = await ValidatorData();
-        const pubkey = (connected) ? publicKey.toString() : null
-        const validatorWalletList:any = await WalletValidator(pubkey);
-        setSearchValidators(validatorList)
-        setSearchWalletValidators(validatorWalletList)
-        setOnFocusApiLoaded(true)
-      }
-    }
 
     const doSearch = async(key, searchTitle) => {
         setSearchInput(searchTitle)
@@ -134,7 +133,7 @@ interface ValidatorData {
     <>
       <div className={`search-container ${props.mobilehide}`} >
           <input className={`search expandright ${(showSearchValidators) ? 'src-active' : ''}`} id={props.elementID} type="search" name="search" placeholder="Search validators..."        
-            onFocus={(e) => {getValidator()}} onChange={(e) => {doSearch(e.target.name, e.target.value)}}  autoComplete="off" value={searchInput} />
+          onChange={(e) => {doSearch(e.target.name, e.target.value)}}  autoComplete="off" value={searchInput} />
           <label className="btnSearch searchbtn" htmlFor={props.elementID}>
             <span className="mglass">⚲</span></label>
         {(hasFilterData && showSearchValidators) ?
