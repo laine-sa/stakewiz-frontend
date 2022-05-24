@@ -1,7 +1,8 @@
 import React, {useState, useEffect, FC} from 'react';
 import Link from 'next/link';
 import { ValidatorData, WalletValidator } from './common';
-import { useWallet} from '@solana/wallet-adapter-react'
+import { useWallet} from '@solana/wallet-adapter-react';
+import { RenderImage } from './validator/common'
 import config from '../config.json';
 
 const API_URL = process.env.API_BASE_URL;
@@ -28,15 +29,16 @@ interface ValidatorData {
             <a>
             {(props.filterValidator.image) && 
               <div className="product-img">
-                <img
-                  src= {(props.filterValidator.image)}
-                  alt=""
+                <RenderImage
+                    img={(props.filterValidator.image)}
+                    vote_identity={props.filterValidator.vote_identity}
+                    size={50}
                 />
               </div>
             }
               <div className="product-info">
                 <div className="product-title">
-                    {props.filterValidator.name}
+                    <b>{props.filterValidator.name}</b>
                   
                 </div>
                 <div className={`scroll-description ${(!props.filterValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
@@ -49,7 +51,7 @@ interface ValidatorData {
                   </span>
                   <span className="product-description">
                     <b>Activated Stake:</b>&nbsp;
-                    {activated_stake}
+                    ◎ {activated_stake}
                   </span>
                 </div>
               </div>
