@@ -1,6 +1,7 @@
 import { FC } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { validatorI } from "./interfaces";
 
 export const StakeLabel: FC<{stake: number}> = ({stake}) => {
     
@@ -40,16 +41,30 @@ export const RenderImage: FC<
         className?: string
     }> = ({ img, vote_identity, size, className }) => {
         
-    if(img==null) {
-        return null;
-    }
-    else return (
+    return (
         <Link href={'/validator/'+vote_identity} passHref>
             <a>
-                <Image className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} src={img} width={size} height={size} loading="lazy" alt={vote_identity+"-logo"} />
+                <Image 
+                    className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} 
+                    src={(img==null) ? '/images/validator-image-na.png' : img} 
+                    width={size} 
+                    height={size} 
+                    loading="lazy" 
+                    alt={vote_identity+"-logo"} />
             </a>
         </Link>
     )
+}
+
+export const RenderName: FC<{
+    validator: validatorI
+}> = ({validator}) => {
+    if(validator.name=='') {
+        return <span>{validator.vote_identity}</span>;
+    }
+    else {
+        return <span>{validator.name}</span>;
+    }
 }
 
 export const RenderUrl: FC<{url:string}> = ({url}) => {

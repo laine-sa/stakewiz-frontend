@@ -115,15 +115,18 @@ class SearchBar extends React.Component<
 
 
         return (
-            <div className="container text-white py-2">
-                <div className="row search-row">
-                    <div className="col col-md-4 position-relative d-flex align-items-center m-bottom-13">
-                        <input className="p-2 form-control" type="text" id="vsearch" name='textInput' value={this.state.textInput} placeholder="Search validators..." autoComplete="off" onChange={event => this.doSearch(event.target.name,event.target.value)} onKeyDown={event => this.keyPressed(event)} />
-                        <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(((event.target as HTMLButtonElement).previousSibling as HTMLInputElement).name)}>
-                            Clear
-                        </button>
-                    </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
+            <div className="d-flex flex-column align-items-center gap-2">
+                
+                <div className="position-relative d-flex align-items-center w-50">
+                    <input className="p-2 form-control" type="text" id="vsearch" name='textInput' value={this.state.textInput} placeholder="Search validators..." autoComplete="off" onChange={event => this.doSearch(event.target.name,event.target.value)} onKeyDown={event => this.keyPressed(event)} />
+                    <button className="btn btn-sm btn-outline-dark" id="clear-input" onClick={(event) => this.clearInput(((event.target as HTMLButtonElement).previousSibling as HTMLInputElement).name)}>
+                        Clear
+                    </button>
+                </div>
+            
+                <div className="d-flex flex-row">
+                    
+                    <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
                         <label htmlFor="vhideanonymous">Hide unnamed</label>
                     </div>
@@ -131,16 +134,16 @@ class SearchBar extends React.Component<
                             placement='top'    
                             overlay={<Tooltip>{onlyMineTooltip}</Tooltip>}
                         >
-                        <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
+                        <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
                             <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="onlyMine" id="vhideprivate" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyMine} disabled={onlyMineDisabled} />
                             <label htmlFor="vonlymine">Only Mine</label>
                         </div>
                     </OverlayTrigger>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchToggle">
+                    <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />
                         <label htmlFor="vhidestake">Hide high-stake</label>
                     </div>
-                    <div className="col col-md-auto d-flex align-items-center text-left form-check form-switch searchSort">
+                    <div className="d-flex align-items-center text-left form-check form-switch searchSort">
                         <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
                         <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
                             <option value='rank'>Wiz Score ↑</option>
@@ -161,10 +164,14 @@ class SearchBar extends React.Component<
                             <option value='asncity_concentration'>ASN+City Concentration ↓</option>
                         </select>
                     </div>
-                    <div className="col d-flex align-items-center bg-dark text-white p-1 rounded justify-content-center" id="resultsno">
+                </div>
+                
+                <div className='d-flex align-items-end'>
+                    <div className="d-flex align-items-center bg-dark text-white p-2 rounded justify-content-center" id="resultsno">
                         {this.state.validatorCount} validators
                     </div>
                 </div>
+                
             </div>
         );
     }

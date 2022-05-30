@@ -74,7 +74,6 @@ const TopBar: FC = () => {
 
     const renderEpochProgress = () => {
       if(epochInfo!=null) {
-        console.log(epochInfo);
 
         let d_days = Math.floor(epochInfo.duration_seconds/(60*60*24));
         let d_hours = Math.floor((epochInfo.duration_seconds - (d_days*60*60*24)) / (60*60));
@@ -130,7 +129,7 @@ const TopBar: FC = () => {
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
                 <img 
-                  src={"/images/stakewiz-logo-white.webp"}
+                  src={"/images/new-logo-white.webp"}
                   className='stakewiz-logo'
                   alt="Stakewiz Logo" 
                 />

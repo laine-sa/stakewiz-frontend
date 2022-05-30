@@ -8,6 +8,12 @@
   src: url('./fonts/lato/Lato-Regular.ttf');
 }
 
+@font-face {
+  font-family:fullpack;
+  src: url('./fonts/fullpack.ttf');
+}
+
+
 button:focus, button:active {
   outline:none!important;
   box-shadow:none!important;
@@ -33,8 +39,8 @@ body {
   font-display:auto;
   font-family:lato;
   font-size:0.9rem;
-  background-color:#131313;
-  background-image:url('../public/images/body-bg2.webp');
+  background-color:#31668f;
+  background-image:url('../public/images/bgs/lightning.webp');
   background-size:cover;
   background-attachment:fixed;
 }
@@ -160,6 +166,11 @@ a:hover {
 
 .cluster_statistic {
   font-size:0.7rem;
+}
+
+.wiz-font {
+  font-family:fullpack;
+  text-transform:uppercase;
 }
 
 .click-to-copy {
