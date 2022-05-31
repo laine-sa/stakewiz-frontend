@@ -207,7 +207,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
   
       return (
           [
-            <div className='d-flex flex-wrap justify-content-center'>
+            <div className='d-flex flex-wrap justify-content-center' key='flex-list-container'>
                 {list}
             </div>,
             <WizScore 
