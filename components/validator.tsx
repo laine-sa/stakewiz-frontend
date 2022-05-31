@@ -480,22 +480,26 @@ const ValidatorBox2: FC<{
                         </div>                    
                     </div>  
                 </div>
-                <div className='bg-semidark rounded p-2 text-center flex-grow-1 m-1'>
-                    <div>
-                        {validator.version}
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>
+                        {validator.apy_estimate}%
                     </div>
                     <div>
                         <OverlayTrigger
                             placement="bottom"
                             overlay={
                                 <Tooltip>
-                                    Software version
+                                    Estimated APY based on this epoch's performance
                                 </Tooltip>
                             } 
                         >
-                            <i className='bi bi-cpu'></i>
+                            <i className='bi bi-graph-up-arrow'></i>
                         </OverlayTrigger>
                     </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.apy_estimate} aria-valuemin={0} aria-valuemax={10} style={{width: validator.apy_estimate*10+'%'}}>
+                        </div>                    
+                    </div> 
                 </div>
             </div>
             <div className='d-flex flex-column'>
