@@ -65,7 +65,7 @@ const TopBar: FC = () => {
         
       getEpochInfo()
       .then((epoch: EpochInfoI) => {
-        console.log(epoch);
+        
         setEpochInfo(epoch);
         
       });
@@ -90,7 +90,7 @@ const TopBar: FC = () => {
                 Epoch {epochInfo.epoch}
               </div>
               <div className="progress epoch-progress w-100">
-                <div className="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
+                <div className="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
                 </div>
               </div>
               <div className='epoch-progress-label text-secondary'>

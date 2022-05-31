@@ -40,7 +40,7 @@ body {
   font-family:lato;
   font-size:0.9rem;
   background-color:#31668f;
-  background-image:url('../public/images/bgs/lightning.webp');
+  background-image:url('../public/images/bg-symmetry.webp');
   background-size:cover;
   background-attachment:fixed;
 }
@@ -304,12 +304,16 @@ a:hover {
   font-size:12px;
 }
 
-@media only screen and (max-width: 991px) {
-  .m-bottom-13{
-    margin-bottom: 13px;
+.bg-semidark {
+  background-color:#414549;
+}
+
+@media only screen and (max-width:1200px) {
+  .validator-flex-container {
+    width:45%!important;
   }
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 800px) {
   
   .navbar-flex-container {
     flex-direction:column;
@@ -379,11 +383,19 @@ a:hover {
     height:auto;
   }
 
+  .validator-flex-container {
+    width:100%!important;
+  }
+
   .desktop-visible{
     display:none!important;
   }
   .mobile-visible {
     display:initial!important;
+  }
+
+  .validator-search-filter-row {
+    flex-direction: column!important;
   }
 
   #support-label {

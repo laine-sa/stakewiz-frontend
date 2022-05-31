@@ -334,7 +334,7 @@ const ValidatorBox2: FC<{
         <div className='d-flex w-25 flex-grow-1 rounded bg-dark px-2 py-2 m-1 flex-column validator-flex-container'>
             
             <div className='validator-flex-logo align-items-center d-flex'>
-                <div>
+                <div className='flex-shrink-0'>
                     <RenderImage
                         img={validator.image}
                         vote_identity={validator.vote_identity}
@@ -350,7 +350,7 @@ const ValidatorBox2: FC<{
                         </span>  
                     </Link>              
                 </div>
-                <div className='ms-auto badge bg-secondary align-self-start'>
+                <div className='ms-auto badge bg-semidark align-self-start'>
                     <OverlayTrigger
                         placement="top"
                         overlay={
@@ -362,8 +362,49 @@ const ValidatorBox2: FC<{
                         <span>{index+1}</span>
                     </OverlayTrigger>
                 </div>
-                    
             </div>  
+
+            <div className='d-flex my-2 flex-column'>
+                <div className='d-flex flex-row'>
+                    <div className='fw-bold me-2 w-25 flex-grow-1'>
+                        Identity
+                    </div>
+                    <div className='text-truncate'>
+                    <OverlayTrigger
+                        placement="left"
+                        overlay={
+                            <Tooltip>
+                                Copy
+                            </Tooltip>
+                        } 
+                        >
+                        <span className="click-to-copy videntity" id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
+                            {validator.identity}
+                        </span>
+                    </OverlayTrigger>
+                    </div>
+                </div>
+                <div className='d-flex flex-row'>
+                    <div className='fw-bold me-2 w-25 text-nowrap'>
+                        Vote Account
+                    </div>
+                    <div className='text-truncate'>
+                     <OverlayTrigger
+                        placement="left"
+                        overlay={
+                            <Tooltip>
+                                Copy
+                            </Tooltip>
+                        } 
+                        >
+                        <span className="click-to-copy vvoteaccount" id={validator.vote_identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
+                            {validator.vote_identity}
+                        </span>
+                    </OverlayTrigger>
+                    </div>
+                </div>
+            </div>
+
             <div className='d-flex text-center my-2'>
                 <div className='flex-grow-1'>
                     <span className={'pointer wiz-font me-3 '+renderRankTextColor()} onClick={() => showWizModal()}>WIZ SCORE</span>
@@ -376,14 +417,85 @@ const ValidatorBox2: FC<{
             </div>
 
             <div className='d-flex'>
-                <div className='bg-secondary p-2 text-center flex-grow-1 m-1'>
-                    {validator.skip_rate.toFixed(1)}%
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>
+                        {validator.skip_rate.toFixed(1)}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Skip rate (lower is better)
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-box'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.skip_rate} aria-valuemin={0} aria-valuemax={100} style={{width: validator.skip_rate+'%'}}>
+                        </div>                    
+                    </div>                
                 </div>
-                <div className='bg-secondary p-2 text-center flex-grow-1 m-1'>
-                    {validator.credit_ratio.toFixed(1)}%
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>   
+                        {validator.credit_ratio.toFixed(1)}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Voting rate (higher is better)
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-pencil-square'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.credit_ratio} aria-valuemin={0} aria-valuemax={100} style={{width: validator.credit_ratio+'%'}}>
+                        </div>                    
+                    </div>    
                 </div>
-                <div className='bg-secondary p-2 text-center flex-grow-1 m-1'>
-                    {validator.commission}%
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>
+                        {validator.commission}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Commission
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-cash-coin'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className={(validator.commission<=10) ? "progress-bar bg-warning" : "progress-bar bg-danger"} role="progressbar" aria-valuenow={validator.commission} aria-valuemin={0} aria-valuemax={10} style={{width: validator.commission*10+'%'}}>
+                        </div>                    
+                    </div>  
+                </div>
+                <div className='bg-semidark rounded p-2 text-center flex-grow-1 m-1'>
+                    <div>
+                        {validator.version}
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Software version
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-cpu'></i>
+                        </OverlayTrigger>
+                    </div>
                 </div>
             </div>
             <div className='d-flex flex-column'>

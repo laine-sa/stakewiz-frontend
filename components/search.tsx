@@ -124,7 +124,7 @@ class SearchBar extends React.Component<
                     </button>
                 </div>
             
-                <div className="d-flex flex-row">
+                <div className="d-flex flex-row validator-search-filter-row">
                     
                     <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
