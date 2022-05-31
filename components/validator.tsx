@@ -274,19 +274,19 @@ const ValidatorBox2: FC<{
 
         let stakeText, stakeColor, stakeBg, stakeWidth;
         if(validator.stake_ratio > config.STAKE_CATEGORIES.HIGH) {
-            stakeText = 'High Stake (◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)))+')';
+            stakeText = 'High Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
             stakeColor = 'text-danger';
             stakeBg = 'bg-danger';
             stakeWidth = 100;
         }
         else if(validator.stake_ratio > config.STAKE_CATEGORIES.MEDIUM) {
-            stakeText = 'Medium Stake (◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)))+')';
+            stakeText = 'Medium Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
             stakeColor = 'text-warning';
             stakeBg = 'bg-warning';
             stakeWidth = validator.stake_ratio*1000;
         }
         else {
-            stakeText = 'Low Stake (◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)))+')';
+            stakeText = 'Low Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
             stakeColor = 'text-success';
             stakeBg = 'bg-success';
             stakeWidth = validator.stake_ratio*1000;
@@ -422,7 +422,7 @@ const ValidatorBox2: FC<{
                 </div>
             </div>
 
-            <div className='d-flex'>
+            <div className='d-flex my-2'>
                 <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
                     <div className='p-2'>
                         {validator.skip_rate.toFixed(1)}%
@@ -508,7 +508,7 @@ const ValidatorBox2: FC<{
                     </div> 
                 </div>
             </div>
-            <div className='d-flex flex-column'>
+            <div className='d-flex flex-column my-2'>
                 {renderStakeBar()}
             </div>
             <div className='d-flex my-2'>
