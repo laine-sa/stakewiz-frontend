@@ -295,7 +295,13 @@ const ValidatorBox2: FC<{
         return (
             [
                 <div key={'stakebalabel-'+validator.vote_identity}>                
-                    <div className={"col text-center vstakelabel my-1"}>{stakeText}</div>            
+                    <div className={"d-flex align-items-center justify-content-center vstakelabel my-1"}>
+                        {stakeText}
+                        <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => showStakeModal()}>
+                            <i className='bi bi-plus pe-1 alert-btn-icon'></i>
+                            Stake
+                        </button>
+                    </div>            
                 </div>,
                 <div key={'stakebar-'+validator.vote_identity}>                
                     <div className="col mt-1">                    
@@ -507,19 +513,22 @@ const ValidatorBox2: FC<{
             </div>
             <div className='d-flex my-2'>
                 <div className='flex-grow-1 mx-1'>
-                    <button className='btn btn-outline-info btn-sm w-100'>
-                        Stake
-                    </button>
-                </div>
-                <div className='flex-grow-1 mx-1'>
-                    <button className='btn btn-outline-warning btn-sm w-100' onClick={() => showWizModal()}>
+                    <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showWizModal()}>
                         Scorecard
                     </button>
                 </div>
                 <div className='flex-grow-1 mx-1'>
-                    <button className='btn btn-outline-light btn-sm w-100'>
-                        More Info
+                    <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showAlertModal()}>
+                        <i className='bi bi-plus pe-1 alert-btn-icon'></i>
+                        Alert
                     </button>
+                </div>
+                <div className='flex-grow-1 mx-1'>
+                    <Link href={'/validator/'+validator.vote_identity} passHref>
+                        <button className='btn btn-outline-secondary text-light btn-sm w-100'>
+                            More Info
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
