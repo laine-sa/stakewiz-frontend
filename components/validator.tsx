@@ -202,8 +202,8 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
         list.push(this.renderValidator(i));
       }
-      list.push(<div className='d-flex w-25 flex-grow-1'></div>);
-      list.push(<div className='d-flex w-25 flex-grow-1'></div>);
+      list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-1'></div>);
+      list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);
   
       return (
           [
