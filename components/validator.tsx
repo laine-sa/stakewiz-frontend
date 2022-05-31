@@ -495,7 +495,7 @@ const ValidatorBox2: FC<{
                             placement="bottom"
                             overlay={
                                 <Tooltip>
-                                    Estimated APY based on this epoch's performance
+                                    Estimated APY based on this epoch&apos;s performance
                                 </Tooltip>
                             } 
                         >
