@@ -16,40 +16,40 @@ interface ValidatorData {
 }
 
   export const ValidatorFilterData: FC<{
-    filterValidator: ValidatorData; 
-  }> = (props) => {
-    const activated_stake = new Intl.NumberFormat().format(Number(props.filterValidator.activated_stake.toFixed(0)));
+    filteredValidator: ValidatorData; 
+  }> = ({filteredValidator}) => {
+    const activated_stake = new Intl.NumberFormat().format(Number(filteredValidator.activated_stake.toFixed(0)));
     return (
       <>
         <li className="item">
           <Link
-            href={"/validator/" + props.filterValidator.vote_identity}
+            href={"/validator/" + filteredValidator.vote_identity}
             passHref
             >
             <a>
-            {(props.filterValidator.image) && 
-              <div className="product-img">
+            {(filteredValidator.image) && 
+              <div className="validator-img">
                 <RenderImage
-                    img={(props.filterValidator.image)}
-                    vote_identity={props.filterValidator.vote_identity}
+                    img={(filteredValidator.image)}
+                    vote_identity={filteredValidator.vote_identity}
                     size={50}
                 />
               </div>
             }
-              <div className="product-info">
-                <div className="product-title">
-                    <b>{props.filterValidator.name}</b>
+              <div className="validator-info">
+                <div className="validator-title">
+                    <b>{filteredValidator.name}</b>
                   
                 </div>
-                <div className={`scroll-description ${(!props.filterValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
-                  <span className="product-description text-truncate">
-                    <b>Identity:</b>&nbsp;{props.filterValidator.identity}
+                <div className={`scroll-description ${(!filteredValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
+                  <span className="validator-description text-truncate">
+                    <b>Identity:</b>&nbsp;{filteredValidator.identity}
                   </span>
-                  <span className="product-description text-truncate">
+                  <span className="validator-description text-truncate">
                     <b>Vote Identity:</b>&nbsp;
-                    {props.filterValidator.vote_identity}
+                    {filteredValidator.vote_identity}
                   </span>
-                  <span className="product-description">
+                  <span className="validator-description">
                     <b>Activated Stake:</b>&nbsp;
                     ◎ {activated_stake}
                   </span>
@@ -64,12 +64,12 @@ interface ValidatorData {
 
   }
 
-  const Search: FC<{
+  const GlobalSearch: FC<{
     mobilehide : string,
     elementID : string,
     validatorList ? : string[],
     showSearchValidators ? : boolean
-    }> = (props) => {
+    }> = ({ mobilehide, elementID }) => {
     const validatorList = useContext(ValidatorContext);
     useEffect(() => {
       setSearchValidators(validatorList)
@@ -120,25 +120,25 @@ interface ValidatorData {
  
   return (
     <>
-      <div className={`search-container ${props.mobilehide}`} >
-          <input className={`search expandright ${(showSearchValidators) ? 'src-active' : ''}`} id={props.elementID} type="search" name="search" placeholder="Search validators..."        
+      <div className={`search-container ${mobilehide}`} >
+          <input className={`search expandright ${(showSearchValidators) ? 'src-active' : ''}`} id={elementID} type="search" name="search" placeholder="Search validators..."        
           onChange={(e) => {doSearch(e.target.name, e.target.value)}}  autoComplete="off" value={searchInput} />
-          <label className={`btnSearch searchbtn ${(showSearchValidators) ? 'btnSearch-active' : ''}`} htmlFor={props.elementID}>
+          <label className={`btnSearch searchbtn ${(showSearchValidators) ? 'btnSearch-active' : ''}`} htmlFor={elementID}>
             <span className="mglass">⚲</span></label>
         {(hasFilterData && showSearchValidators) ?
-            <div className="elastic-search-result-div scrollSrc">
-                  <ul className="products-list product-list-in-box">
+            <div className="search-result-div scrollSrc">
+                  <ul className="validators-list validator-list-in-box">
                     <div className="search-result-heading"></div>
                       {  searchFilterValidators.map((validator) =>
                         <ValidatorFilterData
                         key={validator.identity}
-                        filterValidator={validator}
+                        filteredValidator={validator}
                       />
                     )}
                   </ul>
             </div>
             : (!hasFilterData && showSearchValidators) ? 
-                <div className="elastic-search-result-div scrollSrc">
+                <div className="search-result-div scrollSrc">
                    No Results Found
                 </div>
             : null
@@ -148,4 +148,4 @@ interface ValidatorData {
   )
 
 }
-export default Search;
+export default GlobalSearch;

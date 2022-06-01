@@ -25,7 +25,7 @@ const API_URL = process.env.API_BASE_URL;
 class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     constructor(props, context ) {
       super(props);
-      
+
       if(this.props.state.clusterStats==null) this.getClusterStats();
       
       if(this.props.userPubkey) {

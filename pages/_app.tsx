@@ -49,14 +49,18 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   );
 
   const [validators, setValidators] = useState([]);
-  const validatorCon = useContext(ValidatorContext);
     useEffect(() => {
         if(validators.length < 1){
             const getValidator = async() => {
-                const validatorList : any = await ValidatorData();
+                let validatorList : any;
+                try{
+                    validatorList  = await ValidatorData();
+                }catch(e){
+                    validatorList = [];
+                }
                 setValidators(validatorList)
             }
-            getValidator()
+            getValidator();
         }
     }, [validators]);
 

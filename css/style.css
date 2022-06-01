@@ -393,7 +393,7 @@ a:hover {
   right: 0;
 }
 
-.product-title{
+.validator-title{
   color:#000;
 }
 .expandright:focus {
@@ -403,7 +403,7 @@ a:hover {
 .top-search-box::placeholder {
   color: #ccc;
 }
-.elastic-search-result-div {
+.search-result-div {
   position: absolute;
   max-height: 535px;
   overflow: auto;
@@ -418,7 +418,7 @@ a:hover {
   overflow-x: hidden;
   padding: 5px;
 }
-.elastic-search-result-div .box {
+.search-result-div .box {
   margin-bottom: 0;
 }
 .search-result-li {
@@ -441,23 +441,23 @@ a:hover {
 .navbar-nav {
   align-items: center;
 }
-.elastic-search-result-div:focus {
+.search-result-div:focus {
   width: 363px;
   padding: 0 16px 0 0;
 }
 
-.elastic-search-result-div:focus {
+.search-result-div:focus {
   padding: 0 0 0 16px;
 }
 
-.products-list .product-img {
+.validators-list .validator-img {
   float: left;
   width: 10%;
 }
-.products-list .product-img img {
+.validators-list .validator-img img {
   object-fit: cover;
 }
-.products-list .product-info {
+.validators-list .validator-info {
   margin-left: 8px;
   float: left;
   width: 68%;
@@ -482,7 +482,7 @@ a:hover {
 .clrFix {
   clear: both;
 }
-.products-list .product-description {
+.validators-list .validator-description {
   display: block;
   color: #999;
   overflow: hidden;
@@ -513,7 +513,7 @@ a:hover {
   .src-active {
     width: 77vw;
   }
-  .elastic-search-result-div {width: 678px;}
+  .search-result-div {width: 678px;}
 }
 @media only screen and (max-width: 767px) {
     .search:focus {
@@ -522,7 +522,7 @@ a:hover {
   .src-active {
     width: 77vw;
   }
-  .elastic-search-result-div {width: 338px;}
+  .search-result-div {width: 338px;}
 }
 /*--------*/
 @media only screen and (max-width: 991px) {
