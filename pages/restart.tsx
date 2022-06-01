@@ -27,21 +27,26 @@ export default function Home() {
 
     const [stake, setStake] = useState(null);
 
-    getStake();
 
-    useEffect(() => {
+    const getStake = () => {
         axios(API_URL+config.API_ENDPOINTS.gossip_stake, {
             headers: {'Content-Type':'application/json'}
         })
           .then(response => {
             let json = response.data;
-            console.log(json);
             setStake(json.active_stake);
           })
           .catch(e => {
             console.log(e);
           })
-    }, [])
+    }
+
+    setTimeout(() => {
+            getStake()
+        },
+        5000
+    );
+
 
     return (
         <div>
@@ -66,6 +71,9 @@ export default function Home() {
                         </div>    
                         <div className='text-center text-white fs-5'>
                             Bar above shows active stake visible in gossip. Once 80% is active the network will restart.
+                        </div>       
+                        <div className='text-center text-white'>
+                            Updates every 5 seconds
                         </div>       
                         <div className='text-center text-white fs-6 my-3'>
                             <p>This display was rapidly built to provide insight into the restart. It receives data directly from our validator log every 5 seconds, refresh to update.</p>
