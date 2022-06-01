@@ -82,7 +82,7 @@ export default function Home() {
                             <p>Information is provided without warranty for it&apos;s accuracy.</p>
                         </div>         
                     </div>     
-                ) : <h2>Loading</h2>}
+                ) : <h2 className='text-white'>Loading...</h2>}
                 
             </main>
 
