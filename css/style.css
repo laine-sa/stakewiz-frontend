@@ -8,6 +8,12 @@
   src: url('./fonts/lato/Lato-Regular.ttf');
 }
 
+@font-face {
+  font-family:fullpack;
+  src: url('./fonts/fullpack.ttf');
+}
+
+
 button:focus, button:active {
   outline:none!important;
   box-shadow:none!important;
@@ -33,8 +39,8 @@ body {
   font-display:auto;
   font-family:lato;
   font-size:0.9rem;
-  background-color:#131313;
-  background-image:url('../public/images/body-bg2.webp');
+  background-color:#31668f;
+  background-image:url('../public/images/bg-symmetry.webp');
   background-size:cover;
   background-attachment:fixed;
 }
@@ -124,7 +130,7 @@ input:focus {
 #clear-input {
   position:absolute;
   right:1rem;
-  z-index:999;
+  z-index:10;
 }
 
 .social-icons {
@@ -160,6 +166,11 @@ a:hover {
 
 .cluster_statistic {
   font-size:0.7rem;
+}
+
+.wiz-font {
+  font-family:fullpack;
+  text-transform:uppercase;
 }
 
 .click-to-copy {
@@ -293,12 +304,18 @@ a:hover {
   font-size:12px;
 }
 
-@media only screen and (max-width: 991px) {
-  .m-bottom-13{
-    margin-bottom: 13px;
+.bg-semidark {
+  background-color:#414549;
+}
+
+@media only screen and (max-width:1200px) {
+  .validator-flex-container {
+    width:45%!important;
   }
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 800px) {
+  
+
   
   .navbar-flex-container {
     flex-direction:column;
@@ -368,11 +385,19 @@ a:hover {
     height:auto;
   }
 
+  .validator-flex-container {
+    width:100%!important;
+  }
+
   .desktop-visible{
     display:none!important;
   }
   .mobile-visible {
     display:initial!important;
+  }
+
+  .validator-search-filter-row {
+    flex-direction: column!important;
   }
 
   #support-label {

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, FC } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import SearchBar from './search';
@@ -13,11 +13,12 @@ import { Connection, ConnectionConfig, PublicKey } from '@solana/web3.js';
 import { checkSolflareEnabled } from './common';
 import { StakeHistoryChart } from './validator/stake_history'
 import { DelinquencyChart } from './validator/delinquency'
-import { StakeLabel, RenderUrl, RenderImage } from './validator/common'
+import { StakeLabel, RenderUrl, RenderImage, RenderName } from './validator/common'
 import { Gauges } from './validator/gauges';
 import { EpochStakeChart } from './validator/epoch_stake'
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
 import { StakeDialog } from './stake';
+const ordinal = require ('ordinal');
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -184,14 +185,14 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
 class ValidatorList extends React.Component<ValidatorListI, {}> {
     renderValidator(i:number) {
       return (
-              <ValidatorBox 
-                key={this.props.validators[i].vote_identity}
+              <ValidatorBox2
                 clusterStats={this.props.clusterStats}
                 validator={this.props.validators[i]} 
                 showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
                 showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
                 showStakeModal={() => this.props.updateStakeModal(true,this.props.validators[i])}
                 connected={this.props.connected}
+                index={i}
               />
       );
     }
@@ -201,10 +202,14 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
         list.push(this.renderValidator(i));
       }
+      list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-1'></div>);
+      list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);
   
       return (
           [
-            list,
+            <div className='d-flex flex-wrap justify-content-center' key='flex-list-container'>
+                {list}
+            </div>,
             <WizScore 
                 key='wizScoreModal'  
                 showWizModal={this.props.showWizModal}
@@ -254,8 +259,282 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
           return null;
       }
 }
-  
-  
+
+const ValidatorBox2: FC<{
+    validator: validatorI,
+    clusterStats: clusterStatsI,
+    showWizModal: Function;
+    showAlertModal: Function;
+    showStakeModal: Function;
+    connected: boolean;
+    index: number;
+}> = ({validator,clusterStats,showWizModal,showAlertModal,showStakeModal,connected,index}) => {
+
+    const renderStakeBar = () => {
+
+        let stakeText, stakeColor, stakeBg, stakeWidth;
+        if(validator.stake_ratio > config.STAKE_CATEGORIES.HIGH) {
+            stakeText = 'High Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
+            stakeColor = 'text-danger';
+            stakeBg = 'bg-danger';
+            stakeWidth = 100;
+        }
+        else if(validator.stake_ratio > config.STAKE_CATEGORIES.MEDIUM) {
+            stakeText = 'Medium Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
+            stakeColor = 'text-warning';
+            stakeBg = 'bg-warning';
+            stakeWidth = validator.stake_ratio*1000;
+        }
+        else {
+            stakeText = 'Low Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
+            stakeColor = 'text-success';
+            stakeBg = 'bg-success';
+            stakeWidth = validator.stake_ratio*1000;
+        }        
+
+        return (
+            [
+                <div key={'stakebalabel-'+validator.vote_identity}>                
+                    <div className={"d-flex align-items-center justify-content-center vstakelabel my-1"}>
+                        {stakeText}
+                        <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => showStakeModal()} disabled={!connected}>
+                            <i className='bi bi-plus pe-1 alert-btn-icon'></i>
+                            Stake
+                        </button>
+                    </div>            
+                </div>,
+                <div key={'stakebar-'+validator.vote_identity}>                
+                    <div className="col mt-1">                    
+                        <div className="progress" data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom">                        
+                            <div className={"progress-bar "+stakeBg} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin={0} aria-valuemax={100} style={{width: stakeWidth+'%'}}>
+                            </div>                    
+                        </div>                
+                    </div>            
+                </div>     
+            ]
+        );
+    }
+
+    const renderRankBgColor = () => {
+        if(validator.rank<=config.WIZ_SCORE_RANK_GROUPS.TOP) {
+            return 'bg-success';
+        }
+        else if(validator.rank<=config.WIZ_SCORE_RANK_GROUPS.MEDIUM) {
+            return 'bg-warning';
+        }
+        else return 'bg-danger';
+    }
+
+    const renderRankTextColor = () => {
+        if(validator.rank<=config.WIZ_SCORE_RANK_GROUPS.TOP) {
+            return 'text-success';
+        }
+        else if(validator.rank<=config.WIZ_SCORE_RANK_GROUPS.MEDIUM) {
+            return 'text-warning';
+        }
+        else return 'text-danger';
+    }
+
+
+    return (
+        <div className='d-flex w-25 flex-grow-1 rounded bg-dark px-2 py-2 m-1 flex-column validator-flex-container'>
+            
+            <div className='validator-flex-logo align-items-center d-flex'>
+                <div className='flex-shrink-0'>
+                    <RenderImage
+                        img={validator.image}
+                        vote_identity={validator.vote_identity}
+                        size={50}
+                    />
+                </div>
+                <div className='text-truncate fs-5'>
+                    <Link href={'/validator/'+validator.vote_identity} passHref>
+                        <span className="ms-2 vlist-name-inner pointer">
+                            <RenderName
+                                validator={validator}    
+                            />
+                        </span>  
+                    </Link>              
+                </div>
+                <div className='ms-auto badge bg-semidark align-self-start'>
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Tooltip>
+                                Ranking in these search results
+                            </Tooltip>
+                        } 
+                    >
+                        <span>{index+1}</span>
+                    </OverlayTrigger>
+                </div>
+            </div>  
+
+            <div className='d-flex my-2 flex-column'>
+                <div className='d-flex flex-row'>
+                    <div className='fw-bold me-2 w-25 flex-grow-1'>
+                        Identity
+                    </div>
+                    <div className='text-truncate'>
+                    <OverlayTrigger
+                        placement="left"
+                        overlay={
+                            <Tooltip>
+                                Copy
+                            </Tooltip>
+                        } 
+                        >
+                        <span className="click-to-copy videntity" id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
+                            {validator.identity}
+                        </span>
+                    </OverlayTrigger>
+                    </div>
+                </div>
+                <div className='d-flex flex-row'>
+                    <div className='fw-bold me-2 w-25 text-nowrap'>
+                        Vote Account
+                    </div>
+                    <div className='text-truncate'>
+                     <OverlayTrigger
+                        placement="left"
+                        overlay={
+                            <Tooltip>
+                                Copy
+                            </Tooltip>
+                        } 
+                        >
+                        <span className="click-to-copy vvoteaccount" id={validator.vote_identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
+                            {validator.vote_identity}
+                        </span>
+                    </OverlayTrigger>
+                    </div>
+                </div>
+            </div>
+
+            <div className='d-flex text-center my-2'>
+                <div className='flex-grow-1'>
+                    <span className={'pointer wiz-font me-3 '+renderRankTextColor()} onClick={() => showWizModal()}>WIZ SCORE</span>
+                    <span className='fw-bold'>{validator.wiz_score}%</span>
+                </div>
+                <div className='flex-grow-1'>
+                    <span className={'wiz-font me-3 '+renderRankTextColor()}>WIZ RANK</span>
+                    <span className='fw-bold'>{ordinal(validator.rank)}</span>
+                </div>
+            </div>
+
+            <div className='d-flex my-2'>
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>
+                        {validator.skip_rate.toFixed(1)}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Skip rate (lower is better)
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-box'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.skip_rate} aria-valuemin={0} aria-valuemax={100} style={{width: validator.skip_rate+'%'}}>
+                        </div>                    
+                    </div>                
+                </div>
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>   
+                        {validator.credit_ratio.toFixed(1)}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Voting rate (higher is better)
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-pencil-square'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.credit_ratio} aria-valuemin={0} aria-valuemax={100} style={{width: validator.credit_ratio+'%'}}>
+                        </div>                    
+                    </div>    
+                </div>
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>
+                        {validator.commission}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Commission
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-cash-coin'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className={(validator.commission<=10) ? "progress-bar bg-warning" : "progress-bar bg-danger"} role="progressbar" aria-valuenow={validator.commission} aria-valuemin={0} aria-valuemax={10} style={{width: validator.commission*10+'%'}}>
+                        </div>                    
+                    </div>  
+                </div>
+                <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='p-2'>
+                        {validator.apy_estimate}%
+                    </div>
+                    <div>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Estimated APY based on this epoch&apos;s performance
+                                </Tooltip>
+                            } 
+                        >
+                            <i className='bi bi-graph-up-arrow'></i>
+                        </OverlayTrigger>
+                    </div>
+                    <div className="progress bg-semidark" style={{height: '2px'}}>                        
+                        <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.apy_estimate} aria-valuemin={0} aria-valuemax={10} style={{width: validator.apy_estimate*10+'%'}}>
+                        </div>                    
+                    </div> 
+                </div>
+            </div>
+            <div className='d-flex flex-column my-2'>
+                {renderStakeBar()}
+            </div>
+            <div className='d-flex my-2'>
+                <div className='flex-grow-1 mx-1'>
+                    <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showWizModal()}>
+                        Scorecard
+                    </button>
+                </div>
+                <div className='flex-grow-1 mx-1'>
+                    <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showAlertModal()}>
+                        <i className='bi bi-plus pe-1 alert-btn-icon'></i>
+                        Alert
+                    </button>
+                </div>
+                <div className='flex-grow-1 mx-1'>
+                    <Link href={'/validator/'+validator.vote_identity} passHref>
+                        <button className='btn btn-outline-secondary text-light btn-sm w-100'>
+                            More Info
+                        </button>
+                    </Link>
+                </div>
+            </div>
+        </div>
+
+    )
+}
 
 class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
     constructor(props) {
