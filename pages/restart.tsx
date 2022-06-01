@@ -39,6 +39,7 @@ export default function Home() {
                     <div className='container'>         
                         <div className='text-center'>
                             <h2 className='text-white'>Network has restarted.</h2>
+                            <h4 className='text-white my-5'>While block production has resumed many websites, dapps and wallets rely on RPC Nodes which also need to restart so it may take some more time until all services are restored.</h4>
                         </div>             
                         <div className='text-center text-white fs-6 my-3'>
                             <p>This display was rapidly built to provide insight into the restart. It receives data directly from our validator log every 5 seconds, refresh to update.</p>
