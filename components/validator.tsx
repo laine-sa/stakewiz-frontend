@@ -35,7 +35,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     }
     componentDidUpdate() {
         const validatorsContext : any = this.context
-        if(this.props.state.validators == null && (validatorsContext.length > 0)){
+        if(this.props.state.validators == null && (validatorsContext) && (validatorsContext.length > 0)){
             this.props.updateState({
                 validators: validatorsContext,
                 filteredValidators: validatorsContext,
