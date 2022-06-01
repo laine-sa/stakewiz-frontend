@@ -25,7 +25,7 @@ const API_URL = process.env.API_BASE_URL;
 class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     constructor(props, context ) {
       super(props);
-      //if(this.props.state.validators==null) this.getValidators();
+      
       if(this.props.state.clusterStats==null) this.getClusterStats();
       
       if(this.props.userPubkey) {
@@ -43,25 +43,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
             });
         }
     }
-    getValidators() {
-      axios(API_URL+config.API_ENDPOINTS.validators, {
-          headers: {'Content-Type':'application/json'}
-      })
-        .then(response => {
-          let json = response.data;
-          
-          this.props.updateState({
-              validators: json,
-              filteredValidators: json,
-              hasData: true,
-          });
-        })
-        .catch(e => {
-          console.log(e);
-          setTimeout(() => { this.getValidators() }, 5000);
-        })
-    }
-  
+
     getWalletValidators(pubkey) {
       axios(API_URL+config.API_ENDPOINTS.wallet_validators+'/'+pubkey, {
           headers: {'Content-Type':'application/json'}
