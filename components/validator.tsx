@@ -297,7 +297,7 @@ const ValidatorBox2: FC<{
                 <div key={'stakebalabel-'+validator.vote_identity}>                
                     <div className={"d-flex align-items-center justify-content-center vstakelabel my-1"}>
                         {stakeText}
-                        <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => showStakeModal()}>
+                        <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => showStakeModal()} disabled={!connected}>
                             <i className='bi bi-plus pe-1 alert-btn-icon'></i>
                             Stake
                         </button>

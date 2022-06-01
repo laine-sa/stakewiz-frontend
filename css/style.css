@@ -130,7 +130,7 @@ input:focus {
 #clear-input {
   position:absolute;
   right:1rem;
-  z-index:999;
+  z-index:10;
 }
 
 .social-icons {
