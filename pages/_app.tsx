@@ -13,7 +13,9 @@ import {
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { AppProps } from 'next/app';
-import { FC, useMemo } from 'react';
+import { FC, useMemo,  useEffect, useState, useContext } from 'react';
+import { ValidatorContext } from '../components/validator/validatorhook';
+import { ValidatorData } from '../components/common';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('bootstrap/dist/css/bootstrap.css');
@@ -46,7 +48,20 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
       [network]
   );
 
+  const [validators, setValidators] = useState([]);
+  const validatorCon = useContext(ValidatorContext);
+    useEffect(() => {
+        if(validators.length < 1){
+            const getValidator = async() => {
+                const validatorList : any = await ValidatorData();
+                setValidators(validatorList)
+            }
+            getValidator()
+        }
+    }, [validators]);
+
   return (
+    <ValidatorContext.Provider value={validators}>
       <ConnectionProvider endpoint={endpoint}>
           <WalletProvider wallets={wallets} autoConnect>
               <WalletModalProvider>
@@ -54,6 +69,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
               </WalletModalProvider>
           </WalletProvider>
       </ConnectionProvider>
+      </ValidatorContext.Provider>
   );
 };
 

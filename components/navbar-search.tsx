@@ -1,9 +1,9 @@
-import React, {useState, useEffect, FC} from 'react';
+import React, {useState, useEffect, useContext, FC} from 'react';
 import Link from 'next/link';
-import { ValidatorData, WalletValidator } from './common';
 import { useWallet} from '@solana/wallet-adapter-react';
 import { RenderImage } from './validator/common'
 import config from '../config.json';
+import { ValidatorContext } from './validator/validatorhook'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -70,24 +70,15 @@ interface ValidatorData {
     validatorList ? : string[],
     showSearchValidators ? : boolean
     }> = (props) => {
+    const validatorList = useContext(ValidatorContext);
     useEffect(() => {
-    const getValidator = async() => {
-        const validatorList:any = await ValidatorData();
-        const pubkey = (connected) ? publicKey.toString() : null
-        const validatorWalletList:any = await WalletValidator(pubkey);
-        setSearchValidators(validatorList)
-        setSearchWalletValidators(validatorWalletList)
-      }
-      getValidator()
-    }, []);
+      setSearchValidators(validatorList)
+    },[validatorList])
     const [hasFilterData, setHasFilterData] = useState(false);
     const [searchValidators, setSearchValidators] = useState([]);
     const [searchFilterValidators, setSearchFilterValidators] = useState([]);
-    const [searchWalletValidators, setSearchWalletValidators] = useState([]);
     const [showSearchValidators, setShowSearchValidators] = useState(false);
     const [searchInput, setSearchInput] = useState('');
-
-    let {connected, publicKey} = useWallet();
 
     const doSearch = async(key, searchTitle) => {
         setSearchInput(searchTitle)
@@ -106,9 +97,6 @@ interface ValidatorData {
                   continue;
                 }
                 else{
-                  if(searchWalletValidators.length > 0) {
-                    if(!searchWalletValidators.includes(vote_identity)) continue;
-                  }
                   let sf = "rank_asc"
                   sf = sf.substring(0,sf.length-4);
                   filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));

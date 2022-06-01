@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useContext } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import SearchBar from './search';
@@ -18,13 +18,14 @@ import { Gauges } from './validator/gauges';
 import { EpochStakeChart } from './validator/epoch_stake'
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
 import { StakeDialog } from './stake';
+import { ValidatorContext } from './validator/validatorhook'
 
 const API_URL = process.env.API_BASE_URL;
 
 class ValidatorListing extends React.Component<ValidatorListingI, {}> {
-    constructor(props) {
+    constructor(props, context ) {
       super(props);
-      if(this.props.state.validators==null) this.getValidators();
+      //if(this.props.state.validators==null) this.getValidators();
       if(this.props.state.clusterStats==null) this.getClusterStats();
       
       if(this.props.userPubkey) {
@@ -32,7 +33,16 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       }
       
     }
-  
+    componentDidUpdate() {
+        const validatorsContext : any = this.context
+        if(this.props.state.validators == null && (validatorsContext.length > 0)){
+            this.props.updateState({
+                validators: validatorsContext,
+                filteredValidators: validatorsContext,
+                hasData: true,
+            });
+        }
+    }
     getValidators() {
       axios(API_URL+config.API_ENDPOINTS.validators, {
           headers: {'Content-Type':'application/json'}
@@ -134,7 +144,6 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       }
   
     render() {
-        
       if(!this.props.state.hasData || this.props.state.clusterStats == null) {
         return (
           <Spinner />
@@ -180,6 +189,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       }
     }
 }
+ValidatorListing.contextType = ValidatorContext;
 
 class ValidatorList extends React.Component<ValidatorListI, {}> {
     renderValidator(i:number) {
