@@ -315,7 +315,6 @@ a:hover {
 }
 @media only screen and (max-width: 800px) {
   
-
   
   .navbar-flex-container {
     flex-direction:column;
@@ -535,19 +534,12 @@ a:hover {
     flex-direction:row;
   }
 
-  .mobile-gauges {
-    display:block;
-    flex-direction:unset!important;
+  .mobile-gauge-gauge {
+    width:100%;
   }
 
-  .mobile-gauges div {
-    margin:0;
-    padding:0;
-  }
-
-  .mobile-gauge-container {
-    margin: 0;
-    padding: 0;
+  .mobile-gauge-div {
+    width:75%!important;
   }
 }
 
