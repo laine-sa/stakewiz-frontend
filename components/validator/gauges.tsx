@@ -42,7 +42,7 @@ export const Gauges: FC<{
                             arcPadding={0.03}
                             needleBaseColor="#AAAAAA"
                             needleColor="#AAAAAA"
-                            animateDuration={6000}
+                            animate={false}
                             cornerRadius={0}
                         />
                     </div>
@@ -60,7 +60,7 @@ export const Gauges: FC<{
                         arcPadding={0.03}
                         needleBaseColor="#AAAAAA"
                         needleColor="#AAAAAA"
-                        animateDuration={6000}
+                        animate={false}
                         cornerRadius={0}
                     />
                     </div>
@@ -78,7 +78,7 @@ export const Gauges: FC<{
                         arcPadding={0.03}
                         needleBaseColor="#AAAAAA"
                         needleColor="#AAAAAA"
-                        animateDuration={6000}
+                        animate={false}
                         cornerRadius={0}
                     />
                     </div>
@@ -96,7 +96,7 @@ export const Gauges: FC<{
                         arcPadding={0.03}
                         needleBaseColor="#AAAAAA"
                         needleColor="#AAAAAA"
-                        animateDuration={6000}
+                        animate={false}
                         cornerRadius={0}
                     />
                     </div>
