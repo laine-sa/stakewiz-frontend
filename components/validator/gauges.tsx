@@ -1,5 +1,7 @@
 import { FC } from "react";
 import Chart from "react-google-charts";
+import GaugeChart from 'react-gauge-chart'
+
 
 export const Gauges: FC<{
     skip_rate: number, 
@@ -29,71 +31,83 @@ export const Gauges: FC<{
     ]
 
     return (
-        <div className='d-flex flex-wrap justify-content-center'>
-            <Chart
-                chartType="Gauge"
-                width="10rem"
-                height="10rem"
-                data={skipGauge}
-                options={{
-                    greenFrom: 0,
-                    greenTo: 5,
-                    yellowFrom: 5,
-                    yellowTo: 10,
-                    minorTicks: 5,
-                    min:0,
-                    max:20,
-                    allowAsync: true
-                }}
-            />
-            <Chart
-                chartType="Gauge"
-                width="10rem"
-                height="10rem"
-                data={creditGauge}
-                options={{
-                    greenFrom: 85,
-                    greenTo: 100,
-                    yellowFrom: 75,
-                    yellowTo: 85,
-                    minorTicks: 5,
-                    min:50,
-                    max:100,
-                    allowAsync: true
-                }}
-            />
-            <Chart
-                chartType="Gauge"
-                width="10rem"
-                height="10rem"
-                data={wizScoreGauge}
-                options={{
-                    greenFrom: 85,
-                    greenTo: 100,
-                    yellowFrom: 70,
-                    yellowTo: 85,
-                    minorTicks: 5,
-                    min:50,
-                    max:100,
-                    allowAsync: true
-                }}
-            />
-            <Chart
-                chartType="Gauge"
-                width="10rem"
-                height="10rem"
-                data={uptimeGauge}
-                options={{
-                    greenFrom: 99.5,
-                    greenTo: 100,
-                    yellowFrom: 98.5,
-                    yellowTo:99.5,
-                    minorTicks: 5,
-                    min: 95,
-                    max: 100,
-                    allowAsync: true
-                }}
-            />
+        <div className='d-flex flex-wrap justify-content-center mobile-gauge-container'>
+            <div className='d-flex mobile-gauge-row'>
+                <div className='flex-grow-1 d-flex flex-column align-items-center mobile-gauge-gauge'>
+                    <div>
+                        <GaugeChart id='gauge-chart-skip' 
+                            nrOfLevels={15} 
+                            percent={skip_rate/100} 
+                            colors={["#198754", "#FFFFFF"]} 
+                            arcWidth={0.08} 
+                            arcPadding={0.03}
+                            needleBaseColor="#AAAAAA"
+                            needleColor="#AAAAAA"
+                            animateDuration={6000}
+                            cornerRadius={0}
+                        />
+                    </div>
+                    <div className='fs-6 fw-bold'>
+                        Skip rate
+                    </div>
+                </div>
+                <div className='flex-grow-1 d-flex flex-column align-items-center'>
+                    <div>
+                    <GaugeChart id='gauge-chart-credits' 
+                        nrOfLevels={15} 
+                        percent={credit_ratio/100}  
+                        colors={["#CCCCCC", "#198754"]} 
+                        arcWidth={0.08} 
+                        arcPadding={0.03}
+                        needleBaseColor="#AAAAAA"
+                        needleColor="#AAAAAA"
+                        animateDuration={6000}
+                        cornerRadius={0}
+                    />
+                    </div>
+                    <div className='fs-6 fw-bold'>
+                        Voting rate
+                    </div>
+                </div>
+            </div>
+            <div className='d-flex mobile-gauge-row'>
+                <div className='flex-grow-1 d-flex flex-column align-items-center'>
+                    <div>
+                    <GaugeChart id='gauge-chart-wiz' 
+                        nrOfLevels={15} 
+                        percent={wiz_score/100}  
+                        colors={["#FFFFFF", "#198754"]} 
+                        arcWidth={0.08} 
+                        arcPadding={0.03}
+                        needleBaseColor="#AAAAAA"
+                        needleColor="#AAAAAA"
+                        animateDuration={6000}
+                        cornerRadius={0}
+                    />
+                    </div>
+                    <div className='fs-6 fw-bold'>
+                        <span className='wiz-font me-2'>WIZ</span> score
+                    </div>
+                </div>
+                <div className='flex-grow-1 d-flex flex-column align-items-center'>
+                    <div>
+                    <GaugeChart id='gauge-chart-uptime' 
+                        nrOfLevels={15} 
+                        percent={uptime/100}  
+                        colors={["#CCCCCC", "#198754"]} 
+                        arcWidth={0.08} 
+                        arcPadding={0.03}
+                        needleBaseColor="#AAAAAA"
+                        needleColor="#AAAAAA"
+                        animateDuration={6000}
+                        cornerRadius={0}
+                    />
+                    </div>
+                    <div className='fs-6 fw-bold'>
+                        Uptime (30 days)
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
