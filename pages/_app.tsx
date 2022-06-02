@@ -56,7 +56,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
                 try{
                     validatorList  = await ValidatorData();
                 }catch(e){
-                    console.log(e);
+                    setTimeout(()=>{ console.log(e)},5000);
                 }
                 setValidators(validatorList)
             }

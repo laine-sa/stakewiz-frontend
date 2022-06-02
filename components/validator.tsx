@@ -897,7 +897,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         if(this.props.vote_identity!='') this.getValidator();
         if(this.state.clusterStats==null) this.getClusterStats();
     }
-
     getValidator() {
         axios(API_URL+config.API_ENDPOINTS.validator+'/'+this.props.vote_identity, {
           headers: {'Content-Type':'application/json'}
@@ -958,7 +957,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         const solflareEnabled = checkSolflareEnabled(this.props.userPubkey);
 
         if(this.state.validator!=null) {
-
             
 
             let updated_at = new Date(this.state.validator.updated_at);

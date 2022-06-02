@@ -4,6 +4,7 @@ import { useWallet} from '@solana/wallet-adapter-react';
 import { RenderImage } from './validator/common'
 import config from '../config.json';
 import { ValidatorContext } from './validator/validatorhook'
+import { useRouter } from 'next/router'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -18,7 +19,15 @@ interface ValidatorData {
   export const ValidatorFilterData: FC<{
     filteredValidator: ValidatorData; 
   }> = ({filteredValidator}) => {
+    const router = useRouter()
     const activated_stake = new Intl.NumberFormat().format(Number(filteredValidator.activated_stake.toFixed(0)));
+
+    let validatorUrl : string =`/validator/${filteredValidator.vote_identity}`
+    const validatorClick = (e) => {
+       e.preventDefault()
+       router.push(validatorUrl)
+     }
+
     return (
       <>
         <li className="item">
@@ -31,11 +40,7 @@ interface ValidatorData {
                 />
               </div>
             }
-            <Link
-            href={"/validator/" + filteredValidator.vote_identity}
-            passHref
-            >
-            <a>
+            <a href={"/validator/" + filteredValidator.vote_identity} onClick={() => {validatorClick}}>
               <div className="validator-info">
                 <div className="validator-title">
                     <b>{filteredValidator.name}</b>
@@ -56,7 +61,6 @@ interface ValidatorData {
                 </div>
               </div>
               </a>
-              </Link>
               <div className="clrFix"></div>
         </li>
       </>
