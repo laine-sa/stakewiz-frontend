@@ -22,11 +22,6 @@ interface ValidatorData {
     return (
       <>
         <li className="item">
-          <Link
-            href={"/validator/" + filteredValidator.vote_identity}
-            passHref
-            >
-            <a>
             {(filteredValidator.image) && 
               <div className="validator-img">
                 <RenderImage
@@ -36,16 +31,21 @@ interface ValidatorData {
                 />
               </div>
             }
+            <Link
+            href={"/validator/" + filteredValidator.vote_identity}
+            passHref
+            >
+            <a>
               <div className="validator-info">
                 <div className="validator-title">
                     <b>{filteredValidator.name}</b>
                   
                 </div>
                 <div className={`scroll-description ${(!filteredValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
-                  <span className="validator-description text-truncate">
+                  <span className="validator-description">
                     <b>Identity:</b>&nbsp;{filteredValidator.identity}
                   </span>
-                  <span className="validator-description text-truncate">
+                  <span className="validator-description">
                     <b>Vote Identity:</b>&nbsp;
                     {filteredValidator.vote_identity}
                   </span>

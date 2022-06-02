@@ -105,18 +105,18 @@ class WizScoreBody extends React.Component<{
     }
 
     renderWizScore() {
-        let color = 'bg-danger';
+        let color = 'text-danger';
         if(this.props.validator.rank <= config.WIZ_SCORE_RANK_GROUPS.TOP) {
-            color = 'bg-success';
+            color = 'text-success';
         }
         else if(this.props.validator.rank <= config.WIZ_SCORE_RANK_GROUPS.MEDIUM) {
-            color = 'bg-warning';
+            color = 'text-warning';
         }
         return (
             <div className="row scorecard-wiz-score">
-                <div className={"col text-center text-white fst-italic p-3 mx-5 rounded "+color}>
+                <div className={"col text-center text-white fst-italic p-3 mx-5 "}>
                     <h5 className="mb-0">
-                        WIZ SCORE: 
+                        <span className={'wiz-font me-2 '+color}>WIZ SCORE:</span> 
                             <span id="scorecard-wizscore">
                             {' '+new Intl.NumberFormat().format(Number(this.props.validator.wiz_score.toFixed(2)))+'% '}
                             </span> 
@@ -339,11 +339,6 @@ class WizScore extends React.Component<{
                 <Modal.Body>
                     {this.renderWizScoreBody()}
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => this.props.hideWizModal()}>
-                    Close
-                    </Button>
-                </Modal.Footer>
             </Modal>
         );
         }

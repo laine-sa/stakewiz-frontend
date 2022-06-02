@@ -19,9 +19,10 @@
         "cancel": "cancel",
         "wallet_validators": "stake_validators_by_withdraw_authority",
         "solflare_check": "solflare_check",
-        "epoch_info": "epoch_info"
+        "epoch_info": "epoch_info",
+        "gossip_stake": "gossip_stake"
     },
-    "DEFAULT_LIST_SIZE": 25,
+    "DEFAULT_LIST_SIZE": 50,
     "WIZ_SCORE_RANK_GROUPS": {
         "TOP": 50,
         "MEDIUM": 250

@@ -66,7 +66,7 @@ const TopBar: FC = () => {
         
       getEpochInfo()
       .then((epoch: EpochInfoI) => {
-        console.log(epoch);
+        
         setEpochInfo(epoch);
         
       });
@@ -75,7 +75,6 @@ const TopBar: FC = () => {
 
     const renderEpochProgress = () => {
       if(epochInfo!=null) {
-        console.log(epochInfo);
 
         let d_days = Math.floor(epochInfo.duration_seconds/(60*60*24));
         let d_hours = Math.floor((epochInfo.duration_seconds - (d_days*60*60*24)) / (60*60));
@@ -92,7 +91,7 @@ const TopBar: FC = () => {
                 Epoch {epochInfo.epoch}
               </div>
               <div className="progress epoch-progress w-100">
-                <div className="progress-bar progress-bar-striped bg-dark progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
+                <div className="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
                 </div>
               </div>
               <div className='epoch-progress-label text-secondary'>
@@ -131,7 +130,7 @@ const TopBar: FC = () => {
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
                 <img 
-                  src={"/images/stakewiz-logo-white.webp"}
+                  src={"/images/new-logo-white.webp"}
                   className='stakewiz-logo'
                   alt="Stakewiz Logo" 
                 />
