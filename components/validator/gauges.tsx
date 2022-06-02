@@ -31,7 +31,7 @@ export const Gauges: FC<{
     ]
 
     return (
-        <div className='d-flex flex-wrap justify-content-center mobile-gauge-container'>
+        <div className='d-flex flex-wrap justify-content-center mobile-gauge-container text-white my-2'>
                 <div className='flex-grow-1 d-flex flex-column align-items-center'>
                     <div>
                         <GaugeChart id='gauge-chart-skip' 
