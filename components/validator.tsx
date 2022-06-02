@@ -1024,20 +1024,13 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                 </div>,
                 <div className='container validator-details-content' key='validator-details-content'>
 
-                    <div className='row'>
-                        <div className='col text-white p-2 m-1 d-flex justify-content-center mobile-gauge-container'>
-                                <div className='row mobile-gauges justify-content-center'>
-                                    <Gauges
-                                        skip_rate={this.state.validator.skip_rate}
-                                        credit_ratio={this.state.validator.credit_ratio}
-                                        wiz_score={this.state.validator.wiz_score}
-                                        uptime={this.state.validator.uptime}
+                    <Gauges
+                        skip_rate={this.state.validator.skip_rate}
+                        credit_ratio={this.state.validator.credit_ratio}
+                        wiz_score={this.state.validator.wiz_score}
+                        uptime={this.state.validator.uptime}
 
-                                    />
-                                </div>
-
-                        </div>
-                    </div>
+                    />
 
                     <div className='row'>
                         <div className='col p-2 text-white border border-white rounded'>

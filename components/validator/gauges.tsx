@@ -32,8 +32,7 @@ export const Gauges: FC<{
 
     return (
         <div className='d-flex flex-wrap justify-content-center mobile-gauge-container'>
-            <div className='d-flex mobile-gauge-row'>
-                <div className='flex-grow-1 d-flex flex-column align-items-center mobile-gauge-gauge'>
+                <div className='flex-grow-1 d-flex flex-column align-items-center'>
                     <div>
                         <GaugeChart id='gauge-chart-skip' 
                             nrOfLevels={15} 
@@ -69,8 +68,6 @@ export const Gauges: FC<{
                         Voting rate
                     </div>
                 </div>
-            </div>
-            <div className='d-flex mobile-gauge-row'>
                 <div className='flex-grow-1 d-flex flex-column align-items-center'>
                     <div>
                     <GaugeChart id='gauge-chart-wiz' 
@@ -107,7 +104,6 @@ export const Gauges: FC<{
                         Uptime (30 days)
                     </div>
                 </div>
-            </div>
         </div>
     );
 }
