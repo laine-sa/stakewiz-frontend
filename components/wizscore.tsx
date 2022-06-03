@@ -433,10 +433,10 @@ class WizScoreWeightings extends React.Component<{},
                             </tr>
                             <tr> 
                                 <td>
-                                    Valid Version 
+                                    Min valid version 
                                 </td>
                                 <td>
-                                    {this.state.weightings.version.map((v, i, arr) => {
+                                    {this.state.weightings.min_versions.map((v, i, arr) => {
                                         if(arr.length-1===i) {
                                             return v;
                                         }
@@ -446,7 +446,7 @@ class WizScoreWeightings extends React.Component<{},
                                     })}
                                 </td>
                                 <td>
-                                    The version a validator should use
+                                    The minimum version within each minor release branch a validator should be using, e.g. if the value here is 1.9.20 the validator can use 1.9.20, 1.9.21, 1.9.22, etc., but not 1.9.19 or 1.8.30. Multiple minor branches can be valid at the same time.
                                 </td>
                             </tr>
                             <tr> 
