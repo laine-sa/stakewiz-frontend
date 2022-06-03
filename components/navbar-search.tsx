@@ -5,6 +5,7 @@ import { RenderImage } from './validator/common'
 import config from '../config.json';
 import { ValidatorContext } from './validator/validatorhook'
 import { useRouter } from 'next/router'
+const ordinal = require ('ordinal');
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -13,14 +14,15 @@ interface ValidatorData {
   vote_identity: string;
   identity: string,
   activated_stake : number,
-  image : string
+  image : string,
+  wiz_score : number,
+  rank : number
 }
 
   export const ValidatorFilterData: FC<{
     filteredValidator: ValidatorData; 
   }> = ({filteredValidator}) => {
     const router = useRouter()
-    const activated_stake = new Intl.NumberFormat().format(Number(filteredValidator.activated_stake.toFixed(0)));
 
     let validatorUrl : string =`/validator/${filteredValidator.vote_identity}`
     const validatorClick = (e) => {
@@ -54,10 +56,16 @@ interface ValidatorData {
                     <b>Vote Identity:</b>&nbsp;
                     {filteredValidator.vote_identity}
                   </span>
-                  <span className="validator-description">
-                    <b>Activated Stake:</b>&nbsp;
-                    ◎ {activated_stake}
-                  </span>
+                  <div className='wiz-one-line'> 
+                    <span className="validator-description">
+                      <b><span className='wiz-font me-2'>WIZ</span> Score:</b>&nbsp;
+                      {filteredValidator.wiz_score}%
+                    </span>
+                    <span className="validator-description">
+                      <b><span className='wiz-font me-2'>WIZ</span> Rank:</b>&nbsp;
+                      {ordinal(filteredValidator.rank)}
+                    </span>
+                  </div>
                 </div>
               </div>
               </a>
