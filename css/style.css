@@ -407,7 +407,9 @@ a:hover {
   left: auto;
   right: 0;
 }
-
+.wiz-one-line{
+  display : flex
+}
 .validator-title{
   color:#000;
 }
@@ -475,9 +477,10 @@ a:hover {
 .validators-list .validator-info {
   margin-left: 8px;
   float: left;
-  width: 80%; /*68*/
+  width: 85%; /*68,80*/
 }
 .scroll-description {
+  font-size : 0.8rem;
   width: 100%; /*70*/
 }
 .scroll-descrip-full-Width {
