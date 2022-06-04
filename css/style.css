@@ -563,6 +563,7 @@ a:hover {
   
   .navbar-flex-container {
     flex-direction:column;
+    align-items:start!important;
   }
 
   .navbar-text {
