@@ -307,6 +307,14 @@ a:hover {
 .bg-semidark {
   background-color:#414549;
 }
+
+.delinquent-badge {
+  position:absolute;
+  top:0;
+  left:0;
+  border-top-left-radius: 0;
+  z-index:100;
+}
 /* navbar search css start */
 .btnSearch {
   display: inline-block;
