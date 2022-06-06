@@ -177,7 +177,7 @@ ValidatorListing.contextType = ValidatorContext;
 class ValidatorList extends React.Component<ValidatorListI, {}> {
     renderValidator(i:number) {
       return (
-              <ValidatorBox2 key={i}
+              <ValidatorBox key={i}
                 clusterStats={this.props.clusterStats}
                 validator={this.props.validators[i]} 
                 showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
@@ -252,7 +252,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       }
 }
 
-const ValidatorBox2: FC<{
+const ValidatorBox: FC<{
     validator: validatorI,
     clusterStats: clusterStatsI,
     showWizModal: Function;
@@ -327,10 +327,24 @@ const ValidatorBox2: FC<{
         else return 'text-danger';
     }
 
+    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-dark'
 
     return (
-        <div className='d-flex w-25 flex-grow-1 rounded bg-dark px-2 py-2 m-1 flex-column validator-flex-container'>
-            
+        <div className={'d-flex position-relative w-25 flex-grow-1 rounded bg-dark border px-2 py-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor}>
+            {(validator.delinquent) ? (
+                <div className='badge bg-danger delinquent-badge'>
+                   <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                            <Tooltip>
+                                This validator is currently delinquent, meaning they are not voting.
+                            </Tooltip>
+                        } 
+                    > 
+                        <span>DELINQUENT</span>
+                    </OverlayTrigger>
+                </div>
+            ) : null}
             <div className='validator-flex-logo align-items-center d-flex'>
                 <div className='flex-shrink-0'>
                     <RenderImage
@@ -364,8 +378,17 @@ const ValidatorBox2: FC<{
 
             <div className='d-flex my-2 flex-column'>
                 <div className='d-flex flex-row'>
-                    <div className='fw-bold me-2 w-25 flex-grow-1'>
-                        Identity
+                    <div className='fw-bold me-1'>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Validator Identity
+                                </Tooltip>
+                            } 
+                        >
+                             <span>I:</span>
+                        </OverlayTrigger>
                     </div>
                     <div className='text-truncate'>
                     <OverlayTrigger
@@ -381,10 +404,17 @@ const ValidatorBox2: FC<{
                         </span>
                     </OverlayTrigger>
                     </div>
-                </div>
-                <div className='d-flex flex-row'>
-                    <div className='fw-bold me-2 w-25 text-nowrap'>
-                        Vote Account
+                    <div className='fw-bold mx-1 text-nowrap'>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    Vote Account
+                                </Tooltip>
+                            } 
+                        >
+                            <span>V:</span>
+                        </OverlayTrigger>
                     </div>
                     <div className='text-truncate'>
                      <OverlayTrigger
@@ -528,357 +558,6 @@ const ValidatorBox2: FC<{
     )
 }
 
-class ValidatorBox extends React.Component<ValidatorBoxPropsI,{}> {
-    constructor(props) {
-        super(props);
-        
-    }
-
-    renderRankColor() {
-        if(this.props.validator.rank<=config.WIZ_SCORE_RANK_GROUPS.TOP) {
-            return 'bg-success';
-        }
-        else if(this.props.validator.rank<=config.WIZ_SCORE_RANK_GROUPS.MEDIUM) {
-            return 'bg-warning';
-        }
-        else return 'bg-danger';
-    }
-
-    renderStakeBar() {
-
-        let stakeText, stakeColor, stakeBg, stakeWidth;
-        if(this.props.validator.stake_ratio > config.STAKE_CATEGORIES.HIGH) {
-            stakeText = 'High Stake';
-            stakeColor = 'text-danger';
-            stakeBg = 'bg-danger';
-            stakeWidth = 100;
-        }
-        else if(this.props.validator.stake_ratio > config.STAKE_CATEGORIES.MEDIUM) {
-            stakeText = 'Medium Stake';
-            stakeColor = 'text-warning';
-            stakeBg = 'bg-warning';
-            stakeWidth = this.props.validator.stake_ratio*1000;
-        }
-        else {
-            stakeText = 'Low Stake';
-            stakeColor = 'text-success';
-            stakeBg = 'bg-success';
-            stakeWidth = this.props.validator.stake_ratio*1000;
-        }
-
-        return (
-            [
-                <div className="row" key={'stakebalabel-'+this.props.validator.vote_identity}>                
-                    <div className={"col text-center vstakelabel my-1 "+stakeColor}>{stakeText}</div>            
-                </div>,
-                <div className="row" key={'stakebar-'+this.props.validator.vote_identity}>                
-                    <div className="col mt-1">                    
-                        <div className="progress" data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom">                        
-                            <div className={"progress-bar progress-bar-striped progress-bar-animated "+stakeBg} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin={0} aria-valuemax={100} style={{width: stakeWidth+'%'}}>
-                            </div>                    
-                        </div>                
-                    </div>            
-                </div>     
-            ]
-        );
-    }
-    
-    render() {
-
-        const activated_stake = new Intl.NumberFormat().format(Number(this.props.validator.activated_stake.toFixed(0)));
-        const credit_ratio = new Intl.NumberFormat().format(Number(this.props.validator.credit_ratio.toFixed(1)));
-        const skip_rate = new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)));
-        
-        return (
-                <div className="row py-2 my-2 border vbox rounded border-secondary" id={this.props.validator.vote_identity}>
-                    <div className="col my-1">            
-                        <div className="row">                
-                            <div className="col apy-value text-center">         
-                                <span className={"cluster_statistic rounded-pill text-white fw-bold p-2 px-3 mx-1 "+this.renderRankColor()}>
-                                    {this.props.validator.rank}
-                                </span>                    
-                                <div className="p-2">{this.props.validator.wiz_score} %</div>                
-                            </div>            
-                        </div>            
-                        <div className="row wiz-score-button py-1 px-2">                
-                            <OverlayTrigger
-                                    placement="bottom"
-                                    overlay={
-                                        <Tooltip>
-                                            Click for detailed scorecard
-                                        </Tooltip>
-                                    } 
-                                >
-                                <button className="btn btn-outline-warning btn-sm" onClick={() => this.props.showWizModal()} >                
-                                        Wiz Score            
-                                </button>
-                            </OverlayTrigger>
-                        </div>        
-                    </div>
-                    <div className="col col-md-2 my-2 mobile-name-column">            
-                        <div className="row">                
-                            <div className="col text-center">                    
-                                
-                                    <RenderImage
-                                        img={this.props.validator.image}
-                                        vote_identity={this.props.validator.vote_identity}
-                                        size={50}
-                                    />
-                                
-                            </div>            
-                        </div>            
-                        <div className="row pt-2">                
-                            <div className="col text-center vlist-name">
-                                    <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
-                                        <span className="vlist-name-inner pointer">{this.props.validator.name}</span>  
-                                    </Link>              
-                                    
-                            </div>            
-                        </div>        
-                    </div>
-                    <div className="col my-1 mt-4">            
-                        <div className="row">                
-                            <div className="col apy-value text-center">
-                                {this.props.validator.apy_estimate} %
-                                <br />                    
-                                
-                                    <OverlayTrigger
-                                        placement="bottom"
-                                        overlay={
-                                            <Tooltip>
-                                                Stake weighted cluster average (excludes private validators)
-                                            </Tooltip>
-                                        } 
-                                    >
-                                        <span className="cluster_statistic text-secondary">Ø {this.props.clusterStats.avg_apy} %</span>
-                                    </OverlayTrigger>
-                                             
-                            </div>            
-                        </div>            
-                        <div className="row">                
-                            <div className="col apy-label text-center my-1 vlist-label">Estimated APY</div>            
-                        </div>        
-                    </div>
-                    <div className="col my-1 mobile-stake-column">            
-                        <div className="row">                
-                            <div className="col text-center">                    
-                                <OverlayTrigger
-                                    placement="right"
-                                    overlay={
-                                        <Tooltip>
-                                            Active Stake
-                                        </Tooltip>
-                                    } 
-                                >
-                                    <span>◎ {activated_stake}</span>
-                                </OverlayTrigger>
-                                <br />                        
-                                <OverlayTrigger
-                                    placement="right"
-                                    overlay={
-                                        <Tooltip>
-                                            Cluster average
-                                        </Tooltip>
-                                    } 
-                                >
-                                    <span className="cluster_statistic text-secondary">Ø ◎ {new Intl.NumberFormat().format(Number(this.props.clusterStats.avg_activated_stake.toFixed(0)))}</span>                
-                                </OverlayTrigger>
-                            </div>            
-                        </div>            
-                        {this.renderStakeBar()}   
-                    </div>
-                    <div className="col mobile-stats-column">            
-                        <div className="row">                
-                            <div className="col my-1">                    
-                                <OverlayTrigger
-                                    placement="left"
-                                    overlay={
-                                        <Tooltip>
-                                            Skip Rate (lower is better)
-                                        </Tooltip>
-                                    } 
-                                >
-                                    <i className="bi bi-box pe-2"></i>
-                                </OverlayTrigger>
-                                    {skip_rate} %
-                                    <OverlayTrigger
-                                placement="right"
-                                overlay={
-                                    <Tooltip>
-                                        Cluster average
-                                    </Tooltip>
-                                } 
-                                >
-                                    <span className="cluster_statistic text-secondary ps-1">Ø {this.props.clusterStats.avg_skip_rate} %</span>                
-                                </OverlayTrigger>
-                            </div>            
-                        </div>            
-                        <div className="row">                
-                            <div className="col my-1">                    
-                                <OverlayTrigger
-                                    placement="left"
-                                    overlay={
-                                        <Tooltip>
-                                            Voting Success Rate (higher is better)
-                                        </Tooltip>
-                                    } 
-                                >
-                                    <i className="bi bi-pencil-square pe-2"></i>
-                                </OverlayTrigger>
-                                    {credit_ratio} %
-                                <OverlayTrigger
-                                placement="right"
-                                overlay={
-                                    <Tooltip>
-                                        Cluster average
-                                    </Tooltip>
-                                } 
-                                >
-                                    <span className="cluster_statistic text-secondary ps-1">Ø {this.props.clusterStats.avg_credit_ratio} %</span>                
-                                </OverlayTrigger>
-                            </div>            
-                        </div>            
-                        <div className="row">                
-                            <div className="col my-1">                    
-                                <OverlayTrigger
-                                    placement="left"
-                                    overlay={
-                                        <Tooltip>
-                                            Commission
-                                        </Tooltip>
-                                    } 
-                                >
-                                    <i className="bi bi-cash-coin pe-2"></i>
-                                </OverlayTrigger>
-                                    {this.props.validator.commission} %
-                                <OverlayTrigger
-                                placement="right"
-                                overlay={
-                                    <Tooltip>
-                                        Cluster average
-                                    </Tooltip>
-                                } 
-                                >
-                                    <span className="cluster_statistic text-secondary ps-1">Ø {this.props.clusterStats.avg_commission} %</span>                
-                                </OverlayTrigger>
-                            </div>            
-                        </div>            
-                        <div className="row">                
-                            <div className="col my-1">                    
-                                <OverlayTrigger
-                                    placement="left"
-                                    overlay={
-                                        <Tooltip>
-                                            Version
-                                        </Tooltip>
-                                    } 
-                                >
-                                    <i className="bi bi-cpu pe-2"></i>
-                                </OverlayTrigger>
-                                    {this.props.validator.version}                
-                            </div>            
-                        </div>        
-                    </div>
-                    <div className="col col-md-3 vlist-identity">            
-                        <div className="row">                
-                            <div className="col my-1 mt-1 text-truncate">                    
-                                <i className="bi bi-card-text pe-1"></i>
-                                    <OverlayTrigger
-                                        placement="left"
-                                        overlay={
-                                            <Tooltip>
-                                                {this.props.validator.description}
-                                            </Tooltip>
-                                        } 
-                                    >
-                                        <span>
-                                            {this.props.validator.description}
-                                        </span>
-                                    </OverlayTrigger>
-                            </div>            
-                        </div>            
-                        <div className="row">                
-                            <div className="col my-1 align-items-center">                    
-                                <i className="bi bi-globe pe-1"> </i>
-                                    <RenderUrl
-                                        url={this.props.validator.website}
-                                    />
-                            </div>            
-                        </div>            
-                        <div className="row my-1 mobile-identities">                
-                            <div className="col text-truncate">                    
-                                <span className="vlist-label">Identity:&nbsp;</span>
-                                <OverlayTrigger
-                                        placement="left"
-                                        overlay={
-                                            <Tooltip>
-                                                Copy
-                                            </Tooltip>
-                                        } 
-                                    >
-                                    <span className="click-to-copy videntity" id={this.props.validator.identity} onClick={() => {navigator.clipboard.writeText(this.props.validator.identity)}}>{this.props.validator.identity}</span>                
-                                </OverlayTrigger>
-                            </div>            
-                        </div>            
-                        <div className="row my-1 mobile-identities">                
-                            <div className="col text-truncate">                    
-                                <span className="vlist-label">Vote Account:&nbsp;</span>
-                                <OverlayTrigger
-                                        placement="left"
-                                        overlay={
-                                            <Tooltip>
-                                                Copy
-                                            </Tooltip>
-                                        } 
-                                    >
-                                    <span className="click-to-copy vvoteaccount" id={this.props.validator.vote_identity} onClick={() => {navigator.clipboard.writeText(this.props.validator.vote_identity)}}>{this.props.validator.vote_identity}</span>                
-                                </OverlayTrigger>
-                            </div>            
-                        </div>        
-                    </div>
-                    <div className="col d-grid gap-2">         
-                    
-                        <button className="btn btn-outline-success alert-button" onClick={() => this.props.showAlertModal()} >                
-                            <i className="bi bi-plus px-1 alert-btn-icon"></i>
-                                Create Alert            
-                        </button>  
-                        <ConditionalWrapper
-                                    condition={(!this.props.connected) ? true : false}
-                                    wrapper={children => (
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Tooltip>
-                                                    Connect wallet to enable
-                                                </Tooltip>
-                                            } 
-                                        >
-                                            {children}
-                                        </OverlayTrigger>
-                                    )}
-                            >
-                            <span className='d-grid'>
-                                <button 
-                                    className="btn btn-outline-success alert-button" 
-                                    onClick={() => this.props.showStakeModal()} 
-                                    disabled={!this.props.connected}
-                                >               
-                                <i className="bi bi-plus px-1 alert-btn-icon"></i> 
-                                    Stake            
-                                </button> 
-                            </span>   
-                        </ConditionalWrapper>
-                        <Link href={'/validator/'+this.props.validator.vote_identity} passHref>
-                            <button className="btn btn-outline-light alert-button">                
-                                    More Info            
-                            </button>          
-                        </Link>
-                    </div>
-                </div>
-        );
-    }
-}
-
 class ValidatorDetail extends React.Component<validatorDetailI, 
     {
         validator: validatorI;
@@ -973,13 +652,29 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 img={this.state.validator.image}
                                 vote_identity={this.state.validator.vote_identity}
                                 size={100}
+                                className={(this.state.validator.delinquent) ? 'border border-danger border-3' : null}
                             />
                         </div>
                     </div>
 
                     <div className='row'>
                         <div className='col text-white text-center p-2'>
-                            <h2>{this.renderName()}</h2>
+                            <h2 className='d-flex align-items-center justify-content-center'>{this.renderName()}
+                            {(this.state.validator.delinquent) ? (
+                                <div className='ms-2 badge bg-danger fs-6'>
+                                    <OverlayTrigger
+                                        placement="bottom"
+                                        overlay={
+                                            <Tooltip>
+                                                This validator is currently delinquent, meaning they are not voting.
+                                            </Tooltip>
+                                        } 
+                                    > 
+                                        <span>DELINQUENT</span>
+                                    </OverlayTrigger>
+                                </div>
+                            ): null}
+                            </h2>
                             
                             <button className='btn btn-outline-success mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
