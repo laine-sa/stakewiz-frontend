@@ -395,7 +395,7 @@ a:hover {
   -o-transition-duration: 0.4s;
 }
 .search:focus {
-  width: 285px;/* 270,363 */
+  width: 355px;/* 285, 270,363 */
   padding: 0 16px 0 0;
 }
 
@@ -424,7 +424,7 @@ a:hover {
   position: absolute;
   max-height: 535px;
   overflow: auto;
-  width: 335px; /*320,411; */
+  width:  405px;/* 335, 320,411; */
   background: #ffffff;
   margin-top: 55px;
   border-left: 1px solid #a6a6a6;
@@ -521,7 +521,7 @@ a:hover {
   padding: 8px;
 }
 .src-active {
-  width: 285px;
+  width: 355px; /* 285 */
   padding: 0 0 0 16px;
 }
 /*-----------*/
@@ -785,6 +785,7 @@ a:hover {
     width: 77vw;
   }
   .search-result-div {width: 330px;}
+  .wiz-one-line { display: block;}
 }
 /*----------------------*/
 @media only screen and (max-width: 359px) {

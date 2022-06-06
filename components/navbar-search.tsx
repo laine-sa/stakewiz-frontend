@@ -58,11 +58,11 @@ interface ValidatorData {
                   </span>
                   <div className='wiz-one-line'> 
                     <span className="validator-description">
-                      <b><span className='wiz-font me-2'>WIZ</span> Score:</b>&nbsp;
+                      <b><span className='wiz-font me-2'>WIZ Score:</span></b>&nbsp;
                       {filteredValidator.wiz_score}%
                     </span>
                     <span className="validator-description">
-                      <b><span className='wiz-font me-2'>WIZ</span> Rank:</b>&nbsp;
+                      <b><span className='wiz-font me-2'>WIZ Rank:</span></b>&nbsp;
                       {ordinal(filteredValidator.rank)}
                     </span>
                   </div>
