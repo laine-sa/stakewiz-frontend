@@ -33,15 +33,13 @@ interface ValidatorData {
     return (
       <>
         <li className="item">
-            {(filteredValidator.image) && 
-              <div className="validator-img">
-                <RenderImage
-                    img={(filteredValidator.image)}
-                    vote_identity={filteredValidator.vote_identity}
-                    size={50}
-                />
-              </div>
-            }
+            <div className="validator-img">
+              <RenderImage
+                  img={(filteredValidator.image)}
+                  vote_identity={filteredValidator.vote_identity}
+                  size={50}
+              />
+            </div>
             <a href={"/validator/" + filteredValidator.vote_identity} onClick={() => {validatorClick}}>
               <div className="validator-info">
                 <div className="validator-title">
@@ -49,22 +47,17 @@ interface ValidatorData {
                   
                 </div>
                 <div className={`scroll-description ${(!filteredValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
-                  <span className="validator-description">
-                    <b>Identity:</b>&nbsp;{filteredValidator.identity}
-                  </span>
-                  <span className="validator-description">
-                    <b>Vote Identity:</b>&nbsp;
-                    {filteredValidator.vote_identity}
-                  </span>
-                  <div className='wiz-one-line'> 
-                    <span className="validator-description">
-                      <b><span className='wiz-font me-2'>WIZ Score:</span></b>&nbsp;
-                      {filteredValidator.wiz_score}%
-                    </span>
-                    <span className="validator-description">
-                      <b><span className='wiz-font me-2'>WIZ Rank:</span></b>&nbsp;
-                      {ordinal(filteredValidator.rank)}
-                    </span>
+                  <div className="d-flex">
+                    <div className='text-truncate flex-grow-1 text-secondary'>
+                      <b>I:</b>&nbsp;{filteredValidator.identity} &nbsp;
+                    </div>
+                    <div className='text-truncate flex-grow-1 text-secondary'>
+                      <b>V:</b>&nbsp;{filteredValidator.vote_identity} &nbsp;
+                    </div>
+                  </div>
+                  <div className='wiz-one-line text-secondary'> 
+                      <span className='wiz-font me-2'>WIZ Score:</span>&nbsp;
+                      <span className='fw-bold'>{filteredValidator.wiz_score}% ({ordinal(filteredValidator.rank)})</span>
                   </div>
                 </div>
               </div>
