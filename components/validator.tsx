@@ -1,4 +1,4 @@
-import React, { useRef, FC } from 'react';
+import React, { useRef, FC, useContext } from 'react';
 import axios from 'axios';
 import config from '../config.json';
 import SearchBar from './search';
@@ -18,14 +18,15 @@ import { Gauges } from './validator/gauges';
 import { EpochStakeChart } from './validator/epoch_stake'
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
 import { StakeDialog } from './stake';
+import { ValidatorContext } from './validator/validatorhook'
 const ordinal = require ('ordinal');
 
 const API_URL = process.env.API_BASE_URL;
 
 class ValidatorListing extends React.Component<ValidatorListingI, {}> {
-    constructor(props) {
+    constructor(props, context ) {
       super(props);
-      if(this.props.state.validators==null) this.getValidators();
+
       if(this.props.state.clusterStats==null) this.getClusterStats();
       
       if(this.props.userPubkey) {
@@ -33,26 +34,17 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       }
       
     }
-  
-    getValidators() {
-      axios(API_URL+config.API_ENDPOINTS.validators, {
-          headers: {'Content-Type':'application/json'}
-      })
-        .then(response => {
-          let json = response.data;
-          
-          this.props.updateState({
-              validators: json,
-              filteredValidators: json,
-              hasData: true,
-          });
-        })
-        .catch(e => {
-          console.log(e);
-          setTimeout(() => { this.getValidators() }, 5000);
-        })
+    componentDidUpdate() {
+        const validatorsContext : any = this.context
+        if(this.props.state.validators == null && (validatorsContext) && (validatorsContext.length > 0)){
+            this.props.updateState({
+                validators: validatorsContext,
+                filteredValidators: validatorsContext,
+                hasData: true,
+            });
+        }
     }
-  
+
     getWalletValidators(pubkey) {
       axios(API_URL+config.API_ENDPOINTS.wallet_validators+'/'+pubkey, {
           headers: {'Content-Type':'application/json'}
@@ -135,7 +127,6 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       }
   
     render() {
-        
       if(!this.props.state.hasData || this.props.state.clusterStats == null) {
         return (
           <Spinner />
@@ -156,7 +147,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   validators={this.props.state.filteredValidators}
                   clusterStats={this.props.state.clusterStats}
                   listSize={this.props.state.visibleCount}
-                  key='validatorList'
+                  key='validatorlist'
                   showWizModal={this.props.state.showWizModal}
                   updateWizModal={(show:boolean,validator:validatorI) => this.updateWizModalVisibility(show,validator)}
                   wizValidator={this.props.state.wizValidator}
@@ -181,11 +172,12 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       }
     }
 }
+ValidatorListing.contextType = ValidatorContext;
 
 class ValidatorList extends React.Component<ValidatorListI, {}> {
     renderValidator(i:number) {
       return (
-              <ValidatorBox2
+              <ValidatorBox2 key={i}
                 clusterStats={this.props.clusterStats}
                 validator={this.props.validators[i]} 
                 showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
@@ -905,7 +897,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         if(this.props.vote_identity!='') this.getValidator();
         if(this.state.clusterStats==null) this.getClusterStats();
     }
-
     getValidator() {
         axios(API_URL+config.API_ENDPOINTS.validator+'/'+this.props.vote_identity, {
           headers: {'Content-Type':'application/json'}
@@ -966,7 +957,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         const solflareEnabled = checkSolflareEnabled(this.props.userPubkey);
 
         if(this.state.validator!=null) {
-
             
 
             let updated_at = new Date(this.state.validator.updated_at);

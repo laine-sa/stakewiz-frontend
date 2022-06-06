@@ -11,6 +11,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
 import { EpochInfoI } from './validator/interfaces';
 import { JsxElement } from 'typescript';
+import GlobalSearch from "./navbar-search";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -138,7 +139,7 @@ const TopBar: FC = () => {
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
               {renderEpochProgress()}
               <Nav>
-                
+              <GlobalSearch mobilehide="mobile-col-hide tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop" />
                 <Nav.Link href="/" className='text-white'>Home</Nav.Link>
                 <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
                 <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
@@ -151,6 +152,10 @@ const TopBar: FC = () => {
             </Navbar.Collapse>
           </Container>
         </Navbar>
+        <Container key="mobile-search-container">
+          <GlobalSearch mobilehide="mobile-visible tablet-on" key="searchValidatorMobile" elementID="searchValidatorMobile" />,
+          <div className="clrFix"></div>
+        </Container>
       </div>         
     )
     
@@ -249,4 +254,35 @@ const getEpochInfo = async (): Promise<Object> => {
   return result;
 }
 
-export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper}
+const ValidatorData = async() => {
+
+  return await new Promise((resolve, reject) => {
+    axios(API_URL+config.API_ENDPOINTS.validators, {
+    headers: {'Content-Type':'application/json'}
+    }).then(response => {
+      resolve(response.data);
+    })
+    .catch(error => {
+      reject(error);
+    });
+  });
+
+};
+
+const WalletValidators = async(pubkey) => {
+
+  return await new Promise((resolve, reject) => {
+    axios(API_URL+config.API_ENDPOINTS.wallet_validators+'/'+pubkey, {
+    headers: {'Content-Type':'application/json'}
+    }).then(response => {
+      resolve(response.data);
+    })
+    .catch(error => {
+      console.log(error);
+      reject(error);
+    });
+  });
+
+};
+
+export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper, ValidatorData, WalletValidators}
