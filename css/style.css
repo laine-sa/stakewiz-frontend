@@ -395,7 +395,7 @@ a:hover {
   -o-transition-duration: 0.4s;
 }
 .search:focus {
-  width: 270px;/* 363 */
+  width: 285px;/* 270,363 */
   padding: 0 16px 0 0;
 }
 
@@ -424,7 +424,7 @@ a:hover {
   position: absolute;
   max-height: 535px;
   overflow: auto;
-  width: 320px; /*411px; */
+  width: 335px; /*320,411; */
   background: #ffffff;
   margin-top: 55px;
   border-left: 1px solid #a6a6a6;
@@ -488,7 +488,7 @@ a:hover {
 }
 .scrollSrc ul {
   margin-bottom: 0;
-  padding: 0 8px;
+  padding: 0 2px;
 }
 .scrollSrc li {
   list-style-type: none;
@@ -508,6 +508,9 @@ a:hover {
   text-overflow: ellipsis;
   line-height: 23px;
 }
+.wiz-one-line span{
+  margin-right : 8px;
+}
 .load-item {
   width: 100%;
   border: none;
@@ -518,7 +521,7 @@ a:hover {
   padding: 8px;
 }
 .src-active {
-  width: 270px;
+  width: 285px;
   padding: 0 0 0 16px;
 }
 /*-----------*/
@@ -535,10 +538,10 @@ a:hover {
   .tablet-on {display: block !important;}
   .tablet-off {display: none;}
   .search:focus {
-    width: 77vw;
+    width: 77vw; /* 77 */
   }
   .src-active {
-    width: 77vw;
+    width: 77vw; /* 77 */
   }
   .search-result-div {width: 678px;}
   /*---------*/
@@ -781,6 +784,9 @@ a:hover {
   .src-active {
     width: 77vw;
   }
-  .search-result-div {width: 338px;}
+  .search-result-div {width: 330px;}
 }
 /*----------------------*/
+@media only screen and (max-width: 359px) {
+  .search-result-div {width: 294px;}
+}
