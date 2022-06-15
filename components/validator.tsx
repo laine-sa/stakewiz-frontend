@@ -19,7 +19,7 @@ import { EpochStakeChart } from './validator/epoch_stake'
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
 import { StakeDialog } from './stake';
 import { ValidatorContext } from './validator/validatorhook'
-const ordinal = require ('ordinal');
+import ordinal from 'ordinal'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -90,8 +90,36 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     bumpVisibleCount() {
         
         this.props.updateState({
-          visibleCount: this.props.state.visibleCount+config.DEFAULT_LIST_SIZE
+          visibleCount: this.props.state.visibleCount + config.DEFAULT_LIST_SIZE
         });
+    }
+
+    updateStakeValidators(validator: validatorI) {
+
+        if(this.props.state.stakeValidators!=null) {
+            if(this.props.state.stakeValidators.includes(validator)) {
+                let sv = this.props.state.stakeValidators;
+
+                sv.splice(this.props.state.stakeValidators.indexOf(validator),1);
+
+                this.props.updateState({
+                    stakeValidators: sv
+                })
+            }
+            else {
+                let sv = this.props.state.stakeValidators;
+                sv.push(validator);
+
+                this.props.updateState({
+                    stakeValidators: sv
+                });
+            }
+        }
+        else {
+            this.props.updateState({
+                stakeValidators: [validator]
+            });
+        }
     }
   
     updateWizModalVisibility(show:boolean,validator=null) {
@@ -161,6 +189,8 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   solflareEnabled={this.props.state.solflareNotificationsEnabled}
                   connection={this.props.connection}
                   connected={this.props.connected}
+                  updateStakevalidators={(validator: validatorI) => this.updateStakeValidators(validator)}
+                  stakeValidators={this.props.state.stakeValidators}
                   />,
               <LoadMoreButton
                   key='loadMoreButton'
@@ -185,8 +215,35 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 showStakeModal={() => this.props.updateStakeModal(true,this.props.validators[i])}
                 connected={this.props.connected}
                 index={i}
+                updateStakeValidators={(validator: validatorI) => this.props.updateStakevalidators(validator)}
               />
       );
+    }
+
+    multiValidators() {
+        let html = [];
+        for(let i = 0; i < this.props.stakeValidators.length; i++) {
+            html.push((
+                <div className='d-flex align-items-center'>
+                    <div className='me-1'>
+                        {<RenderImage
+                            img={this.props.stakeValidators[i].image}
+                            vote_identity={this.props.stakeValidators[i].vote_identity}
+                            size={30}
+                        />}
+                    </div>
+                    <div className='text-truncate'>
+                        <RenderName
+                            validator={this.props.stakeValidators[i]}
+                        />
+                    </div>
+                    <div>
+                        <input type='text' className='form-control w-25'></input>
+                    </div>
+                </div>
+            ));
+        }
+        return html;
     }
   
     render() {
@@ -197,10 +254,29 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-1'></div>);
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);
   
+      let cart = null;
+
+      if(this.props.stakeValidators!=null) {
+        if(this.props.stakeValidators.length>0) {
+            cart = (
+                <div className='d-flex w-25 bg-light text-dark p-2 m-1 rounded flex-column'>
+                    <div className='fs-5 fw-bold mb-2'>
+                        Your chosen validators
+                    </div>
+                    <div>
+                        {this.multiValidators()}
+                    </div>
+                </div>
+              );
+        }
+      }
+
       return (
           [
-            <div className='d-flex flex-wrap justify-content-center' key='flex-list-container'>
-                {list}
+            <div className='d-flex justify-content-center' key='flex-list-container'>
+                <div className={'d-flex flex-wrap'}>
+                    {list}
+                </div>
             </div>,
             <WizScore 
                 key='wizScoreModal'  
@@ -252,15 +328,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       }
 }
 
-const ValidatorBox: FC<{
-    validator: validatorI,
-    clusterStats: clusterStatsI,
-    showWizModal: Function;
-    showAlertModal: Function;
-    showStakeModal: Function;
-    connected: boolean;
-    index: number;
-}> = ({validator,clusterStats,showWizModal,showAlertModal,showStakeModal,connected,index}) => {
+const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,showStakeModal,connected,index,updateStakeValidators}) => {
 
     const renderStakeBar = () => {
 
@@ -326,8 +394,8 @@ const ValidatorBox: FC<{
                                     </OverlayTrigger>
                                 )}
                         >
-                            <span>
-                                <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => showStakeModal()} disabled={!connected}>
+                            <span className='d-none'>
+                                <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => updateStakeValidators(validator)} disabled={!connected}>
                                     <i className='bi bi-plus pe-1 alert-btn-icon'></i>
                                     Multi stake
                                 </button>
@@ -360,14 +428,14 @@ const ValidatorBox: FC<{
     const borderColor = (validator.delinquent) ? 'border-danger' : 'border-dark'
 
     return (
-        <div className={'d-flex position-relative w-25 flex-grow-1 rounded bg-dark border px-2 py-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor}>
+        <div className={'d-flex position-relative w-25 flex-grow-1 rounded bg-dark border p-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor}>
             {(validator.delinquent) ? (
                 <div className='badge bg-danger delinquent-badge'>
                    <OverlayTrigger
                         placement="bottom"
                         overlay={
                             <Tooltip>
-                                This validator is currently delinquent, which means they aren't voting.
+                                This validator is currently delinquent, which means they aren&apos;t voting.
                             </Tooltip>
                         } 
                     > 
@@ -376,14 +444,14 @@ const ValidatorBox: FC<{
                 </div>
             ) : null}
             <div className='validator-flex-logo align-items-center d-flex'>
-                <div className='flex-shrink-0'>
+                <div className='flex-shrink-0 my-3'>
                     <RenderImage
                         img={validator.image}
                         vote_identity={validator.vote_identity}
                         size={50}
                     />
                 </div>
-                <div className='text-truncate fs-5'>
+                <div className='text-truncate fs-6 my-3 ms-2'>
                     <Link href={'/validator/'+validator.vote_identity} passHref>
                         <span className="ms-2 vlist-name-inner pointer">
                             <RenderName
@@ -545,22 +613,49 @@ const ValidatorBox: FC<{
             </div>
             <div className='d-flex my-2'>
                 <div className='flex-grow-1 mx-1'>
-                    <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showWizModal()}>
-                        Scorecard
-                    </button>
+                    <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                            <Tooltip>
+                                Scorecard
+                            </Tooltip>
+                        } 
+                    >
+                        <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showWizModal()}>
+                            <i className='bi bi-list-columns pe-1 alert-btn-icon'></i>
+                        </button>
+                    </OverlayTrigger>
                 </div>
                 <div className='flex-grow-1 mx-1'>
-                    <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showAlertModal()}>
-                        <i className='bi bi-plus pe-1 alert-btn-icon'></i>
-                        Alert
-                    </button>
+                    <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                            <Tooltip>
+                                Create Alert
+                            </Tooltip>
+                        } 
+                    >
+                        <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showAlertModal()}>
+                            <i className='bi bi-bell pe-1 alert-btn-icon'></i>
+                        </button>
+                    </OverlayTrigger>
                 </div>
                 <div className='flex-grow-1 mx-1'>
                     <Link href={'/validator/'+validator.vote_identity} passHref>
-                        <button className='btn btn-outline-secondary text-light btn-sm w-100'>
-                            More Info
-                        </button>
+                        <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                                <Tooltip>
+                                    More Info
+                                </Tooltip>
+                            } 
+                        >
+                            <button className='btn btn-outline-secondary text-light btn-sm w-100'>
+                                <i className='bi bi-info-lg pe-1 alert-btn-icon'></i>
+                            </button>
+                        </OverlayTrigger>
                     </Link>
+                    
                 </div>
             </div>
         </div>
@@ -676,7 +771,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         placement="bottom"
                                         overlay={
                                             <Tooltip>
-                                                This validator is currently delinquent, which means they aren't voting.
+                                                This validator is currently delinquent, which means they aren&apos;t voting.
                                             </Tooltip>
                                         } 
                                     > 

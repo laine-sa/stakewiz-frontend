@@ -91,11 +91,8 @@ interface ValidatorData {
         if(searchTitle.length > config.DEFAULT_SEARCH_KEY_COUNT){
           for (let i = 0; i < searchValidators.length; i++) {
             
-            let stakeRatio = searchValidators[i].stake_ratio*1000;
-            let commission = searchValidators[i].commission;
             let name = searchValidators[i].name;
             let txtValue = searchValidators[i].name + searchValidators[i].identity + searchValidators[i].vote_identity;
-            let vote_identity = searchValidators[i].vote_identity;
             
             if (txtValue.toUpperCase().indexOf(searchTitle.toUpperCase()) > -1 ) {
                 if((name=='')) {

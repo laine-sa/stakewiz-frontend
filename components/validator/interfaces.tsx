@@ -86,6 +86,8 @@ export interface ValidatorBoxPropsI {
     showAlertModal: Function;
     showStakeModal: Function;
     connected: boolean;
+    index: number;
+    updateStakeValidators: Function;
 }
 
 export interface ValidatorListI {
@@ -105,6 +107,8 @@ export interface ValidatorListI {
     solflareEnabled: boolean;
     connection: Connection;
     connected: boolean;
+    updateStakevalidators: Function;
+    stakeValidators: [validatorI];
 }
 
 export interface ValidatorListingI {
@@ -112,6 +116,7 @@ export interface ValidatorListingI {
         validators: [validatorI],
         clusterStats: clusterStatsI,
         filteredValidators: [validatorI],
+        stakeValidators: [validatorI],
         hasData: boolean,
         visibleCount: number,
         showWizModal: boolean,
