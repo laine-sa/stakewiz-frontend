@@ -14,14 +14,14 @@ export const StakeLabel: FC<{stake: number}> = ({stake}) => {
         if(stake<0) {
             
             return (
-                <span className="text-danger ms-1">
+                <span className="ms-2">
                     - ◎ {n}
                 </span>
             );
         }
         else {
             return (
-                <span className="text-success ms-1">
+                <span className="ms-2">
                     + ◎ {n}
                 </span>
             );

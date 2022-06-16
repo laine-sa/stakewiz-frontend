@@ -216,8 +216,19 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 connected={this.props.connected}
                 index={i}
                 updateStakeValidators={(validator: validatorI) => this.props.updateStakevalidators(validator)}
+                isStakeValidator={this.isStakeValidator(this.props.validators[i])}
               />
       );
+    }
+
+    isStakeValidator(validator: validatorI) {
+        if(this.props.stakeValidators!=null) {
+            if(this.props.stakeValidators.includes(validator)) {
+                return true
+            }
+            else return false
+        }
+        return false
     }
 
     multiValidators() {
@@ -328,7 +339,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       }
 }
 
-const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,showStakeModal,connected,index,updateStakeValidators}) => {
+const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,showStakeModal,connected,index,updateStakeValidators,isStakeValidator}) => {
 
     const renderStakeBar = () => {
 
@@ -373,31 +384,20 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                                 )}
                         >
                             <span>
-                                <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => showStakeModal()} disabled={!connected}>
-                                    <i className='bi bi-plus pe-1 alert-btn-icon'></i>
-                                    Stake
-                                </button>
-                            </span>
-                        </ConditionalWrapper>
-                        <ConditionalWrapper
-                                condition={(!connected) ? true : false}
-                                wrapper={children => (
-                                    <OverlayTrigger
-                                        placement="top"
-                                        overlay={
-                                            <Tooltip>
-                                                Connect wallet to enable
-                                            </Tooltip>
-                                        } 
-                                    >
-                                        {children}
-                                    </OverlayTrigger>
-                                )}
-                        >
-                            <span className='d-none'>
-                                <button className='btn btn-outline-info btn-sm ms-2 py-0' onClick={() => updateStakeValidators(validator)} disabled={!connected}>
-                                    <i className='bi bi-plus pe-1 alert-btn-icon'></i>
-                                    Multi stake
+                                
+                                <button className='btn btn-outline-light btn-sm ms-2 py-0' onClick={() => updateStakeValidators(validator)} disabled={!connected}>
+                                    {(!isStakeValidator) ? (
+                                        <span>
+                                            <i className='bi bi-plus pe-1 alert-btn-icon'></i>
+                                            Stake
+                                        </span>
+                                        ) : (
+                                            <span>
+                                                <i className='bi bi-dash pe-1 alert-btn-icon'></i>
+                                                Stake
+                                            </span>
+                                            )
+                                        }
                                 </button>
                             </span>
                         </ConditionalWrapper>
@@ -405,8 +405,8 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                 </div>,
                 <div key={'stakebar-'+validator.vote_identity}>                
                     <div className="col mt-1">                    
-                        <div className="progress" data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom">                        
-                            <div className={"progress-bar "+stakeBg} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin={0} aria-valuemax={100} style={{width: stakeWidth+'%'}}>
+                        <div className={(isStakeValidator) ? 'progress bg-wizdark' : 'progress bg-dark'} data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom" style={{height: '5px'}}>                        
+                            <div className={"progress-bar bg-primary"} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin={0} aria-valuemax={100} style={{width: stakeWidth+'%'}}>
                             </div>                    
                         </div>                
                     </div>            
@@ -415,20 +415,11 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
         );
     }
 
-    const renderRankTextColor = () => {
-        if(validator.rank<=config.WIZ_SCORE_RANK_GROUPS.TOP) {
-            return 'text-success';
-        }
-        else if(validator.rank<=config.WIZ_SCORE_RANK_GROUPS.MEDIUM) {
-            return 'text-warning';
-        }
-        else return 'text-danger';
-    }
-
-    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-dark'
+    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-secondary';
+    const bgColor = (isStakeValidator) ? 'bg-dark' : 'bg-wizdark';    
 
     return (
-        <div className={'d-flex position-relative w-25 flex-grow-1 rounded bg-dark border p-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor}>
+        <div className={'d-flex position-relative w-25 flex-grow-1 rounded border p-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor+' '+bgColor}>
             {(validator.delinquent) ? (
                 <div className='badge bg-danger delinquent-badge'>
                    <OverlayTrigger
@@ -484,7 +475,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='ms-2 badge bg-semidark align-self-start pointer'>
+                    <div className='ms-1 badge bg-semidark align-self-start pointer'>
                         <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
                             v
                         </span>
@@ -499,7 +490,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                    <div className='ms-2 badge bg-semidark align-self-start'>
+                    <div className='ms-1 badge bg-semidark align-self-start'>
                             <span>{index+1}</span>
                     </div>
                 </OverlayTrigger>
@@ -507,11 +498,11 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
 
             <div className='d-flex text-center my-2'>
                 <div className='flex-grow-1'>
-                    <span className={'pointer wiz-font me-3 '+renderRankTextColor()} onClick={() => showWizModal()}>WIZ SCORE</span>
+                    <span className='pointer wiz-font me-3 ' onClick={() => showWizModal()}>WIZ SCORE</span>
                     <span className='fw-bold'>{validator.wiz_score}%</span>
                 </div>
                 <div className='flex-grow-1'>
-                    <span className={'wiz-font me-3 '+renderRankTextColor()}>WIZ RANK</span>
+                    <span className='wiz-font me-3'>WIZ RANK</span>
                     <span className='fw-bold'>{ordinal(validator.rank)}</span>
                 </div>
             </div>
@@ -525,7 +516,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
                         <div className='p-2'>
                             {validator.skip_rate.toFixed(1)}%
                         </div>
@@ -548,7 +539,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
                         <div className='p-2'>   
                             {validator.credit_ratio.toFixed(1)}%
                         </div>
@@ -571,7 +562,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
                         <div className='p-2'>
                             {validator.commission}%
                         </div>
@@ -594,7 +585,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-semidark rounded text-center flex-grow-1 m-1'>
+                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
                         <div className='p-2'>
                             {validator.apy_estimate}%
                         </div>
@@ -621,7 +612,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showWizModal()}>
+                        <button className='btn btn-outline-light btn-sm w-100' onClick={() => showWizModal()}>
                             <i className='bi bi-list-columns pe-1 alert-btn-icon'></i>
                         </button>
                     </OverlayTrigger>
@@ -635,26 +626,28 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <button className='btn btn-outline-secondary text-light btn-sm w-100' onClick={() => showAlertModal()}>
+                        <button className='btn btn-outline-light btn-sm w-100' onClick={() => showAlertModal()}>
                             <i className='bi bi-bell pe-1 alert-btn-icon'></i>
                         </button>
                     </OverlayTrigger>
                 </div>
                 <div className='flex-grow-1 mx-1'>
-                    <Link href={'/validator/'+validator.vote_identity} passHref>
-                        <OverlayTrigger
-                            placement="bottom"
-                            overlay={
-                                <Tooltip>
-                                    More Info
-                                </Tooltip>
-                            } 
-                        >
-                            <button className='btn btn-outline-secondary text-light btn-sm w-100'>
-                                <i className='bi bi-info-lg pe-1 alert-btn-icon'></i>
-                            </button>
-                        </OverlayTrigger>
-                    </Link>
+                    <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                            <Tooltip>
+                                More Info
+                            </Tooltip>
+                        } 
+                    >
+                        <span>
+                            <Link href={'/validator/'+validator.vote_identity} passHref>
+                                <button className='btn btn-outline-light btn-sm w-100'>
+                                    <i className='bi bi-info-lg pe-1 alert-btn-icon'></i>
+                                </button>
+                            </Link>
+                        </span>
+                    </OverlayTrigger>
                     
                 </div>
             </div>
@@ -781,7 +774,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                             ): null}
                             </h2>
                             
-                            <button className='btn btn-outline-success mx-1' onClick={scrollToAlertForm}>
+                            <button className='btn btn-outline-light mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
                             <ConditionalWrapper
@@ -801,7 +794,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                             >
                                 <span>
                                     <button 
-                                        className='btn btn-outline-success mx-1' 
+                                        className='btn btn-outline-light mx-1' 
                                         onClick={() => this.setState({showStakeModal:true})}
                                         disabled={!this.props.connected}
                                         >

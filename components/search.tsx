@@ -164,10 +164,7 @@ class SearchBar extends React.Component<
                             <option value='asncity_concentration'>ASN+City Concentration ↓</option>
                         </select>
                     </div>
-                </div>
-                
-                <div className='d-flex align-items-end'>
-                    <div className="d-flex align-items-center bg-dark text-white p-2 rounded justify-content-center" id="resultsno">
+                    <div className="d-flex align-items-center bg-dark text-white p-2 ms-2 rounded justify-content-center" id="resultsno">
                         {this.state.validatorCount} validators
                     </div>
                 </div>

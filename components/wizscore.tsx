@@ -48,7 +48,7 @@ function WizScoreRow(props) {
                     <td>
                         {props.value}
                     </td>
-                    <td className={color}>
+                    <td>
                         {score}
                     </td>
                 </tr>
@@ -144,7 +144,7 @@ class WizScoreBody extends React.Component<{
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
                             <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
                         </p>
-                        <table className="table table-sm table-dark"> 
+                        <table className={"table table-sm"}> 
                             <thead>
                                 <tr> 
                                     <th scope="col">

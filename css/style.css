@@ -39,8 +39,8 @@ body {
   font-display:auto;
   font-family:lato;
   font-size:0.9rem;
-  background-color:#31668f;
-  background-image:url('../public/images/bg-symmetry.webp');
+  background-color:#8792a7;
+  background-image:url('../public/images/bg-symmetry-blue.webp');
   background-size:cover;
   background-attachment:fixed;
 }
@@ -131,6 +131,14 @@ input:focus {
   position:absolute;
   right:1rem;
   z-index:10;
+}
+
+.bg-wizlight {
+  background-color:#8792a7;
+}
+
+.bg-wizdark {
+  background-color: #6c788d;
 }
 
 .social-icons {
@@ -238,6 +246,7 @@ a:hover {
 .validator-detail-scorecard .scorecard-wiz-score { 
   display:none!important;
 }
+
 
 .wallet-container .wallet-adapter-button {
   height:auto;
@@ -516,6 +525,7 @@ a:hover {
   text-overflow: ellipsis;
   line-height: 23px;
 }
+
 .wiz-one-line span{
   margin-right : 8px;
 }

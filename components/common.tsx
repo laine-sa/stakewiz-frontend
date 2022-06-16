@@ -90,11 +90,11 @@ const TopBar: FC = () => {
               <div className='text-light text-center epoch-progress-text'>
                 Epoch {epochInfo.epoch}
               </div>
-              <div className="progress epoch-progress w-100">
+              <div className="progress epoch-progress w-100" style={{height: '5px'}}>
                 <div className="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
                 </div>
               </div>
-              <div className='epoch-progress-label text-secondary'>
+              <div className='epoch-progress-label text-light'>
                 {(epochInfo.slot_height/config.SLOTS_PER_EPOCH*100).toFixed(1)} % complete
                 &nbsp;
                 ({(r_days>0) ? <span>{r_days}d</span> : null} {(r_hours>0) ? <span>{r_hours}h</span> : null} {r_minutes}m of {d_days}d {d_hours}h {d_minutes}m remaining)

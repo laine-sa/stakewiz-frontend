@@ -88,6 +88,7 @@ export interface ValidatorBoxPropsI {
     connected: boolean;
     index: number;
     updateStakeValidators: Function;
+    isStakeValidator: boolean;
 }
 
 export interface ValidatorListI {
