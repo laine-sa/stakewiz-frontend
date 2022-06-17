@@ -7,8 +7,8 @@ interface searchI {
     setFilter: Function;
     walletValidators: [string];
     stakeValidators: [validatorI];
-    showStakeModal: boolean;
-    updateStakeModal: Function;
+    showMultiStakeModal: boolean;
+    updateMultiStakeModal: Function;
 }
 
 class SearchBar extends React.Component<
@@ -42,7 +42,7 @@ class SearchBar extends React.Component<
 
         return (
             <div className='d-flex mx-2'>
-                <button className='btn btn-sm btn-outline-light' onClick={() => this.props.updateStakeModal(1,null)}>
+                <button className='btn btn-sm btn-outline-light' onClick={() => this.props.updateMultiStakeModal(true)}>
                     {(selectCount==0) ? <i className='bi bi-minecart me-2'></i> : <i className='bi bi-minecart-loaded me-2'></i> }
                     {selectCount} selected
                 </button>

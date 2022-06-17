@@ -17,7 +17,7 @@ import { StakeLabel, RenderUrl, RenderImage, RenderName } from './validator/comm
 import { Gauges } from './validator/gauges';
 import { EpochStakeChart } from './validator/epoch_stake'
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
-import { StakeDialog } from './stake';
+import { StakeDialog, MultiStakeDialog } from './stake';
 import { ValidatorContext } from './validator/validatorhook'
 import ordinal from 'ordinal'
 
@@ -144,13 +144,9 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
       });
     }
 
-    updateStakeModalVisibility(show:boolean,validator=null) {
-        if(validator==null && this.props.state.stakeValidator!=null) {
-            validator = this.props.state.stakeValidator;
-        }
+    updateMultiStakeModalVisibility(show:boolean) {
         this.props.updateState({
-            showStakeModal: show,
-            stakeValidator: validator
+            showMultiStakeModal: show
         });
       }
   
@@ -170,8 +166,8 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   }}
                   walletValidators={this.props.state.walletValidators}
                   stakeValidators={this.props.state.stakeValidators}
-                  showStakeModal={this.props.state.showStakeModal}
-                  updateStakeModal={(show:boolean,validator:validatorI) => this.updateStakeModalVisibility(show,validator)}
+                  showMultiStakeModal={this.props.state.showMultiStakeModal}
+                  updateMultiStakeModal={(show: boolean) => this.updateMultiStakeModalVisibility(show)}
                   key='searchBar'
                   />,
               <ValidatorList 
@@ -184,9 +180,8 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   wizValidator={this.props.state.wizValidator}
                   showAlertModal={this.props.state.showAlertModal}
                   updateAlertModal={(show:boolean,validator:validatorI) => this.updateAlertModalVisibility(show,validator)}
-                  showStakeModal={this.props.state.showStakeModal}
-                  updateStakeModal={(show:boolean,validator:validatorI) => this.updateStakeModalVisibility(show,validator)}
-                  stakeValidator={this.props.state.stakeValidator}
+                  showMultiStakeModal={this.props.state.showMultiStakeModal}
+                  updateMultiStakeModal={(show:boolean) => this.updateMultiStakeModalVisibility(show)}
                   alertValidator={this.props.state.alertValidator}
                   userPubkey={this.props.userPubkey}
                   solflareEnabled={this.props.state.solflareNotificationsEnabled}
@@ -215,7 +210,6 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 validator={this.props.validators[i]} 
                 showWizModal={() => this.props.updateWizModal(true,this.props.validators[i])}
                 showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
-                showStakeModal={() => this.props.updateStakeModal(true,this.props.validators[i])}
                 connected={this.props.connected}
                 index={i}
                 updateStakeValidators={(validator: validatorI) => this.props.updateStakevalidators(validator)}
@@ -306,12 +300,12 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 userPubkey={this.props.userPubkey}
                 solflareEnabled={this.props.solflareEnabled}
             />,
-            <StakeDialog
-                key='stakeModal'
-                validator={this.props.stakeValidator}
-                showStakeModal={this.props.showStakeModal}
+            <MultiStakeDialog
+                key='multiStakeModal'
+                stakeValidators={this.props.stakeValidators}
+                showStakeModal={this.props.showMultiStakeModal}
                 hideStakeModal={(alert,validator) => {
-                    this.props.updateStakeModal(false)
+                    this.props.updateMultiStakeModal(false)
                     if(alert) this.props.updateAlertModal(true, validator);
                 }}
                 clusterStats={this.props.clusterStats}
@@ -342,7 +336,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       }
 }
 
-const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,showStakeModal,connected,index,updateStakeValidators,isStakeValidator}) => {
+const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,connected,index,updateStakeValidators,isStakeValidator}) => {
 
     const renderStakeBar = () => {
 

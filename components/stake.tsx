@@ -5,7 +5,7 @@ import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram, Transaction } from '@solana/web3.js';
 import RangeSlider from 'react-bootstrap-range-slider'
-import { RenderImage } from './validator/common';
+import { RenderImage, RenderName } from './validator/common';
 import { getEpochInfo, Spinner } from './common';
 
 
@@ -48,6 +48,190 @@ const StakeInput: FC<{
         
     )
 
+}
+
+export const MultiStakeDialog: FC<{
+    stakeValidators: [validatorI],
+    showStakeModal: boolean,
+    hideStakeModal: Function,
+    clusterStats: clusterStatsI,
+    allowAlertDialog?: boolean
+}> = ({stakeValidators,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog}) => {
+
+    const { connection } = useConnection();
+    const {connected, publicKey, sendTransaction, signTransaction} = useWallet();
+
+    const [stakeRentExemptAmount, setStakeRentExemptAmount] = useState(config.DEFAULT_STAKE_RENT_LAMPORTS);
+    const [stakeAmount, setStakeAmount] = useState(null);
+    const [balance, setBalance] = useState(0);
+
+    const[renderTime, setRenderTime] = useState(Math.floor(Date.now() / 1000));
+
+    const [epochInfo, setEpochInfo] = useState<EpochInfoI | null>(null);
+    const [epochReturn, setEpochReturn] = useState(0);
+    const [monthReturn, setMonthReturn] = useState(0);
+
+    const [submitError, setSubmitError] = useState<string>(undefined);
+    const [submitted, setSubmitted] = useState(false);
+    const [signed, setSigned] = useState(false);
+    const [processed, setProcessed] = useState(false);
+    const [confirmed, setConfirmed] = useState(false);
+    const [signature, setSignature] = useState<string>();
+
+    
+    const calculateReturns = async () => {
+        /*let epoch;
+        if(epochInfo==undefined) {
+            epoch = await getEpochInfo();
+            setEpochInfo(epoch);
+        }
+        if((epochInfo!=undefined || epoch != undefined) && validator!=null) {
+
+            if(epoch == undefined) epoch = epochInfo;
+        
+            let epoch_return = Math.pow(1+validator.apy_estimate/100, 1/epoch.epochs_per_year)-1;
+            setEpochReturn(epoch_return);
+
+            let month_return = Math.pow(1+epoch_return, epoch.epochs_per_year/12)-1;
+            setMonthReturn(month_return);
+            
+        }*/
+    }
+
+    const validateAmount = (amount) => {
+        setRenderTime(Math.floor(Date.now() / 1000));
+        if(amount > balance/LAMPORTS_PER_SOL) setStakeAmount((balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
+        else setStakeAmount(amount);
+
+        calculateReturns();
+    }
+
+    const getBalance = () => {
+        if(publicKey && connection) {
+            connection.getBalance(publicKey)
+            .then((resolved) => {
+                setBalance(resolved);
+                if(stakeAmount==null && resolved > config.TX_RESERVE_LAMPORTS) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
+                calculateReturns();
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        }
+    }
+
+    const getStakeRentExemptAmount= () => {
+        if(publicKey && connection) {
+            connection.getMinimumBalanceForRentExemption(StakeProgram.space)
+            .then((resolved) => {
+                setStakeRentExemptAmount(resolved);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        }
+    };
+
+    useEffect(() => {
+        if(publicKey && connection) {
+            getBalance();
+            getStakeRentExemptAmount();
+
+        }
+    }, [renderTime]);
+
+    const renderName = (validator) => {
+        if(validator!=null) {
+            if(validator.name!='') {
+                return validator.name;
+            }
+            else {
+                return validator.vote_identity;
+            }
+        }
+    }
+
+    const renderStakeValidators = () => {
+        if(stakeValidators!=null) {
+            let validatorList = [];
+            stakeValidators.map((validator,index) => {
+                validatorList.push((
+                    <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1'>
+                        <div className='align-self-end'>
+                            <RenderImage
+                                img={validator.image}
+                                size={25}
+                                vote_identity={validator.vote_identity}
+                            />
+                        </div>
+                        <div className='ps-2 w-25 text-truncate'>
+                            {renderName(validator)}
+                        </div>
+                        <div className='d-flex flex-row align-items-center lh-1'>
+                            <div className='badge bg-light text-dark ms-1'>
+                                APY {validator.apy_estimate} %
+                            </div>
+                            <div className='badge bg-light text-dark ms-1'>
+                                Comm {validator.commission} %
+                            </div>
+                            <div className='badge bg-light text-dark ms-1'>
+                                <span className='wiz-font me-2'>Wiz</span> {validator.wiz_score} %
+                            </div>
+                            
+                        </div>
+                        <div className='mx-2'>
+                                <RangeSlider 
+                                    value={0}
+                                    min={0}
+                                    max={1000} 
+                                    step={50}
+                                    onChange={(event) => {  }}
+                                    tooltip='off'
+                                    variant='light'
+                                />
+                            </div>
+                    </div>
+                ))
+            })
+            return validatorList;
+        }
+        return null;
+    }
+
+
+    if(stakeValidators!=null && clusterStats !=null) {
+        return (
+            <Modal show={showStakeModal} onHide={() => hideStakeModal()} dialogClassName='modal-lg multi-stake-modal-modal'>
+                <Modal.Body>
+                    <div className='d-flex fs-5 py-2'>
+                        Your staking selection
+                    </div>
+                    <div className='d-flex py-2 flex-column'>
+                        {renderStakeValidators()}
+                    </div>
+                    <div>
+                        <div>
+                            Available: ◎ {balance/LAMPORTS_PER_SOL}
+                        </div>
+                    </div>
+                    <div className='w-100'>
+                        <StakeInput
+                            key={'range-slider-'+stakeAmount}
+                            balance={balance}
+                            minStakeAmount={stakeRentExemptAmount+1}
+                            stakeAmount={stakeAmount}
+                            updateAmount={(amount) => validateAmount(amount)}
+                        />
+                    </div>
+                </Modal.Body>
+            </Modal>
+        );
+    }
+    else {
+        return null;
+    }
 }
 
 export const StakeDialog: FC<{

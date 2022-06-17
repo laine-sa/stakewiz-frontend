@@ -84,7 +84,6 @@ export interface ValidatorBoxPropsI {
     clusterStats: clusterStatsI;
     showWizModal: Function;
     showAlertModal: Function;
-    showStakeModal: Function;
     connected: boolean;
     index: number;
     updateStakeValidators: Function;
@@ -101,9 +100,8 @@ export interface ValidatorListI {
     wizValidator: validatorI;
     alertValidator: validatorI;
     showAlertModal: boolean;
-    stakeValidator: validatorI;
-    showStakeModal: boolean;
-    updateStakeModal: Function;
+    showMultiStakeModal: boolean;
+    updateMultiStakeModal: Function;
     userPubkey: string;
     solflareEnabled: boolean;
     connection: Connection;
@@ -128,6 +126,7 @@ export interface ValidatorListingI {
         showStakeModal: boolean,
         walletValidators: [string],
         solflareNotificationsEnabled: boolean,
+        showMultiStakeModal: boolean
       },
     updateState: Function;
     userPubkey: string;
