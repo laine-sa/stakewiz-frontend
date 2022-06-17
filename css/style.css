@@ -324,6 +324,20 @@ a:hover {
   border-top-left-radius: 0;
   z-index:100;
 }
+
+.validator-box-selected {
+  background-color:#2b3c88;
+}
+
+.validator-box-unselected {
+  background-color:#5264b6;
+}
+
+.btn-validator-selected {
+  background-color: #198754;
+  color:#fff;
+}
+
 /* navbar search css start */
 .btnSearch {
   display: inline-block;

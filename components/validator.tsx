@@ -169,6 +169,9 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                       return this.doFilter(filteredValidators);
                   }}
                   walletValidators={this.props.state.walletValidators}
+                  stakeValidators={this.props.state.stakeValidators}
+                  showStakeModal={this.props.state.showStakeModal}
+                  updateStakeModal={(show:boolean,validator:validatorI) => this.updateStakeModalVisibility(show,validator)}
                   key='searchBar'
                   />,
               <ValidatorList 
@@ -363,6 +366,8 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
             stakeWidth = validator.stake_ratio*1000;
         }        
 
+        let btnColor = (isStakeValidator) ? 'btn-outline-success btn-validator-selected' : 'btn-outline-light';
+
         return (
             [
                 <div key={'stakebalabel-'+validator.vote_identity}>                
@@ -385,7 +390,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         >
                             <span>
                                 
-                                <button className='btn btn-outline-light btn-sm ms-2 py-0' onClick={() => updateStakeValidators(validator)} disabled={!connected}>
+                                <button className={'btn btn-sm ms-2 py-0 '+btnColor} onClick={() => updateStakeValidators(validator)} disabled={!connected}>
                                     {(!isStakeValidator) ? (
                                         <span>
                                             <i className='bi bi-plus pe-1 alert-btn-icon'></i>
@@ -393,7 +398,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                                         </span>
                                         ) : (
                                             <span>
-                                                <i className='bi bi-dash pe-1 alert-btn-icon'></i>
+                                                <i className='bi bi-check pe-1 alert-btn-icon'></i>
                                                 Stake
                                             </span>
                                             )
@@ -405,7 +410,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                 </div>,
                 <div key={'stakebar-'+validator.vote_identity}>                
                     <div className="col mt-1">                    
-                        <div className={(isStakeValidator) ? 'progress bg-wizdark' : 'progress bg-dark'} data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom" style={{height: '5px'}}>                        
+                        <div className='progress bg-wizdark' data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom" style={{height: '5px'}}>                        
                             <div className={"progress-bar bg-primary"} role="progressbar" aria-valuenow={stakeWidth} aria-valuemin={0} aria-valuemax={100} style={{width: stakeWidth+'%'}}>
                             </div>                    
                         </div>                
@@ -415,8 +420,8 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
         );
     }
 
-    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-secondary';
-    const bgColor = (isStakeValidator) ? 'bg-dark' : 'bg-wizdark';    
+    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-primary';
+    const bgColor = (isStakeValidator) ? 'validator-box-selected' : 'validator-box-unselected';    
 
     return (
         <div className={'d-flex position-relative w-25 flex-grow-1 rounded border p-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor+' '+bgColor}>

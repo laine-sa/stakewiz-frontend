@@ -5,7 +5,10 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 interface searchI {
     validators: [validatorI];
     setFilter: Function;
-    walletValidators: [string]
+    walletValidators: [string];
+    stakeValidators: [validatorI];
+    showStakeModal: boolean;
+    updateStakeModal: Function;
 }
 
 class SearchBar extends React.Component<
@@ -29,6 +32,22 @@ class SearchBar extends React.Component<
             validatorCount: this.props.validators.length,
             sortField: 'rank_asc'
         };
+    }
+
+    renderStakeSelection() {
+        let selectCount = 0;
+        if(this.props.stakeValidators!=null) {
+            selectCount = this.props.stakeValidators.length;
+        }
+
+        return (
+            <div className='d-flex mx-2'>
+                <button className='btn btn-sm btn-outline-light' onClick={() => this.props.updateStakeModal(1,null)}>
+                    {(selectCount==0) ? <i className='bi bi-minecart me-2'></i> : <i className='bi bi-minecart-loaded me-2'></i> }
+                    {selectCount} selected
+                </button>
+            </div>
+        )
     }
 
 
@@ -164,9 +183,10 @@ class SearchBar extends React.Component<
                             <option value='asncity_concentration'>ASN+City Concentration ↓</option>
                         </select>
                     </div>
-                    <div className="d-flex align-items-center bg-dark text-white p-2 ms-2 rounded justify-content-center" id="resultsno">
+                    <div className="d-flex align-items-center bg-dark text-white p-1 px-2 ms-2 mt-0 rounded justify-content-center" id="resultsno">
                         {this.state.validatorCount} validators
                     </div>
+                    {this.renderStakeSelection()}
                 </div>
                 
             </div>
