@@ -256,28 +256,18 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
   
     render() {
       let list = [];
+      let laine = null;
+      
+      for(let i=0; i<this.props.validators.length; i++) {
+        if(this.props.validators[i].vote_identity==config.LAINE_VOTE_IDENTITY) laine = this.props.validators[i];
+      }
+
       for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
         list.push(this.renderValidator(i));
       }
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-1'></div>);
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);
   
-      let cart = null;
-
-      if(this.props.stakeValidators!=null) {
-        if(this.props.stakeValidators.length>0) {
-            cart = (
-                <div className='d-flex w-25 bg-light text-dark p-2 m-1 rounded flex-column'>
-                    <div className='fs-5 fw-bold mb-2'>
-                        Your chosen validators
-                    </div>
-                    <div>
-                        {this.multiValidators()}
-                    </div>
-                </div>
-              );
-        }
-      }
 
       return (
           [
@@ -310,6 +300,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 }}
                 clusterStats={this.props.clusterStats}
                 allowAlertDialog={true}
+                laine={laine}
             />
           ]
       );
