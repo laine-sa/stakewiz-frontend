@@ -145,6 +145,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     }
 
     updateMultiStakeModalVisibility(show:boolean) {
+        
         this.props.updateState({
             showMultiStakeModal: show
         });

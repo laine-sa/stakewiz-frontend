@@ -81,7 +81,6 @@ export const MultiStakeDialog: FC<{
     
     const [stakeDistribution, setStakeDistribution] = useState({})
     const [validators, setValidators] = useState(stakeValidators);
-    const [validatorList, setValidatorList] = useState(null);
 
     
     const calculateReturns = async () => {
@@ -178,14 +177,10 @@ export const MultiStakeDialog: FC<{
         }
     }
 
-    useEffect(() => {
-        renderStakeValidators();
-    }, [validators]);
-
     const renderStakeValidators = () => {
-        if(validators!=null) {
+        if(stakeValidators!=null) {
             let vl = [];
-            validators.map((validator,index) => {
+            stakeValidators.map((validator,index) => {
                 vl.push((
                     <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2' key={'validator-staking-list-'+hash(validators)+validator.vote_identity}>
                         <div className='align-self-end'>
@@ -216,32 +211,26 @@ export const MultiStakeDialog: FC<{
                     </div>
                 ))
             })
-            setValidatorList(vl);
+            return vl;
         }
         return null;
     }
 
     const toggleLaine = () => {
-        if(!validators.includes(laine)) {
-            let v = validators;
-            v.push(laine);
-            setValidators(v);
-            
+        if(!stakeValidators.includes(laine)) {
+            stakeValidators.push(laine);
         }
-        
-        
     }
 
-
-    if(validators!=null && clusterStats !=null) {
+    if(stakeValidators!=null && clusterStats !=null) {
         return (
             <Modal show={showStakeModal} onHide={() => hideStakeModal()} dialogClassName='modal-lg multi-stake-modal-modal'>
                 <Modal.Body>
                     <div className='d-flex fs-5 py-2'>
                         Your staking selection
                     </div>
-                    <div className='d-flex py-2 flex-column' key={'validator-selection-list-'+validators.length+'-'+hash(stakeDistribution)}>
-                        {validatorList}
+                    <div className='d-flex py-2 flex-column' key={'validator-selection-list-'+stakeValidators.length+'-'+hash(stakeValidators)}>
+                        {renderStakeValidators()}
                     </div>
                     <div>
                         <div>
@@ -283,7 +272,7 @@ export const MultiStakeDialog: FC<{
                     <div>
                         Stake Amount: {stakeAmount}<br />
                         Min for rent exemption: {stakeRentExemptAmount}
-                        <button className='btn btn-outline-light m-2' onClick={() => toggleLaine()}>Add Laine</button>
+                        <button className='btn btn-outline-light' onClick={() => toggleLaine()}>Add Laine</button>
                     </div>
                 </Modal.Body>
             </Modal>
