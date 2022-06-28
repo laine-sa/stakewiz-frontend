@@ -32,7 +32,10 @@ export default function Home() {
                                     <Link href="#faq-2">How is the stake concentration score calculated?</Link>
                                 </li>
                                 <li>
-                                    <Link href="#faq-3">What does the yellow border and triangle mean?</Link>
+                                    <Link href="#faq-apy">How is the APY estimated?</Link>
+                                </li>
+                                <li>
+                                    <Link href="#faq-3">What does the red border and delinquency flag mean?</Link>
                                 </li>
                                 <li>
                                     <Link href="#faq-4">What is delinquency?</Link>
@@ -73,10 +76,10 @@ export default function Home() {
                                 The best outcome for the network is an increase in Nakamoto Coefficient (min number of nodes that can halt the network), which requires spreading stake to smaller staked validators. This is what we aim to encourage as well.
                             </p>
                             <p>
-                                To calculate the &quot;loading bar&quot; graphic thus we took the percentage of stake relative to the largest validator multiplied by 10. Anything over 100 is classified as &quot;high stake&quot;, empirically this is about ◎ 1,500,000. Any validator with this much or more stake is considered &quot;high stake&quot; 
+                                To calculate the &quot;loading bar&quot; graphic thus we took the percentage of stake relative to the largest validator multiplied by 10. Anything over 100 is classified as &quot;high stake&quot;, empirically this is about ◎ 1,000,000. Any validator with this much or more stake is considered &quot;high stake&quot; 
                             </p>
                             <p>
-                                Medium stake is classified as a score above 25, which works out to about ◎ 375,000. Validators in this category have a medium amount of stake. Staking with them still aids decentralisation, but they&apos;re already in a category above the &quot;low stake&quot; validators.
+                                Medium stake is classified as a score above 25, which works out to about ◎ 250,000. Validators in this category have a medium amount of stake. Staking with them still aids decentralisation, but they&apos;re already in a category above the &quot;low stake&quot; validators.
                             </p>
                             <p>
                                 Low stake is every other validators, which still includes validators that are &quot;above-average&quot;, since the average stake on Solana is approximately ◎ 200,000.
@@ -85,11 +88,27 @@ export default function Home() {
                                 Over time we might adjust this display algorithm (and that&apos;s all it is, a way to try and visualise stake weight), in which case we&apos;ll update this FAQ entry.
                             </p>
                             <hr className="m-3 my-5" />
-                            <h3 className="mb-4" id="faq-3">
-                                What does the yellow border and triangle mean?
+                            <h3 className="mb-4" id="faq-apy">
+                                How is the APY estimated?
                             </h3>
                             <p>
-                                We display a yellow warning triangle next to the validator name (or where the name would be if they don&apos;t have one) and a yellow border when they are currently delinquent. This means right now as of our systems&apos; last observation they are delinquent as reported by the RPC Node our systems queried.
+                                Estimating APY can be difficult. APY is the compounded annual yield you can expect on your stake. This means we need to factor in the validator&apos;s performance, the network&apos;s average performance, the total inflation and the total active stake, as well as the how many epochs there are in a calendar year.
+                            </p>
+                            <p>
+                                Many websites use a simpler method, where they look at the previous epoch and assume that the highest APY last epoch will be the highest APY this epoch. Then validators are just ranked and their APY calculated relative to this reference APY. This method is somewhat accurate, but not entirely correct.
+                            </p>
+                            <p>
+                                We have updated our method where we now calculate the exact network inflation for the current epoch from on-chain data, we also determine the total supply of SOL and work out the stake and credit weighted portion of inflation each validator should earn this epoch. Based on this, together with our internal epoch tracking data we can then extrapolate the compounded annual return for a given validator.
+                            </p>
+                            <p>
+                                It&apos;s important to note that the estimated APY makes one important assumption: That every epoch for a year takes as long as this one, and that the validator&apos;s performance relative to its peers remains the same for a year. Of course in reality those two things are unlikely, but it&apos;s not something we can easily model for.
+                            </p>
+                            <hr className="m-3 my-5" />
+                            <h3 className="mb-4" id="faq-3">
+                                What does the red border and delinquency flag mean?
+                            </h3>
+                            <p>
+                                We display a red warning next to the validator name (or where the name would be if they don&apos;t have one) and a red border when they are currently delinquent. This means right now as of our systems&apos; last observation they are delinquent as reported by the RPC Node our systems queried.
                             </p>
                             <hr className="m-3 my-5" />
                             <h3 className="mb-4" id="faq-4">
@@ -125,17 +144,14 @@ export default function Home() {
                                 Are there other ways to receive alerts?
                             </h3>
                                 <p>
-                                    Not yet, but we&apos;re planning to introduce some, including the ability to configure webhooks to popular messaging services so you can get them where it&apos;s most convenient to you.
-                                </p>
-                                <p>
-                                    We&apos;d love to offer SMS alerts but right now this would be cost prohibitive, we&apos;re thinking of ways to make this happen. A Twilio integration may be an interim solution though. We&apos;re also planning to provide a generic API or webhook format in the future.
+                                    We currently offer three alerting channels: email, Telegram and Solflare notifications. We&apos;re planning on adding webhooks and possibly Discord and Slack alerts in the future.
                                 </p>
                                 <hr className="m-3 my-5" />
                                 <h3 className="mb-4" id="faq-7">
                                     How often do I get an alert when a validator is delinquent?
                                 </h3>
                                 <p>
-                                    Right now just once, when the delinquency first exceeds your chosen threshold. We might add a second email to let you know when they&apos;re no longer delinquenty, but we haven&apos;t implemented this yet.
+                                    Just once per delinquency period, when the delinquency first exceeds your chosen threshold. We might add a second email to let you know when they&apos;re no longer delinquenty, but we haven&apos;t implemented this yet.
                                 </p>
                                 <hr className="m-3 my-5" />
                                 <h3 className="mb-4" id="faq-8">
