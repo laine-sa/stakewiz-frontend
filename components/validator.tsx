@@ -149,7 +149,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
         this.props.updateState({
             showMultiStakeModal: show
         });
-      }
+    }
   
     render() {
       if(!this.props.state.hasData || this.props.state.clusterStats == null) {
@@ -188,7 +188,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   solflareEnabled={this.props.state.solflareNotificationsEnabled}
                   connection={this.props.connection}
                   connected={this.props.connected}
-                  updateStakevalidators={(validator: validatorI) => this.updateStakeValidators(validator)}
+                  updateStakeValidators={(validator: validatorI) => this.updateStakeValidators(validator)}
                   stakeValidators={this.props.state.stakeValidators}
                   />,
               <LoadMoreButton
@@ -213,7 +213,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 showAlertModal={() => this.props.updateAlertModal(true,this.props.validators[i])}
                 connected={this.props.connected}
                 index={i}
-                updateStakeValidators={(validator: validatorI) => this.props.updateStakevalidators(validator)}
+                updateStakeValidators={(validator: validatorI) => this.props.updateStakeValidators(validator)}
                 isStakeValidator={this.isStakeValidator(this.props.validators[i])}
               />
       );
@@ -227,32 +227,6 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
             else return false
         }
         return false
-    }
-
-    multiValidators() {
-        let html = [];
-        for(let i = 0; i < this.props.stakeValidators.length; i++) {
-            html.push((
-                <div className='d-flex align-items-center'>
-                    <div className='me-1'>
-                        {<RenderImage
-                            img={this.props.stakeValidators[i].image}
-                            vote_identity={this.props.stakeValidators[i].vote_identity}
-                            size={30}
-                        />}
-                    </div>
-                    <div className='text-truncate'>
-                        <RenderName
-                            validator={this.props.stakeValidators[i]}
-                        />
-                    </div>
-                    <div>
-                        <input type='text' className='form-control w-25'></input>
-                    </div>
-                </div>
-            ));
-        }
-        return html;
     }
   
     render() {
@@ -294,6 +268,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
             <MultiStakeDialog
                 key='multiStakeModal'
                 stakeValidators={this.props.stakeValidators}
+                updateStakeValidators={(validator: validatorI) => this.props.updateStakeValidators(validator)}
                 showStakeModal={this.props.showMultiStakeModal}
                 hideStakeModal={(alert,validator) => {
                     this.props.updateMultiStakeModal(false)

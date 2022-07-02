@@ -347,6 +347,11 @@ a:hover {
   color:#fff;
 }
 
+.multi-stake-distribution-buttons .btn-outline-light:disabled {
+  color:#fff!important;
+  opacity:1!important;
+}
+
 /* navbar search css start */
 .btnSearch {
   display: inline-block;

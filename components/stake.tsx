@@ -52,12 +52,20 @@ const StakeInput: FC<{
 
 export const MultiStakeDialog: FC<{
     stakeValidators: [validatorI],
+    updateStakeValidators: Function,
     showStakeModal: boolean,
     hideStakeModal: Function,
     clusterStats: clusterStatsI,
     allowAlertDialog?: boolean,
     laine: validatorI
-}> = ({stakeValidators,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog, laine}) => {
+}> = ({stakeValidators,updateStakeValidators,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog, laine}) => {
+
+    enum DistributionMethods {
+        Equal = 0,
+        WizScore = 1,
+        APY = 2,
+        Custom = 3
+    };
 
     const { connection } = useConnection();
     const {connected, publicKey, sendTransaction, signTransaction} = useWallet();
@@ -80,7 +88,7 @@ export const MultiStakeDialog: FC<{
     const [signature, setSignature] = useState<string>();
     
     const [stakeDistribution, setStakeDistribution] = useState({})
-    const [validators, setValidators] = useState(stakeValidators);
+    const [distributionMethod, setDistributionMethod] = useState(DistributionMethods.Equal);
 
     
     const calculateReturns = async () => {
@@ -107,7 +115,7 @@ export const MultiStakeDialog: FC<{
         if(amount > balance/LAMPORTS_PER_SOL) setStakeAmount((balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
         else setStakeAmount(amount);
 
-        calculateDistribution(amount*LAMPORTS_PER_SOL);
+        calculateDistribution();
 
         calculateReturns();
     }
@@ -119,12 +127,17 @@ export const MultiStakeDialog: FC<{
                 setBalance(resolved);
                 if(stakeAmount==null && resolved > config.TX_RESERVE_LAMPORTS) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
                 calculateReturns();
+                calculateDistribution();
             })
             .catch((error) => {
                 console.log(error);
             });
 
         }
+    }
+
+    const removeStakeValidator = (validator: validatorI) => {
+
     }
 
     const getStakeRentExemptAmount= () => {
@@ -142,19 +155,35 @@ export const MultiStakeDialog: FC<{
         }
     };
 
-    const calculateDistribution = (amount) => {
-        console.log('amount is '+amount);
-        if(validators!=null) {
+    const calculateDistribution = () => {
+        if(stakeValidators!=null && distributionMethod != DistributionMethods.Custom) {
 
-            let validatorStake = (amount > stakeRentExemptAmount * validators.length) ? amount / validators.length : 0;
-            validatorStake = (amount > balance-config.TX_RESERVE_LAMPORTS) ? (balance-config.TX_RESERVE_LAMPORTS) / validators.length : validatorStake;
-            validatorStake = Math.floor(validatorStake);
+            let remainder = stakeAmount*LAMPORTS_PER_SOL - stakeValidators.length * stakeRentExemptAmount;
+            let totalWizScore = 0;
+            let totalAPY = 0;
+            
+            console.log(remainder);
+            console.log(stakeAmount);
 
-            let distribution = {};
-            validators.map((validator,index) => {
-                distribution[validator.vote_identity] = validatorStake;
+            stakeValidators.map((validator) => {
+                totalWizScore += validator.wiz_score;
+                totalAPY += validator.apy_estimate;
             })
 
+            let distribution = {};
+            stakeValidators.map((validator,index) => {
+                let validatorStake = stakeRentExemptAmount;
+                switch(distributionMethod) {
+                    case DistributionMethods.Equal:
+                        validatorStake += remainder / stakeValidators.length;
+                    case DistributionMethods.WizScore:
+                        validatorStake += remainder * (validator.wiz_score / totalWizScore);
+                    case DistributionMethods.APY:
+                        validatorStake += remainder * (validator.apy_estimate / totalAPY);
+                }
+
+                distribution[validator.vote_identity] = validatorStake;
+            })
             setStakeDistribution(distribution);
         }
     }
@@ -163,8 +192,13 @@ export const MultiStakeDialog: FC<{
         if(publicKey && connection) {
             getBalance();
             getStakeRentExemptAmount();
+            
         }
     }, [renderTime]);
+
+    useEffect(() => {
+        calculateDistribution();
+    }, []);
 
     const renderName = (validator) => {
         if(validator!=null) {
@@ -182,7 +216,7 @@ export const MultiStakeDialog: FC<{
             let vl = [];
             stakeValidators.map((validator,index) => {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2' key={'validator-staking-list-'+hash(validators)+validator.vote_identity}>
+                    <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2'>
                         <div className='align-self-end'>
                             <RenderImage
                                 img={validator.image}
@@ -205,8 +239,11 @@ export const MultiStakeDialog: FC<{
                             </div>
                             
                         </div>
+                        <div className='mx-2 text-truncate'>
+                            ◎ {stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL}
+                        </div>
                         <div className='mx-2'>
-                                {stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL}
+                            <i className='bi bi-x-lg pointer' onClick={() => updateStakeValidators(validator)}></i>
                         </div>
                     </div>
                 ))
@@ -216,10 +253,18 @@ export const MultiStakeDialog: FC<{
         return null;
     }
 
-    const toggleLaine = () => {
-        if(!stakeValidators.includes(laine)) {
-            stakeValidators.push(laine);
-        }
+    const estimatedAPY = () => {
+        let apy_multiples = 0;
+        stakeValidators.map((validator,index) => {
+            apy_multiples += validator.apy_estimate * stakeDistribution[validator.vote_identity];
+        });
+
+        return Math.round((apy_multiples / stakeAmount/LAMPORTS_PER_SOL*100)+Number.EPSILON) / 100;
+    }
+
+    const changeDistributionMethod = (method: DistributionMethods) => {
+        setDistributionMethod(method);
+        calculateDistribution();
     }
 
     if(stakeValidators!=null && clusterStats !=null) {
@@ -229,50 +274,89 @@ export const MultiStakeDialog: FC<{
                     <div className='d-flex fs-5 py-2'>
                         Your staking selection
                     </div>
-                    <div className='d-flex py-2 flex-column' key={'validator-selection-list-'+stakeValidators.length+'-'+hash(stakeValidators)}>
+                    <div className='d-flex py-2 flex-column'>
                         {renderStakeValidators()}
                     </div>
-                    <div>
-                        <div>
-                            Available: ◎ {balance/LAMPORTS_PER_SOL}
-                        </div>
-                    </div>
-                    <div className='w-1'>
-                        <StakeInput
-                            key={'range-slider-'+stakeAmount}
-                            balance={balance}
-                            minStakeAmount={stakeRentExemptAmount+1/LAMPORTS_PER_SOL}
-                            stakeAmount={stakeAmount}
-                            updateAmount={(amount) => validateAmount(amount)}
-                        />
-                    </div>
-                    <div className='d-flex flex-row justify-content-center align-items-center'>
-                        <div className='fs-6 flex-shrink-1 me-2'>
-                            Total to stake
-                        </div>
-                        <div className='flex-grow-1'>
-                            <div className='input-group input-group-lg'>
-                                <span className='input-group-text' id='stakeAmountInputText'>◎</span>
-                                <input  
-                                    className='form-control text-center' 
-                                    name='stakeAmountInput' 
-                                    type='number' 
-                                    value={stakeAmount} 
-                                    onChange={(event) => validateAmount(parseFloat(event.target.value))} 
-                                    max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
-                                    min={stakeRentExemptAmount / LAMPORTS_PER_SOL}
-                                    
+                    <div className='d-flex flex-row'>
+                        <div className='border border-light border-1 rounded p-2 me-1 flex-grow-1'>
+                            <div className='fs-6 fw-bold'>
+                                Total to Stake
+                            </div>
+                            <div className='w-1'>
+                                <StakeInput
+                                    key={'range-slider-'+stakeAmount}
+                                    balance={balance}
+                                    minStakeAmount={stakeRentExemptAmount+1/LAMPORTS_PER_SOL}
+                                    stakeAmount={stakeAmount}
+                                    updateAmount={(amount) => validateAmount(amount)}
                                 />
+                            </div>
+                            <div className='d-flex flex-row justify-content-center align-items-center'>
+                                <div className='flex-grow-1'>
+                                    <div className='input-group input-group-lg'>
+                                        <span className='input-group-text' id='stakeAmountInputText'>◎</span>
+                                        <input  
+                                            className='form-control text-center fs-6' 
+                                            name='stakeAmountInput' 
+                                            type='number' 
+                                            value={stakeAmount} 
+                                            onChange={(event) => validateAmount(parseFloat(event.target.value))} 
+                                            max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
+                                            min={stakeRentExemptAmount / LAMPORTS_PER_SOL}
+                                            
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='d-flex w-100 justify-content-end'>
+                                <div className="balance-sm text-end text-light">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
+                            </div>
+                        </div>
+                        <div className='border border-light border-1 me-1 rounded p-2 flex-grow-1'>
+                            <div className='fs-6 fw-bold'>
+                                Stake distribution
+                            </div>
+                            <div className='d-grid gap-1 multi-stake-distribution-buttons'>
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Equal)} onClick={() => changeDistributionMethod(DistributionMethods.Equal)}>
+                                    Equal
+                                    {(distributionMethod==DistributionMethods.Equal) ? (
+                                        <i className='bi bi-check-circle ms-2'></i>
+                                    ): null} 
+                                </button>
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => changeDistributionMethod(DistributionMethods.WizScore)}>
+                                    Wiz Score
+                                    {(distributionMethod==DistributionMethods.WizScore) ? (
+                                        <i className='bi bi-check-circle ms-2'></i>
+                                    ): null} 
+                                </button> 
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.APY)} onClick={() => changeDistributionMethod(DistributionMethods.APY)}>
+                                    APY
+                                    {(distributionMethod==DistributionMethods.APY) ? (
+                                        <i className='bi bi-check-circle ms-2'></i>
+                                    ): null} 
+                                </button> 
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Custom)} onClick={() => changeDistributionMethod(DistributionMethods.Custom)}>
+                                    Custom
+                                    {(distributionMethod==DistributionMethods.Custom) ? (
+                                        <i className='bi bi-check-circle ms-2'></i>
+                                    ): null} 
+                                </button>
+                            </div>
+                        </div>
+                        <div className='border border- border-1 rounded p-2 flex-grow-1'>
+                            <div className='fs-6 fw-bold'>
+                                Summary
+                            </div>
+                            <div>
+                                Estimated APY: {estimatedAPY()} %
                             </div>
                         </div>
                     </div>
-                    <div className='d-flex w-100 justify-content-end'>
-                        <div className="balance-sm text-end text-light">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
-                    </div>
+                    
                     <div>
                         Stake Amount: {stakeAmount}<br />
                         Min for rent exemption: {stakeRentExemptAmount}
-                        <button className='btn btn-outline-light' onClick={() => toggleLaine()}>Add Laine</button>
+                        <button className='btn btn-outline-light' onClick={() => updateStakeValidators(laine)}>Add Laine</button>
                     </div>
                 </Modal.Body>
             </Modal>

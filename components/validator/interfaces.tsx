@@ -106,7 +106,7 @@ export interface ValidatorListI {
     solflareEnabled: boolean;
     connection: Connection;
     connected: boolean;
-    updateStakevalidators: Function;
+    updateStakeValidators: Function;
     stakeValidators: [validatorI];
 }
 
