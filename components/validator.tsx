@@ -856,7 +856,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                     <div className='row m-0'>
                         <div className='col p-2 m-1 text-white text-center'>
                         
-                            <h3>Active Stake (20 epochs)</h3>
+                            <h3>Active Stake (30 epochs)</h3>
                             <StakeHistoryChart
                                 vote_identity={this.state.validator.vote_identity}
                             />
