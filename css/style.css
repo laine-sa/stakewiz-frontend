@@ -348,8 +348,13 @@ a:hover {
 }
 
 .multi-stake-distribution-buttons .btn-outline-light:disabled {
-  color:#fff!important;
+  color:#000!important;
+  background-color:#fff!important;
   opacity:1!important;
+}
+
+.multi-stake-validator-badges .badge {
+  min-width:6rem;
 }
 
 /* navbar search css start */

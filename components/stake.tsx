@@ -3,11 +3,10 @@ import { clusterStatsI, EpochInfoI, validatorI } from './validator/interfaces'
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram, Transaction } from '@solana/web3.js';
+import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, sendAndConfirmRawTransaction, SignatureResult, SignatureResultCallback, StakeProgram, SystemProgram, Transaction, TransactionStatus } from '@solana/web3.js';
 import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage, RenderName } from './validator/common';
 import { getEpochInfo, Spinner } from './common';
-import hash from 'object-hash'
 
 const StakeInput: FC<{
     balance: number;
@@ -68,7 +67,7 @@ export const MultiStakeDialog: FC<{
     };
 
     const { connection } = useConnection();
-    const {connected, publicKey, sendTransaction, signTransaction} = useWallet();
+    const {connected, publicKey, sendTransaction, signTransaction, signAllTransactions} = useWallet();
 
     const [stakeRentExemptAmount, setStakeRentExemptAmount] = useState(config.DEFAULT_STAKE_RENT_LAMPORTS);
     const [stakeAmount, setStakeAmount] = useState(null);
@@ -90,7 +89,6 @@ export const MultiStakeDialog: FC<{
     const [stakeDistribution, setStakeDistribution] = useState({})
     const [distributionMethod, setDistributionMethod] = useState(DistributionMethods.Equal);
 
-    
     const calculateReturns = async () => {
         /*let epoch;
         if(epochInfo==undefined) {
@@ -116,7 +114,6 @@ export const MultiStakeDialog: FC<{
         else setStakeAmount(amount);
 
         calculateDistribution();
-
         calculateReturns();
     }
 
@@ -124,20 +121,16 @@ export const MultiStakeDialog: FC<{
         if(publicKey && connection) {
             connection.getBalance(publicKey)
             .then((resolved) => {
+                console.log(resolved);
                 setBalance(resolved);
                 if(stakeAmount==null && resolved > config.TX_RESERVE_LAMPORTS) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
                 calculateReturns();
-                calculateDistribution();
             })
             .catch((error) => {
                 console.log(error);
             });
 
         }
-    }
-
-    const removeStakeValidator = (validator: validatorI) => {
-
     }
 
     const getStakeRentExemptAmount= () => {
@@ -162,9 +155,6 @@ export const MultiStakeDialog: FC<{
             let totalWizScore = 0;
             let totalAPY = 0;
             
-            console.log(remainder);
-            console.log(stakeAmount);
-
             stakeValidators.map((validator) => {
                 totalWizScore += validator.wiz_score;
                 totalAPY += validator.apy_estimate;
@@ -176,15 +166,18 @@ export const MultiStakeDialog: FC<{
                 switch(distributionMethod) {
                     case DistributionMethods.Equal:
                         validatorStake += remainder / stakeValidators.length;
+                        break;
                     case DistributionMethods.WizScore:
                         validatorStake += remainder * (validator.wiz_score / totalWizScore);
+                        break;
                     case DistributionMethods.APY:
                         validatorStake += remainder * (validator.apy_estimate / totalAPY);
+                        break;
                 }
-
+                validatorStake = Math.floor(validatorStake);
                 distribution[validator.vote_identity] = validatorStake;
             })
-            setStakeDistribution(distribution);
+            setStakeDistribution({...distribution});
         }
     }
 
@@ -192,13 +185,14 @@ export const MultiStakeDialog: FC<{
         if(publicKey && connection) {
             getBalance();
             getStakeRentExemptAmount();
-            
         }
     }, [renderTime]);
 
     useEffect(() => {
         calculateDistribution();
-    }, []);
+        if(stakeAmount < minTotalStakeAmount()/LAMPORTS_PER_SOL) setStakeAmount(minTotalStakeAmount()/LAMPORTS_PER_SOL)
+
+    }, [stakeValidators, stakeAmount, distributionMethod, balance, showStakeModal]);
 
     const renderName = (validator) => {
         if(validator!=null) {
@@ -217,17 +211,17 @@ export const MultiStakeDialog: FC<{
             stakeValidators.map((validator,index) => {
                 vl.push((
                     <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2'>
-                        <div className='align-self-end'>
+                        <div className='align-self-end d-flex flex-shrink-1'>
                             <RenderImage
                                 img={validator.image}
                                 size={25}
                                 vote_identity={validator.vote_identity}
                             />
                         </div>
-                        <div className='ps-2 w-25 text-truncate'>
+                        <div className='ps-2 w-25 text-truncate d-flex flex-grow-1'>
                             {renderName(validator)}
                         </div>
-                        <div className='d-flex flex-row align-items-center lh-1 w-50'>
+                        <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>
                             <div className='badge bg-light text-dark ms-1'>
                                 APY {validator.apy_estimate} %
                             </div>
@@ -239,10 +233,10 @@ export const MultiStakeDialog: FC<{
                             </div>
                             
                         </div>
-                        <div className='mx-2 text-truncate'>
+                        <div className='mx-2 text-truncate d-flex w-25'>
                             ◎ {stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL}
                         </div>
-                        <div className='mx-2'>
+                        <div className='mx-2 d-flex flex-grow-1'>
                             <i className='bi bi-x-lg pointer' onClick={() => updateStakeValidators(validator)}></i>
                         </div>
                     </div>
@@ -255,19 +249,140 @@ export const MultiStakeDialog: FC<{
 
     const estimatedAPY = () => {
         let apy_multiples = 0;
-        stakeValidators.map((validator,index) => {
+        stakeValidators.map((validator) => {
             apy_multiples += validator.apy_estimate * stakeDistribution[validator.vote_identity];
         });
 
         return Math.round((apy_multiples / stakeAmount/LAMPORTS_PER_SOL*100)+Number.EPSILON) / 100;
     }
 
-    const changeDistributionMethod = (method: DistributionMethods) => {
-        setDistributionMethod(method);
-        calculateDistribution();
+    const totalStake = () => {
+        let total = 0;
+        stakeValidators.map((validator) => {
+            total += stakeDistribution[validator.vote_identity];
+        });
+
+        return total;
     }
 
-    if(stakeValidators!=null && clusterStats !=null) {
+    const minTotalStakeAmount = () => {
+        return (stakeRentExemptAmount+1) * stakeValidators.length;
+    }
+
+    const doStake = async () => {
+
+        setSubmitError(undefined);
+        setSubmitted(true);
+
+        try {
+            
+            let txs = [];
+            let signers = [];
+            let recentBlockhash = await connection.getLatestBlockhash();
+
+            stakeValidators.map((validator) => {
+                let stakeKeys = Keypair.generate();
+                let auth = new Authorized(
+                    publicKey,
+                    publicKey
+                );
+    
+                let stakeTx = StakeProgram.createAccount({
+                    authorized: auth,
+                    fromPubkey: publicKey,
+                    lamports: stakeDistribution[validator.vote_identity],
+                    stakePubkey: stakeKeys.publicKey
+                });
+                
+                let votePubkey = new PublicKey(validator.vote_identity);
+    
+                let delegateIx = StakeProgram.delegate({
+                    authorizedPubkey: publicKey,
+                    stakePubkey: stakeKeys.publicKey,
+                    votePubkey: votePubkey
+                });
+
+                txs.push(stakeTx);
+                txs.push(delegateIx);
+                signers.push(stakeKeys);
+            })
+
+            let transactions = [];
+
+            let transaction = new Transaction();
+            txs.map((tx, i) => {
+                let y = Math.floor(i / 4);
+                
+                if(transactions[y]==undefined) transactions[y] = new Transaction({
+                    blockhash: recentBlockhash.blockhash,
+                    lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+                    feePayer: publicKey
+                });
+
+                transactions[y].add(tx);
+            });
+
+            signers.map((keypair, i) => {
+                let y = Math.floor(i / 2);
+
+                transactions[y].partialSign(keypair);
+            })
+            
+            console.log(transactions);
+            let signedTx = await signAllTransactions(transactions);
+
+            let signatures = [];
+
+            signedTx.map(async (signed, i) => {
+                let signature = await connection.sendRawTransaction(signed.serialize());
+                signatures.push(signature);
+                console.log('Submitted transaction '+i+' with signature: '+signature);
+            })
+
+            setSigned(true);
+
+            let proc = null;
+            console.log(proc);
+
+            signatures.map(async (signature) => {
+                
+                console.log(proc);
+                if(proc != null) {
+                    if(proc.value.error==null) proc = await connection.confirmTransaction({signature: signature, blockhash: recentBlockhash.blockhash, lastValidBlockHeight: recentBlockhash.lastValidBlockHeight}, 'processed');
+                } else {
+                    proc = await connection.confirmTransaction({signature: signature, blockhash: recentBlockhash.blockhash, lastValidBlockHeight: recentBlockhash.lastValidBlockHeight}, 'processed');
+                }
+            })
+            console.log(proc);
+            
+            if(proc.value.err==null) {
+                setProcessed(true);
+                let conf = await connection.confirmTransaction(signature, 'confirmed');
+                if(conf.value.err==null) {
+                    setConfirmed(true);    
+                }
+                else { 
+                    throw new Object({error:{message:'Error confirming your transaction, check your transaction history'}});
+                }
+            }
+            else {
+                throw new Object({error:{message:'Error confirming your transaction, check your transaction history'}});
+            }
+        }
+        catch(error) {
+            console.log(error);
+            console.log(error.message);
+            setSubmitted(false);
+            setSigned(false);
+            setProcessed(false);
+            setConfirmed(false);
+            setSubmitError(error.message);
+        }
+
+    };
+
+    if(stakeValidators!=null && clusterStats !=null && Object.keys(stakeDistribution).length>0) {
+        
         return (
             <Modal show={showStakeModal} onHide={() => hideStakeModal()} dialogClassName='modal-lg multi-stake-modal-modal'>
                 <Modal.Body>
@@ -286,7 +401,7 @@ export const MultiStakeDialog: FC<{
                                 <StakeInput
                                     key={'range-slider-'+stakeAmount}
                                     balance={balance}
-                                    minStakeAmount={stakeRentExemptAmount+1/LAMPORTS_PER_SOL}
+                                    minStakeAmount={minTotalStakeAmount()}
                                     stakeAmount={stakeAmount}
                                     updateAmount={(amount) => validateAmount(amount)}
                                 />
@@ -302,7 +417,7 @@ export const MultiStakeDialog: FC<{
                                             value={stakeAmount} 
                                             onChange={(event) => validateAmount(parseFloat(event.target.value))} 
                                             max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
-                                            min={stakeRentExemptAmount / LAMPORTS_PER_SOL}
+                                            min={minTotalStakeAmount()}
                                             
                                         />
                                     </div>
@@ -312,51 +427,53 @@ export const MultiStakeDialog: FC<{
                                 <div className="balance-sm text-end text-light">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
                             </div>
                         </div>
-                        <div className='border border-light border-1 me-1 rounded p-2 flex-grow-1'>
+                        <div className='border border-light border-1 me-1 rounded p-2 flex-grow-1 w-25'>
                             <div className='fs-6 fw-bold'>
                                 Stake distribution
                             </div>
                             <div className='d-grid gap-1 multi-stake-distribution-buttons'>
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Equal)} onClick={() => changeDistributionMethod(DistributionMethods.Equal)}>
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Equal)} onClick={() => setDistributionMethod(DistributionMethods.Equal)}>
                                     Equal
-                                    {(distributionMethod==DistributionMethods.Equal) ? (
-                                        <i className='bi bi-check-circle ms-2'></i>
-                                    ): null} 
                                 </button>
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => changeDistributionMethod(DistributionMethods.WizScore)}>
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => setDistributionMethod(DistributionMethods.WizScore)}>
                                     Wiz Score
-                                    {(distributionMethod==DistributionMethods.WizScore) ? (
-                                        <i className='bi bi-check-circle ms-2'></i>
-                                    ): null} 
                                 </button> 
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.APY)} onClick={() => changeDistributionMethod(DistributionMethods.APY)}>
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.APY)} onClick={() => setDistributionMethod(DistributionMethods.APY)}>
                                     APY
-                                    {(distributionMethod==DistributionMethods.APY) ? (
-                                        <i className='bi bi-check-circle ms-2'></i>
-                                    ): null} 
                                 </button> 
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Custom)} onClick={() => changeDistributionMethod(DistributionMethods.Custom)}>
+                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Custom)} onClick={() => setDistributionMethod(DistributionMethods.Custom)}>
                                     Custom
-                                    {(distributionMethod==DistributionMethods.Custom) ? (
-                                        <i className='bi bi-check-circle ms-2'></i>
-                                    ): null} 
                                 </button>
                             </div>
                         </div>
-                        <div className='border border- border-1 rounded p-2 flex-grow-1'>
+                        <div className='border border- border-1 rounded p-2 flex-grow-1 w-25'>
                             <div className='fs-6 fw-bold'>
                                 Summary
                             </div>
+                            <div className='fw-bolder mt-1'>
+                                Total to stake
+                            </div>
+                            <div className='text-truncate'>
+                                ◎ {totalStake() / LAMPORTS_PER_SOL}
+                            </div>
+                            <div className='fw-bolder mt-1'>
+                                No of Validators
+                            </div>
                             <div>
-                                Estimated APY: {estimatedAPY()} %
+                                {stakeValidators.length}
+                            </div>
+                            <div className='fw-bolder mt-1'>
+                                Estimated APY
+                            </div>
+                            <div>
+                                {estimatedAPY()} %
+                            </div>
+                            <div className='mt-2'>
+                                <button className='btn btn-outline-light w-100' onClick={() => doStake()}>
+                                    Stake
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div>
-                        Stake Amount: {stakeAmount}<br />
-                        Min for rent exemption: {stakeRentExemptAmount}
-                        <button className='btn btn-outline-light' onClick={() => updateStakeValidators(laine)}>Add Laine</button>
                     </div>
                 </Modal.Body>
             </Modal>
