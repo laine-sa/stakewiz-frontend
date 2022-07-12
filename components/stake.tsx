@@ -121,7 +121,6 @@ export const MultiStakeDialog: FC<{
         if(publicKey && connection) {
             connection.getBalance(publicKey)
             .then((resolved) => {
-                console.log(resolved);
                 setBalance(resolved);
                 if(stakeAmount==null && resolved > config.TX_RESERVE_LAMPORTS) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
                 calculateReturns();
@@ -210,7 +209,7 @@ export const MultiStakeDialog: FC<{
             let vl = [];
             stakeValidators.map((validator,index) => {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2'>
+                    <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+validator.vote_identity}>
                         <div className='align-self-end d-flex flex-shrink-1'>
                             <RenderImage
                                 img={validator.image}
@@ -242,6 +241,28 @@ export const MultiStakeDialog: FC<{
                     </div>
                 ))
             })
+            if(!stakeValidators.includes(laine) && laine !=null) {
+                vl.push((
+                    <div className='d-flex align-items-center flex-row border border-secondary bg-secondary text-white border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+laine.vote_identity}>
+                        
+                        <div className='me-2 text-truncate d-flex'>
+                            <button className='btn btn-outline-light btn-sm' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
+                                <i className='bi bi-plus me-1'></i>Add Laine
+                            </button>
+                        </div>
+                        <div className='align-self-end d-flex flex-shrink-1'>
+                            <RenderImage
+                                img={laine.image}
+                                size={25}
+                                vote_identity={laine.vote_identity}
+                            />
+                        </div>
+                        <div className='ps-2 w-25 text-truncate d-flex flex-grow-1'>
+                            {renderName(laine)}
+                        </div>
+                    </div>
+                ))
+            }
             return vl;
         }
         return null;
@@ -266,7 +287,12 @@ export const MultiStakeDialog: FC<{
     }
 
     const minTotalStakeAmount = () => {
-        return (stakeRentExemptAmount+1) * stakeValidators.length;
+        if(stakeValidators !=null) {
+            return (stakeRentExemptAmount+1) * stakeValidators.length;
+        }
+        else {
+            return stakeRentExemptAmount + 1;
+        }
     }
 
     const doStake = async () => {
@@ -308,8 +334,6 @@ export const MultiStakeDialog: FC<{
             })
 
             let transactions = [];
-
-            let transaction = new Transaction();
             txs.map((tx, i) => {
                 let y = Math.floor(i / 4);
                 
@@ -333,32 +357,42 @@ export const MultiStakeDialog: FC<{
 
             let signatures = [];
 
-            signedTx.map(async (signed, i) => {
-                let signature = await connection.sendRawTransaction(signed.serialize());
+            for(let i = 0; i < signedTx.length; i++) {
+
+                let signature = await connection.sendRawTransaction(signedTx[i].serialize())
+            
                 signatures.push(signature);
                 console.log('Submitted transaction '+i+' with signature: '+signature);
-            })
+                
+            }
 
             setSigned(true);
 
-            let proc = null;
-            console.log(proc);
+            let proc = [];
+            let proc_error = false;
 
-            signatures.map(async (signature) => {
-                
-                console.log(proc);
-                if(proc != null) {
-                    if(proc.value.error==null) proc = await connection.confirmTransaction({signature: signature, blockhash: recentBlockhash.blockhash, lastValidBlockHeight: recentBlockhash.lastValidBlockHeight}, 'processed');
-                } else {
-                    proc = await connection.confirmTransaction({signature: signature, blockhash: recentBlockhash.blockhash, lastValidBlockHeight: recentBlockhash.lastValidBlockHeight}, 'processed');
-                }
-            })
-            console.log(proc);
+            for(let i = 0; i < signatures.length; i++) {
+                proc[i] = await connection.confirmTransaction({signature: signatures[i], blockhash: recentBlockhash.blockhash, lastValidBlockHeight: recentBlockhash.lastValidBlockHeight}, 'processed');
+                console.log(proc[i]);
+                if(proc[i].value.err!=null) proc_error = true;
+            }
+
             
-            if(proc.value.err==null) {
+            if(proc_error===false) {
                 setProcessed(true);
-                let conf = await connection.confirmTransaction(signature, 'confirmed');
-                if(conf.value.err==null) {
+                let conf = [];
+                let conf_error = false;
+
+                for(let i = 0; i < signatures.length; i++) {
+                    conf[i] = await connection.confirmTransaction({
+                        signature: signatures[i], 
+                        blockhash: recentBlockhash.blockhash, 
+                        lastValidBlockHeight: recentBlockhash.lastValidBlockHeight
+                        }, 'confirmed');
+                    console.log(conf[i]);
+                    if(conf[i].value.err!=null) conf_error = true;
+                }
+                if(conf_error===false) {
                     setConfirmed(true);    
                 }
                 else { 
