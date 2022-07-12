@@ -523,14 +523,14 @@ class AlertForm extends React.Component<AlertFormI, {
                                     checked={this.state.deliveryMethod == 'telegram' ? true : false}
                                     onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
                                 />
-                                <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delTelegram">
+                                <label className="my-1 mx-1 btn btn-outline-light" htmlFor="delTelegram">
                                     Telegram
                                 </label>
                                 <Field className="btn-check" type="radio" name="deliveryMethod" id="delEmail" autoComplete="off" value="email"
                                     checked={this.state.deliveryMethod == 'email' ? true : false}
                                     onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
                                 />
-                                <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delEmail">
+                                <label className="my-1 mx-1 btn btn-outline-light" htmlFor="delEmail">
                                     Email
                                 </label>
                                 <ConditionalWrapper
@@ -554,7 +554,7 @@ class AlertForm extends React.Component<AlertFormI, {
                                             checked={(this.state.deliveryMethod == 'solflare' && this.props.solflareEnabled && this.props.userPubkey) ? true : false}
                                             onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
                                         />
-                                        <label key='solflare-alert-label' className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delSolflare">
+                                        <label key='solflare-alert-label' className="my-1 mx-1 btn btn-outline-light" htmlFor="delSolflare">
                                             Solflare
                                         </label>
                                     </div>
