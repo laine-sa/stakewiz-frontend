@@ -18,7 +18,7 @@ function WizScoreRow(props) {
         </Tooltip>
       );
 
-    let thresholdColor = 'text-black';
+    let thresholdColor = 'text-white';
     if(props.color=='green') {
         thresholdColor = 'text-success';
     }
@@ -144,7 +144,7 @@ class WizScoreBody extends React.Component<{
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
                             <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
                         </p>
-                        <table className={"table table-sm"}> 
+                        <table className={"table table-sm text-white"}> 
                             <thead>
                                 <tr> 
                                     <th scope="col">
