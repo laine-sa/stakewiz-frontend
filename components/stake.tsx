@@ -3,10 +3,31 @@ import { clusterStatsI, EpochInfoI, validatorI } from './validator/interfaces'
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, sendAndConfirmRawTransaction, SignatureResult, SignatureResultCallback, StakeProgram, SystemProgram, Transaction, TransactionStatus } from '@solana/web3.js';
+import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram,  Transaction } from '@solana/web3.js';
 import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage, RenderName } from './validator/common';
 import { getEpochInfo, Spinner } from './common';
+
+export const getStakeAccounts = async (pubkey,connection: Connection) => {
+
+    const stakes = await connection.getParsedProgramAccounts(
+        StakeProgram.programId,
+        {
+            commitment: "confirmed",
+            filters: [
+                {
+                memcmp: {
+                    bytes: pubkey,
+                    offset: 12
+                }
+            }
+            ]
+        }
+    )
+
+
+    return stakes;
+}
 
 const StakeInput: FC<{
     balance: number;

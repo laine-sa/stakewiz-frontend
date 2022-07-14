@@ -1,6 +1,4 @@
 import React, {useState, useEffect, useContext, FC} from 'react';
-import Link from 'next/link';
-import { useWallet} from '@solana/wallet-adapter-react';
 import { RenderImage } from './validator/common'
 import config from '../config.json';
 import { ValidatorContext } from './validator/validatorhook'
