@@ -42,6 +42,7 @@ export const RenderImage: FC<
     }> = ({ img, vote_identity, size, className }) => {
         
     return (
+        
         <Link href={'/validator/'+vote_identity} passHref>
             <a>
                 <Image 

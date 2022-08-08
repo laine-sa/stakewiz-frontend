@@ -201,6 +201,10 @@ export const MultiStakeDialog: FC<{
         }
     }
 
+    const calculateCustomDistribution = (validator, amount) => {
+        console.log(amount);
+    }
+
     useEffect(() => {
         if(publicKey && connection) {
             getBalance();
@@ -210,8 +214,9 @@ export const MultiStakeDialog: FC<{
 
     useEffect(() => {
         calculateDistribution();
-        if(stakeAmount < minTotalStakeAmount()/LAMPORTS_PER_SOL) setStakeAmount(minTotalStakeAmount()/LAMPORTS_PER_SOL)
-
+        if(stakeAmount != null ) {
+            if(stakeAmount < minTotalStakeAmount()/LAMPORTS_PER_SOL) setStakeAmount(minTotalStakeAmount()/LAMPORTS_PER_SOL)
+        }
     }, [stakeValidators, stakeAmount, distributionMethod, balance, showStakeModal]);
 
     const renderName = (validator) => {
@@ -254,7 +259,18 @@ export const MultiStakeDialog: FC<{
                             
                         </div>
                         <div className='mx-2 text-truncate d-flex w-25'>
-                            ◎ {stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL}
+                            {(distributionMethod!=DistributionMethods.Custom) ? (
+                                <span>◎ {stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL}</span>
+                            ) : (
+                                <input 
+                                    type='number' 
+                                    value={stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
+                                    step={1}
+                                    onChange={(e) => calculateCustomDistribution(validator,parseFloat(e.target.value))} 
+                                    name={'stake-custom-input-'+validator.vote_identity}
+                                    id={'stake-custom-input-'+validator.vote_identity}
+                                />
+                            )}
                         </div>
                         <div className='mx-2 d-flex flex-grow-1'>
                             <i className='bi bi-x-lg pointer' onClick={() => updateStakeValidators(validator)}></i>

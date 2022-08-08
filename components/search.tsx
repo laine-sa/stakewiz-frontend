@@ -60,7 +60,7 @@ class SearchBar extends React.Component<
             },() => {
                 const {textInput, hideAnonymous, onlyMine, hideHighStake } = this.state;
                 const list = this.props.validators;
-                var filteredValidators = [];
+                let filteredValidators: validatorI[] = [];
 
 
                 var counter = 0;
@@ -69,7 +69,6 @@ class SearchBar extends React.Component<
                 for (let i = 0; i < list.length; i++) {
             
                     let stakeRatio = list[i].stake_ratio*1000;
-                    let commission = list[i].commission;
                     let name = list[i].name;
                     let txtValue = list[i].name + list[i].identity + list[i].vote_identity;
                     let vote_identity = list[i].vote_identity;
