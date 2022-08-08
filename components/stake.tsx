@@ -3,7 +3,7 @@ import { clusterStatsI, EpochInfoI, validatorI } from './validator/interfaces'
 import config from '../config.json';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram,  Transaction } from '@solana/web3.js';
+import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram,  Transaction, ValidatorInfo } from '@solana/web3.js';
 import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage, RenderName } from './validator/common';
 import { getEpochInfo, Spinner } from './common';
@@ -34,14 +34,17 @@ const StakeInput: FC<{
     minStakeAmount: number;
     stakeAmount: number;
     updateAmount: Function;
-}> = ({balance, minStakeAmount, stakeAmount, updateAmount}) => {
+    readOnly?: boolean;
+}> = ({balance, minStakeAmount, stakeAmount, updateAmount, readOnly}) => {
     
 
     const [sliderValue, setSliderValue] = useState(stakeAmount);
 
     const processUpdate = (amount) => {
-        updateAmount(amount);
-        setSliderValue(amount);
+        if(!readOnly) {
+            updateAmount(amount);
+            setSliderValue(amount);
+        }
     }
 
 
@@ -59,6 +62,7 @@ const StakeInput: FC<{
                     onChange={(event) => processUpdate(parseFloat(event.target.value))}
                     tooltip='off'
                     variant='light'
+                    disabled={(readOnly) ? true : false}
                 />
             </div>
             <div className='text-start px-0 flex-shrink-1'>
@@ -201,8 +205,28 @@ export const MultiStakeDialog: FC<{
         }
     }
 
-    const calculateCustomDistribution = (validator, amount) => {
-        console.log(amount);
+    const calculateCustomDistribution = (validator:validatorI, value: number) => {
+        
+        value = value * LAMPORTS_PER_SOL;
+
+        if(isNaN(value) || value <= stakeRentExemptAmount) value = stakeRentExemptAmount + 1;
+
+        let oldValue = stakeDistribution[validator.vote_identity];
+        let newTotal = totalStake() - oldValue + value;
+
+        if(newTotal > balance) {
+            console.log('Amount is too high');
+            value = balance - totalStake() + oldValue - config.TX_RESERVE_LAMPORTS;
+            if(value < stakeRentExemptAmount) value = stakeRentExemptAmount;
+        }
+
+        let newStake = [];
+        newStake[validator.vote_identity] = value;
+        
+        setStakeDistribution({
+            ...stakeDistribution,
+            ...newStake
+        })
     }
 
     useEffect(() => {
@@ -218,6 +242,12 @@ export const MultiStakeDialog: FC<{
             if(stakeAmount < minTotalStakeAmount()/LAMPORTS_PER_SOL) setStakeAmount(minTotalStakeAmount()/LAMPORTS_PER_SOL)
         }
     }, [stakeValidators, stakeAmount, distributionMethod, balance, showStakeModal]);
+
+    useEffect(() => {
+        if(distributionMethod==DistributionMethods.Custom) {
+            setStakeAmount(totalStake() / LAMPORTS_PER_SOL)
+        }
+    }, [stakeDistribution])
 
     const renderName = (validator) => {
         if(validator!=null) {
@@ -265,7 +295,7 @@ export const MultiStakeDialog: FC<{
                                 <input 
                                     type='number' 
                                     value={stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
-                                    step={1}
+                                    step={5000 / LAMPORTS_PER_SOL}
                                     onChange={(e) => calculateCustomDistribution(validator,parseFloat(e.target.value))} 
                                     name={'stake-custom-input-'+validator.vote_identity}
                                     id={'stake-custom-input-'+validator.vote_identity}
@@ -280,7 +310,7 @@ export const MultiStakeDialog: FC<{
             })
             if(!stakeValidators.includes(laine) && laine !=null) {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-secondary bg-secondary text-white border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+laine.vote_identity}>
+                    <div className='d-flex align-items-center flex-row border border-secondary bg-dark text-white border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+laine.vote_identity}>
                         
                         <div className='me-2 text-truncate d-flex'>
                             <button className='btn btn-outline-light btn-sm' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
@@ -475,6 +505,7 @@ export const MultiStakeDialog: FC<{
                                     minStakeAmount={minTotalStakeAmount()}
                                     stakeAmount={stakeAmount}
                                     updateAmount={(amount) => validateAmount(amount)}
+                                    readOnly={(distributionMethod == DistributionMethods.Custom) ? true : false}
                                 />
                             </div>
                             <div className='d-flex flex-row justify-content-center align-items-center'>
@@ -489,7 +520,7 @@ export const MultiStakeDialog: FC<{
                                             onChange={(event) => validateAmount(parseFloat(event.target.value))} 
                                             max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
                                             min={minTotalStakeAmount()}
-                                            
+                                            disabled={(distributionMethod == DistributionMethods.Custom) ? true : false}
                                         />
                                     </div>
                                 </div>

@@ -39,8 +39,8 @@ body {
   font-display:auto;
   font-family:lato;
   font-size:0.9rem;
-  background-color:#8792a7;
-  background-image:url('../public/images/bg-symmetry-blue.webp');
+  background-color:#164570;
+  background-image:url('../public/images/bg-symmetry-line.webp');
   background-size:cover;
   background-attachment:fixed;
 }
@@ -222,7 +222,7 @@ a:hover {
 }
 
 .modal-content {
-  background-color:#5264b6!important;
+  background-color:#2c518d!important;
   border:0!important;
 }
 
@@ -335,11 +335,11 @@ a:hover {
 }
 
 .validator-box-selected {
-  background-color:#2b3c88;
+  background-color:#36383d;
 }
 
 .validator-box-unselected {
-  background-color:#5264b6;
+  background-color:#565e6b;
 }
 
 .btn-validator-selected {

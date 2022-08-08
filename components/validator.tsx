@@ -381,7 +381,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
         );
     }
 
-    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-primary';
+    const borderColor = (validator.delinquent) ? 'border-danger' : 'border-secondary';
     const bgColor = (isStakeValidator) ? 'validator-box-selected' : 'validator-box-unselected';    
 
     return (
