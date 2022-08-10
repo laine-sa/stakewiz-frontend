@@ -221,10 +221,10 @@ export const MultiStakeDialog: FC<{
 
         console.log('total '+oldValue)
 
-        if(newTotal > balance) {
+        if(newTotal > balance - config.TX_RESERVE_LAMPORTS) {
             console.log('Amount is too high');
             value = balance - totalStake() + oldValue - config.TX_RESERVE_LAMPORTS;
-            if(value < stakeRentExemptAmount) value = stakeRentExemptAmount;
+            if(value < stakeRentExemptAmount) value = 0;
         }
 
         let newStake = [];
@@ -322,7 +322,8 @@ export const MultiStakeDialog: FC<{
                                             value={(stakeInput.validator==validator) ? stakeInput.amount : stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
                                             onChange={(e) => setStakeInput({validator:validator,amount:parseFloat(e.target.value)})} 
                                             max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
-                                            min={stakeRentExemptAmount+1}
+                                            min={0}
+                                            step={0.00005}
                                             disabled={(distributionMethod == DistributionMethods.Custom) ? false : true}
                                         />
                             </div>
@@ -376,6 +377,14 @@ export const MultiStakeDialog: FC<{
         });
 
         return total;
+    }
+
+    const totalValidators = () => {
+        let total = 0;
+        stakeValidators.map((validator) => {
+            if(stakeDistribution[validator.vote_identity]!=undefined && stakeDistribution[validator.vote_identity] != 0) total += 1;
+        });
+        return total
     }
 
     const minTotalStakeAmount = () => {
@@ -585,7 +594,7 @@ export const MultiStakeDialog: FC<{
                                 ◎ {totalStake() / LAMPORTS_PER_SOL}
                             </div>
                             <div className='mt-1'>
-                                with {stakeValidators.length} validators with an estimated compound APY of
+                                with {totalValidators()} validators with an estimated compound APY of
                             </div>
                             <div>
                                 {estimatedAPY()} %
