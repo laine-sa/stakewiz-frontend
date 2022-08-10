@@ -288,19 +288,20 @@ export const MultiStakeDialog: FC<{
                             </div>
                             
                         </div>
-                        <div className='mx-2 text-truncate d-flex w-25'>
-                            {(distributionMethod!=DistributionMethods.Custom) ? (
-                                <span>◎ {stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL}</span>
-                            ) : (
-                                <input 
-                                    type='number' 
-                                    value={stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
-                                    step={5000 / LAMPORTS_PER_SOL}
-                                    onChange={(e) => calculateCustomDistribution(validator,parseFloat(e.target.value))} 
-                                    name={'stake-custom-input-'+validator.vote_identity}
-                                    id={'stake-custom-input-'+validator.vote_identity}
-                                />
-                            )}
+                        <div className='mx-2 text-truncate d-flex'>
+                            <div className='input-group input-group-sm'>
+                                        <span className='input-group-text' id='stakeAmountInputText'>◎</span>
+                                        <input  
+                                            className='form-control text-center' 
+                                            name={'stakeAmountInput-'+validator.vote_identity}
+                                            type='number' 
+                                            value={stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
+                                            onChange={(e) => calculateCustomDistribution(validator,parseFloat(e.target.value))} 
+                                            max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
+                                            min={stakeRentExemptAmount+1}
+                                            disabled={(distributionMethod == DistributionMethods.Custom) ? false : true}
+                                        />
+                            </div>
                         </div>
                         <div className='mx-2 d-flex flex-grow-1'>
                             <i className='bi bi-x-lg pointer' onClick={() => updateStakeValidators(validator)}></i>

@@ -335,11 +335,11 @@ a:hover {
 }
 
 .validator-box-selected {
-  background-color:#36383d;
+  background-color:#2c2d31;
 }
 
 .validator-box-unselected {
-  background-color:#565e6b;
+  background-color:#404449;
 }
 
 .btn-validator-selected {
