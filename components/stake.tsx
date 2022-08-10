@@ -319,7 +319,7 @@ export const MultiStakeDialog: FC<{
                                             className='form-control text-center' 
                                             name={'stakeAmountInput-'+validator.vote_identity}
                                             type='number' 
-                                            value={(stakeInput.validator==validator) ? stakeInput.amount : stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
+                                            value={(stakeInput.validator==validator) ? stakeInput.amount : (stakeDistribution[validator.vote_identity]!=undefined) ? stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL : 0} 
                                             onChange={(e) => setStakeInput({validator:validator,amount:parseFloat(e.target.value)})} 
                                             max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
                                             min={0}
