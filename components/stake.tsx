@@ -39,6 +39,7 @@ const StakeInput: FC<{
     
 
     const [sliderValue, setSliderValue] = useState(stakeAmount);
+    const [pendingValue, setPendingValue] = useState(null);
 
     const processUpdate = (amount) => {
         if(!readOnly) {
@@ -47,26 +48,51 @@ const StakeInput: FC<{
         }
     }
 
+    useEffect(() => {
+        if(pendingValue!=null) {
+            const timeoutId = setTimeout(() => processUpdate(pendingValue), 500)
+            return () => clearTimeout(timeoutId)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pendingValue])
 
     return (
-        <div className='my-2 d-flex flex-row align-items-center pe-0 w-100'>
+        <div className='my-2 d-flex flex-row align-items-center pe-0 w-100' key={'range-slider-div-'+stakeAmount}>
             <div className='me-1 flex-shrink-1'>
-                <span onClick={() => processUpdate(minStakeAmount/LAMPORTS_PER_SOL)} className='pointer'>Min</span>
+                <OverlayTrigger
+                    placement="top"
+                    overlay={
+                        <Tooltip>
+                            The min amount for rent exemption + 1 lamport per validator
+                        </Tooltip>
+                    } 
+                >
+                    <span onClick={() => processUpdate(minStakeAmount/LAMPORTS_PER_SOL)} className={(!readOnly) ? 'pointer' : null}>Min</span>
+                </OverlayTrigger>
             </div>
             <div className='flex-grow-1 px-1'>
                 <RangeSlider 
-                    value={sliderValue} 
+                    value={(pendingValue != null) ? pendingValue : sliderValue} 
                     min={minStakeAmount/LAMPORTS_PER_SOL}
                     max={(balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL} 
-                    step={5000/LAMPORTS_PER_SOL}
-                    onChange={(event) => processUpdate(parseFloat(event.target.value))}
+                    step={500000/LAMPORTS_PER_SOL}
+                    onChange={(event) => setPendingValue(parseFloat(event.target.value))}
                     tooltip='off'
                     variant='light'
                     disabled={(readOnly) ? true : false}
                 />
             </div>
             <div className='text-start px-0 flex-shrink-1'>
-                <span onClick={() => processUpdate((balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL)} className='pointer'>Max</span>
+                <OverlayTrigger
+                    placement="top"
+                    overlay={
+                        <Tooltip>
+                            Your balance minus ◎ 0.01 for fees
+                        </Tooltip>
+                    } 
+                >
+                    <span onClick={() => processUpdate((balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL)} className={(!readOnly) ? 'pointer' : null}>Max</span>
+                </OverlayTrigger>
             </div>
         </div>
         
@@ -100,9 +126,7 @@ export const MultiStakeDialog: FC<{
 
     const[renderTime, setRenderTime] = useState(Math.floor(Date.now() / 1000));
 
-    const [epochInfo, setEpochInfo] = useState<EpochInfoI | null>(null);
-    const [epochReturn, setEpochReturn] = useState(0);
-    const [monthReturn, setMonthReturn] = useState(0);
+    const [stakeInput, setStakeInput] = useState({validator:null,amount:null});
 
     const [submitError, setSubmitError] = useState<string>(undefined);
     const [submitted, setSubmitted] = useState(false);
@@ -114,24 +138,6 @@ export const MultiStakeDialog: FC<{
     const [stakeDistribution, setStakeDistribution] = useState({})
     const [distributionMethod, setDistributionMethod] = useState(DistributionMethods.Equal);
 
-    const calculateReturns = async () => {
-        /*let epoch;
-        if(epochInfo==undefined) {
-            epoch = await getEpochInfo();
-            setEpochInfo(epoch);
-        }
-        if((epochInfo!=undefined || epoch != undefined) && validator!=null) {
-
-            if(epoch == undefined) epoch = epochInfo;
-        
-            let epoch_return = Math.pow(1+validator.apy_estimate/100, 1/epoch.epochs_per_year)-1;
-            setEpochReturn(epoch_return);
-
-            let month_return = Math.pow(1+epoch_return, epoch.epochs_per_year/12)-1;
-            setMonthReturn(month_return);
-            
-        }*/
-    }
 
     const validateAmount = (amount) => {
         setRenderTime(Math.floor(Date.now() / 1000));
@@ -139,7 +145,6 @@ export const MultiStakeDialog: FC<{
         else setStakeAmount(amount);
 
         calculateDistribution();
-        calculateReturns();
     }
 
     const getBalance = () => {
@@ -148,7 +153,6 @@ export const MultiStakeDialog: FC<{
             .then((resolved) => {
                 setBalance(resolved);
                 if(stakeAmount==null && resolved > config.TX_RESERVE_LAMPORTS) setStakeAmount((resolved-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL);
-                calculateReturns();
             })
             .catch((error) => {
                 console.log(error);
@@ -209,10 +213,13 @@ export const MultiStakeDialog: FC<{
         
         value = value * LAMPORTS_PER_SOL;
 
-        if(isNaN(value) || value <= stakeRentExemptAmount) value = stakeRentExemptAmount + 1;
+        if(isNaN(value) || (value <= stakeRentExemptAmount && value != 0)) value = stakeRentExemptAmount + 1;
 
         let oldValue = stakeDistribution[validator.vote_identity];
+        if(oldValue==undefined) oldValue = 0;
         let newTotal = totalStake() - oldValue + value;
+
+        console.log('total '+oldValue)
 
         if(newTotal > balance) {
             console.log('Amount is too high');
@@ -234,6 +241,7 @@ export const MultiStakeDialog: FC<{
             getBalance();
             getStakeRentExemptAmount();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderTime]);
 
     useEffect(() => {
@@ -241,13 +249,29 @@ export const MultiStakeDialog: FC<{
         if(stakeAmount != null ) {
             if(stakeAmount < minTotalStakeAmount()/LAMPORTS_PER_SOL) setStakeAmount(minTotalStakeAmount()/LAMPORTS_PER_SOL)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stakeValidators, stakeAmount, distributionMethod, balance, showStakeModal]);
 
     useEffect(() => {
         if(distributionMethod==DistributionMethods.Custom) {
             setStakeAmount(totalStake() / LAMPORTS_PER_SOL)
         }
-    }, [stakeDistribution])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [distributionMethod, stakeDistribution, stakeValidators])
+
+    useEffect(() => {
+        if(stakeInput.validator != null){
+            const timeoutId = setTimeout(() => {
+                calculateCustomDistribution(stakeInput.validator,stakeInput.amount)
+                setStakeInput({
+                    validator:null,
+                    amount: null
+                })
+            }, 500)
+            return () => clearTimeout(timeoutId)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stakeInput])
 
     const renderName = (validator) => {
         if(validator!=null) {
@@ -295,8 +319,8 @@ export const MultiStakeDialog: FC<{
                                             className='form-control text-center' 
                                             name={'stakeAmountInput-'+validator.vote_identity}
                                             type='number' 
-                                            value={stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
-                                            onChange={(e) => calculateCustomDistribution(validator,parseFloat(e.target.value))} 
+                                            value={(stakeInput.validator==validator) ? stakeInput.amount : stakeDistribution[validator.vote_identity]/LAMPORTS_PER_SOL} 
+                                            onChange={(e) => setStakeInput({validator:validator,amount:parseFloat(e.target.value)})} 
                                             max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
                                             min={stakeRentExemptAmount+1}
                                             disabled={(distributionMethod == DistributionMethods.Custom) ? false : true}
@@ -339,7 +363,7 @@ export const MultiStakeDialog: FC<{
     const estimatedAPY = () => {
         let apy_multiples = 0;
         stakeValidators.map((validator) => {
-            apy_multiples += validator.apy_estimate * stakeDistribution[validator.vote_identity];
+            if(stakeDistribution[validator.vote_identity]!=undefined) apy_multiples += validator.apy_estimate * stakeDistribution[validator.vote_identity];
         });
 
         return Math.round((apy_multiples / stakeAmount/LAMPORTS_PER_SOL*100)+Number.EPSILON) / 100;
@@ -348,7 +372,7 @@ export const MultiStakeDialog: FC<{
     const totalStake = () => {
         let total = 0;
         stakeValidators.map((validator) => {
-            total += stakeDistribution[validator.vote_identity];
+            if(stakeDistribution[validator.vote_identity]!=undefined) total += stakeDistribution[validator.vote_identity];
         });
 
         return total;
@@ -501,10 +525,10 @@ export const MultiStakeDialog: FC<{
                             </div>
                             <div className='w-1'>
                                 <StakeInput
-                                    key={'range-slider-'+stakeAmount}
+                                    key={'stake-range-slider-'+totalStake()}
                                     balance={balance}
                                     minStakeAmount={minTotalStakeAmount()}
-                                    stakeAmount={stakeAmount}
+                                    stakeAmount={totalStake() / LAMPORTS_PER_SOL}
                                     updateAmount={(amount) => validateAmount(amount)}
                                     readOnly={(distributionMethod == DistributionMethods.Custom) ? true : false}
                                 />
@@ -514,10 +538,11 @@ export const MultiStakeDialog: FC<{
                                     <div className='input-group input-group-lg'>
                                         <span className='input-group-text' id='stakeAmountInputText'>◎</span>
                                         <input  
+                                            key={'stake-amount-input'+totalStake}
                                             className='form-control text-center fs-6' 
                                             name='stakeAmountInput' 
                                             type='number' 
-                                            value={stakeAmount} 
+                                            value={totalStake()/LAMPORTS_PER_SOL} 
                                             onChange={(event) => validateAmount(parseFloat(event.target.value))} 
                                             max={(balance - config.TX_RESERVE_LAMPORTS) / LAMPORTS_PER_SOL}    
                                             min={minTotalStakeAmount()}
@@ -554,19 +579,13 @@ export const MultiStakeDialog: FC<{
                                 Summary
                             </div>
                             <div className='fw-bolder mt-1'>
-                                Total to stake
+                                Staking
                             </div>
                             <div className='text-truncate'>
                                 ◎ {totalStake() / LAMPORTS_PER_SOL}
                             </div>
-                            <div className='fw-bolder mt-1'>
-                                No of Validators
-                            </div>
-                            <div>
-                                {stakeValidators.length}
-                            </div>
-                            <div className='fw-bolder mt-1'>
-                                Estimated APY
+                            <div className='mt-1'>
+                                with {stakeValidators.length} validators with an estimated compound APY of
                             </div>
                             <div>
                                 {estimatedAPY()} %
@@ -677,7 +696,8 @@ export const StakeDialog: FC<{
             getStakeRentExemptAmount();
 
         }
-    }, [renderTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [connection, publicKey, renderTime]);
 
     const renderName = () => {
         if(validator!=null) {
