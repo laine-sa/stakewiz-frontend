@@ -44,7 +44,7 @@ export const RenderImage: FC<
     return (
         
         <Link href={'/validator/'+vote_identity} passHref>
-            <a>
+            <a className='d-flex'>
                 <Image 
                     className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} 
                     src={(img==null) ? '/images/validator-image-na.png' : img} 

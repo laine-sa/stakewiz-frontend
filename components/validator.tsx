@@ -707,39 +707,37 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             let activated_stake = new Intl.NumberFormat().format(Number(this.state.validator.activated_stake.toFixed(0)));
 
             return ( [
-                <div className='container-sm m-1 mt-5 rounded-top position-relative' key='validator-details-header'>
+                <div className='container-sm m-1 mt-5 rounded-top position-relative d-flex align-items-center flex-column' key='validator-details-header'>
                     
                    
-                    <div className='row rounded-top'>
-                        <div className='col text-center validator-logo'>
-                            <RenderImage
-                                img={this.state.validator.image}
-                                vote_identity={this.state.validator.vote_identity}
-                                size={100}
-                                className={(this.state.validator.delinquent) ? 'border border-danger border-3' : null}
-                            />
-                        </div>
+                    <div className='d-flex'>
+                        <RenderImage
+                            img={this.state.validator.image}
+                            vote_identity={this.state.validator.vote_identity}
+                            size={100}
+                            className={(this.state.validator.delinquent) ? 'border border-danger border-3' : null}
+                        />
                     </div>
 
-                    <div className='row'>
-                        <div className='col text-white text-center p-2'>
-                            <h2 className='d-flex align-items-center justify-content-center'>{this.renderName()}
-                            {(this.state.validator.delinquent) ? (
-                                <div className='ms-2 badge bg-danger fs-6'>
-                                    <OverlayTrigger
-                                        placement="bottom"
-                                        overlay={
-                                            <Tooltip>
-                                                This validator is currently delinquent, which means they aren&apos;t voting.
-                                            </Tooltip>
-                                        } 
-                                    > 
-                                        <span>DELINQUENT</span>
-                                    </OverlayTrigger>
-                                </div>
-                            ): null}
-                            </h2>
-                            
+                    <div className='d-flex text-white text-center p-2 flex-column'>
+                        <h2 className='d-flex align-items-center justify-content-center'>{this.renderName()}
+                        {(this.state.validator.delinquent) ? (
+                            <div className='ms-2 badge bg-danger fs-6'>
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={
+                                        <Tooltip>
+                                            This validator is currently delinquent, which means they aren&apos;t voting.
+                                        </Tooltip>
+                                    } 
+                                > 
+                                    <span>DELINQUENT</span>
+                                </OverlayTrigger>
+                            </div>
+                        ): null}
+                        </h2>
+                        
+                        <div>
                             <button className='btn btn-outline-light mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
@@ -769,9 +767,10 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 </span>
                             </ConditionalWrapper>
                         </div>
+                        
                     </div>
                 </div>,
-                <div className='container validator-details-content' key='validator-details-content'>
+                <div className='d-flex flex-column validator-details-content' key='validator-details-content'>
 
                     <Gauges
                         skip_rate={this.state.validator.skip_rate}
@@ -781,139 +780,137 @@ class ValidatorDetail extends React.Component<validatorDetailI,
 
                     />
 
-                    <div className='row'>
-                        <div className='col p-2 text-white border border-white rounded'>
-                        
-                                <div className='row'>
-                                    <div className='col'>
-                                            <div className='row mb-2'>
-                                                <div className='col col-md-2 fw-bold'>
-                                                    Identity
-                                                </div>
-                                                <div className='col text-truncate'>
-
-                                                    <OverlayTrigger
-                                                        placement="top"
-                                                        overlay={
-                                                            <Tooltip>
-                                                                Copy
-                                                            </Tooltip>
-                                                        } 
-                                                    >
-                                                        <span className='pointer' onClick={() => {navigator.clipboard.writeText(this.state.validator.identity)}}>{this.state.validator.identity}</span>
-                                                    </OverlayTrigger>
-                                                </div>
-                                            </div>
-                                    </div>
-                                </div>
-                                <div className='row'>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                                <div className='col col-md-2 fw-bold'>
-                                                    Vote Account
-                                                </div>
-                                                <div className='col text-truncate'>
-
-                                                    <OverlayTrigger
-                                                        placement="top"
-                                                        overlay={
-                                                            <Tooltip>
-                                                                Copy
-                                                            </Tooltip>
-                                                        } 
-                                                    >
-                                                        <span className='pointer' onClick={() => {navigator.clipboard.writeText(this.state.validator.vote_identity)}}>{this.state.validator.vote_identity}</span>
-                                                    </OverlayTrigger>
-                                                </div>
-                                            </div>
-                                    </div>
-                                </div>
-                                <div className='row'>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                            <div className='col col-md-2 fw-bold'>
-                                                Description
-                                            </div>
-                                            <div className='col'>
-                                                {this.state.validator.description}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='row mobile-validator-info-row'>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                            <div className='col fw-bold'>
-                                                Website
-                                            </div>
-                                            <div className='col text-truncate'>
-                                                <RenderUrl
-                                                    url={this.state.validator.website}
-                                                />
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                            <div className='col fw-bold'>
-                                                Keybase
-                                            </div>
-                                            <div className='col'>
-                                                {this.state.validator.keybase}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                            <div className='col fw-bold'>
-                                                Commission
-                                            </div>
-                                            <div className='col'>
-                                                {this.state.validator.commission} %
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='row  mobile-validator-info-row'>
+                    <div className='d-flex flex-column p-2 text-white border border-white rounded'>
+                    
+                            <div className='row'>
                                 <div className='col'>
                                         <div className='row mb-2'>
-                                            <div className='col fw-bold'>
-                                                APY (estimate)
+                                            <div className='col col-md-2 fw-bold'>
+                                                Identity
                                             </div>
-                                            <div className='col'>
-                                                {this.state.validator.apy_estimate} %
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                            <div className='col fw-bold'>
-                                                Stake
-                                            </div>
-                                            <div className='col'>
-                                                ◎ {activated_stake}
-                                                <StakeLabel
-                                                    stake={this.state.stake_change}
-                                                    />
+                                            <div className='col text-truncate'>
+
+                                                <OverlayTrigger
+                                                    placement="top"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            Copy
+                                                        </Tooltip>
+                                                    } 
+                                                >
+                                                    <span className='pointer' onClick={() => {navigator.clipboard.writeText(this.state.validator.identity)}}>{this.state.validator.identity}</span>
+                                                </OverlayTrigger>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className='col'>
-                                        <div className='row mb-2'>
-                                            <div className='col fw-bold'>
-                                                Version
+                                </div>
+                            </div>
+                            <div className='row'>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                            <div className='col col-md-2 fw-bold'>
+                                                Vote Account
                                             </div>
-                                            <div className='col'>
-                                                {this.state.validator.version}
+                                            <div className='col text-truncate'>
+
+                                                <OverlayTrigger
+                                                    placement="top"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            Copy
+                                                        </Tooltip>
+                                                    } 
+                                                >
+                                                    <span className='pointer' onClick={() => {navigator.clipboard.writeText(this.state.validator.vote_identity)}}>{this.state.validator.vote_identity}</span>
+                                                </OverlayTrigger>
                                             </div>
+                                        </div>
+                                </div>
+                            </div>
+                            <div className='row'>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col col-md-2 fw-bold'>
+                                            Description
+                                        </div>
+                                        <div className='col'>
+                                            {this.state.validator.description}
                                         </div>
                                     </div>
                                 </div>
-                                
-                                
+                            </div>
+                            <div className='row mobile-validator-info-row'>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            Website
+                                        </div>
+                                        <div className='col text-truncate'>
+                                            <RenderUrl
+                                                url={this.state.validator.website}
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            Keybase
+                                        </div>
+                                        <div className='col'>
+                                            {this.state.validator.keybase}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            Commission
+                                        </div>
+                                        <div className='col'>
+                                            {this.state.validator.commission} %
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='row  mobile-validator-info-row'>
+                            <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            APY (estimate)
+                                        </div>
+                                        <div className='col'>
+                                            {this.state.validator.apy_estimate} %
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            Stake
+                                        </div>
+                                        <div className='col'>
+                                            ◎ {activated_stake}
+                                            <StakeLabel
+                                                stake={this.state.stake_change}
+                                                />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            Version
+                                        </div>
+                                        <div className='col'>
+                                            {this.state.validator.version}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
-                        </div>
+                            
+                        
                     </div>
 
 

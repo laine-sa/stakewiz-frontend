@@ -290,7 +290,7 @@ export const MultiStakeDialog: FC<{
             stakeValidators.map((validator,index) => {
                 vl.push((
                     <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+validator.vote_identity}>
-                        <div className='align-self-end d-flex flex-shrink-1'>
+                        <div className='d-flex flex-shrink-1'>
                             <RenderImage
                                 img={validator.image}
                                 size={25}
@@ -343,7 +343,7 @@ export const MultiStakeDialog: FC<{
                                 <i className='bi bi-plus me-1'></i>Add Laine
                             </button>
                         </div>
-                        <div className='align-self-end d-flex flex-shrink-1'>
+                        <div className='d-flex flex-shrink-1'>
                             <RenderImage
                                 img={laine.image}
                                 size={25}
@@ -520,19 +520,19 @@ export const MultiStakeDialog: FC<{
         
         return (
             <Modal show={showStakeModal} onHide={() => hideStakeModal()} dialogClassName='modal-lg multi-stake-modal-modal'>
+                <Modal.Header closeButton>
+                    <Modal.Title>Create stake accounts</Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
-                    <div className='d-flex fs-5 py-2'>
-                        Your staking selection
-                    </div>
-                    <div className='d-flex py-2 flex-column'>
-                        {renderStakeValidators()}
-                    </div>
-                    <div className='d-flex flex-row'>
-                        <div className='border border-light border-1 rounded p-2 me-1 flex-grow-1'>
-                            <div className='fs-6 fw-bold'>
+                    
+                    
+                    <div className='d-flex flex-column'>
+                        
+                        <div className='p-2 flex-grow-1 border border-secondary'>
+                            <div className='fs-5 flex-grow-1 text-center'>
                                 Total to Stake
                             </div>
-                            <div className='w-1'>
+                            <div>
                                 <StakeInput
                                     key={'stake-range-slider-'+totalStake()}
                                     balance={balance}
@@ -560,44 +560,64 @@ export const MultiStakeDialog: FC<{
                                     </div>
                                 </div>
                             </div>
-                            <div className='d-flex w-100 justify-content-end'>
+                            <div className='flex-grow-1'>
                                 <div className="balance-sm text-end text-light">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
                             </div>
                         </div>
-                        <div className='border border-light border-1 me-1 rounded p-2 flex-grow-1 w-25'>
-                            <div className='fs-6 fw-bold'>
+                        <div className='p-2 my-1 flex-grow-1 border border-secondary'>
+                            <div className='fs-5 mb-2 flex-grow-1 text-center'>
                                 Stake distribution
                             </div>
-                            <div className='d-grid gap-1 multi-stake-distribution-buttons'>
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Equal)} onClick={() => setDistributionMethod(DistributionMethods.Equal)}>
+                            <div className='d-flex multi-stake-distribution-buttons'>
+                                <button className='btn btn-outline-light flex-grow-1 mx-2' disabled={(distributionMethod==DistributionMethods.Equal)} onClick={() => setDistributionMethod(DistributionMethods.Equal)}>
                                     Equal
                                 </button>
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => setDistributionMethod(DistributionMethods.WizScore)}>
+                                <button className='btn btn-outline-light flex-grow-1 mx-2 wiz-font' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => setDistributionMethod(DistributionMethods.WizScore)}>
                                     Wiz Score
                                 </button> 
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.APY)} onClick={() => setDistributionMethod(DistributionMethods.APY)}>
+                                <button className='btn btn-outline-light flex-grow-1 mx-2' disabled={(distributionMethod==DistributionMethods.APY)} onClick={() => setDistributionMethod(DistributionMethods.APY)}>
                                     APY
                                 </button> 
-                                <button className='btn btn-outline-light' disabled={(distributionMethod==DistributionMethods.Custom)} onClick={() => setDistributionMethod(DistributionMethods.Custom)}>
+                                <button className='btn btn-outline-light flex-grow-1 mx-2' disabled={(distributionMethod==DistributionMethods.Custom)} onClick={() => setDistributionMethod(DistributionMethods.Custom)}>
                                     Custom
                                 </button>
                             </div>
                         </div>
-                        <div className='border border- border-1 rounded p-2 flex-grow-1 w-25'>
-                            <div className='fs-6 fw-bold'>
-                                Summary
-                            </div>
-                            <div className='fw-bolder mt-1'>
-                                Staking
-                            </div>
-                            <div className='text-truncate'>
-                                ◎ {totalStake() / LAMPORTS_PER_SOL}
-                            </div>
-                            <div className='mt-1'>
-                                with {totalValidators()} validators with an estimated compound APY of
+                        <div className='flex-grow-1 border border-secondary p-1'>
+                            <div className='fs-5 py-2 flex-grow-1 text-center'>
+                                Your validator selection
                             </div>
                             <div>
-                                {estimatedAPY()} %
+                                {renderStakeValidators()}
+                            </div>
+                            
+                        </div>
+                        <div className='p-2 me-1 flex-grow-1'>
+                            <div className='d-flex flex-grow-1 flex-row align-items-center'>
+                                <div className='d-flex flex-column align-items-center flex-grow-1'>
+                                    <div className='fs-5 fw-bold'>
+                                        {totalValidators()}
+                                    </div>
+                                    <div>
+                                        Validators
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-column align-items-center flex-grow-1'>
+                                    <div className='fs-5 fw-bold'>
+                                    ◎ {totalStake() / LAMPORTS_PER_SOL}
+                                    </div>
+                                    <div>
+                                        Total to stake
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-column align-items-center flex-grow-1'>
+                                    <div className='fs-5 fw-bold'>
+                                        {estimatedAPY()} %
+                                    </div>
+                                    <div>
+                                        Estimated APY
+                                    </div>
+                                </div>
                             </div>
                             <div className='mt-2'>
                                 <button className='btn btn-outline-light w-100' onClick={() => doStake()}>

@@ -222,8 +222,8 @@ a:hover {
 }
 
 .modal-content {
-  background-color:#2c518d!important;
-  border:0!important;
+  background-color:#404449!important;
+  
 }
 
 .modal-dialog .modal-content {
@@ -668,8 +668,8 @@ a:hover {
   }
 
   .stakewiz-logo {
-    width:15rem;
-    height:auto;
+    width:15rem!important;
+    height:auto!important;
   }
 
   .validator-flex-container {

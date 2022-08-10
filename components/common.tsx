@@ -129,10 +129,12 @@ const TopBar: FC = () => {
         <Navbar key='navbar' bg="none" variant="dark" expand="lg">
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
-                <img 
+                <Image 
                   src={"/images/new-logo-white.webp"}
                   className='stakewiz-logo'
                   alt="Stakewiz Logo" 
+                  width={300}
+                  height={96}
                 />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -189,6 +191,7 @@ class Footer extends React.Component {
                       src='/images/gg-logo.png'
                       width='267px'
                       height='30px'
+                      alt='GenesysGo Logo'
                     />
                   </div>
               </div>
