@@ -585,6 +585,11 @@ export const MultiStakeDialog: FC<{
                         </div>
                         {renderSignatureConfirmations()}
                         <div className='flex-grow-1 my-2 text-center'>
+                            <div className='border rounded border-1 border-secondary m-2 p-2'>
+                                Consider setting up some alerts, that way you&apos;ll be notified should your chosen validator change their commission or be delinquent for an extended period.
+                            </div>
+                        </div>
+                        <div className='flex-grow-1 my-2 text-center'>
                             <button className='btn btn-outline-light' onClick={() => doHide()}>
                                 Close
                             </button>

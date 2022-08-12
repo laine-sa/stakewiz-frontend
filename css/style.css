@@ -524,6 +524,11 @@ a:hover {
 .navbar-nav {
   align-items: center;
 }
+
+.nav-discord i {
+  font-size:1.5rem;
+}
+
 .search-result-div:focus {
   width: 363px;
   padding: 0 16px 0 0;
@@ -689,6 +694,16 @@ a:hover {
   .navbar-nav {
     text-align:center;
   }
+
+  .nav-discord {
+    display:flex;
+    align-items:center;
+  }
+
+  .nav-discord span {
+    display:inline-block!important;
+    text-decoration:none!important;
+  } 
 
   .epoch-progress-value { 
     display:none;
