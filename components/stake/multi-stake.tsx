@@ -210,7 +210,7 @@ export const MultiStakeDialog: FC<{
             let vl = [];
             stakeValidators.map((validator,index) => {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-secondary border-1 rounded mb-2 p-1 ps-2' key={'stake-validator-'+validator.vote_identity}>
+                    <div className='d-flex align-items-center flex-row border border-secondary border-1 rounded mb-2 p-1 ps-2 multi-stake-validator-row' key={'stake-validator-'+validator.vote_identity}>
                         <div className='d-flex flex-shrink-1'>
                             <RenderImage
                                 img={validator.image}
@@ -218,7 +218,7 @@ export const MultiStakeDialog: FC<{
                                 vote_identity={validator.vote_identity}
                             />
                         </div>
-                        <div className='ps-2 w-25 text-truncate d-flex flex-grow-1'>
+                        <div className='ps-2 w-25 text-truncate d-flex flex-grow-1 multi-stake-validator-name'>
                             {renderName(validator)}
                         </div>
                         <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>
@@ -249,15 +249,16 @@ export const MultiStakeDialog: FC<{
                                         />
                             </div>
                         </div>
-                        <div className='ms-2 d-flex flex-grow-1'>
+                        <div className='ms-2 d-flex flex-grow-1 multi-stake-remove-button align-items-center'>
                             <i className='bi bi-x-lg pointer' onClick={() => updateStakeValidators(validator)}></i>
+                            <span className='d-none' onClick={() => updateStakeValidators(validator)}>Remove</span>
                         </div>
                     </div>
                 ))
             })
             if(!stakeValidators.includes(laine) && laine !=null) {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-secondary bg-secondary text-white border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+laine.vote_identity}>
+                    <div className='d-flex align-items-center flex-row border border-secondary bg-secondary text-white border-1 rounded mb-1 p-1 px-2 multi-stake-validator-row' key={'stake-validator-'+laine.vote_identity}>
                         
                         
                         <div className='d-flex flex-shrink-1'>
@@ -267,7 +268,7 @@ export const MultiStakeDialog: FC<{
                                 vote_identity={laine.vote_identity}
                             />
                         </div>
-                        <div className='ps-2 text-truncate me-5'>
+                        <div className='ps-2 text-truncate me-5 multi-stake-validator-name'>
                             {renderName(laine)}
                         </div>
                         <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>
@@ -282,7 +283,7 @@ export const MultiStakeDialog: FC<{
                             </div>
                             
                         </div>
-                        <div className='me-2 text-truncate d-flex'>
+                        <div className='text-truncate d-flex'>
                             <button className='btn btn-outline-light btn-sm' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
                                 <i className='bi bi-plus me-1'></i>Add Laine
                             </button>
@@ -354,7 +355,7 @@ export const MultiStakeDialog: FC<{
                                 </div>        
                         )}
                     </div>
-                    <div className='d-flex flex-grow-1 ms-2 flex-nowrap w-25 link-dark'>
+                    <div className='d-flex flex-grow-1 ms-2 flex-nowrap w-25 link-dark text-center'>
                         <a href={config.EXPLORER_TX_BASE+signature} target="_blank" rel="noreferrer">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>
                     </div>
                     <div className='text-truncate ms-2'>
@@ -538,7 +539,7 @@ export const MultiStakeDialog: FC<{
                             
                         </div>
                         <div className='p-2 me-1 flex-grow-1'>
-                            <div className='d-flex flex-grow-1 flex-row align-items-center'>
+                            <div className='d-flex flex-grow-1 flex-row align-items-center multi-stake-summary'>
                                 <div className='d-flex flex-column align-items-center flex-grow-1'>
                                     <div className='fs-5 fw-bold'>
                                         {totalValidators()}

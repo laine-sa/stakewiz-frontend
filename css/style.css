@@ -618,8 +618,50 @@ a:hover {
 }
 
 @media only screen and (max-width: 800px) {
+  .multi-stake-distribution-buttons {
+    flex-direction:column!important;
+  }
+
+  .multi-stake-distribution-buttons button {
+    margin-bottom:0.5rem!important;
+  }
+
+  .multi-stake-validator-badges {
+    flex-direction:column!important;
+    
+  }
+
+  .multi-stake-validator-badges div {
+    margin-bottom:0.5rem;
+    width:100%;
+  }
+
+  .multi-stake-validator-row {
+    flex-direction: column!important;
+    padding-top:0.5rem!important;
+  }
+
+  .multi-stake-validator-name {
+    width:auto!important;
+    margin:auto!important;
+    margin-bottom:0.5rem!important;
+  }
   
-  
+  .multi-stake-remove-button {
+    margin-top:0.5rem!important;
+    display:flex;
+    align-items: center;
+  }
+
+  .multi-stake-remove-button span {
+    display:inline-block!important;
+    margin-left:0.2rem!important;
+  }
+
+  .multi-stake-summary {
+    flex-direction: column!important;
+  }
+
   .navbar-flex-container {
     flex-direction:column;
   }
