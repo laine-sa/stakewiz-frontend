@@ -107,6 +107,7 @@ export interface ValidatorListI {
     connection: Connection;
     connected: boolean;
     updateStakeValidators: Function;
+    clearStakeValidators: Function;
     stakeValidators: [validatorI];
 }
 

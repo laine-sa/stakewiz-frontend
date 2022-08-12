@@ -122,6 +122,12 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
             });
         }
     }
+
+    clearStakeValidators() {
+        this.props.updateState({
+            stakeValidators: null
+        })
+    }
   
     updateWizModalVisibility(show:boolean,validator=null) {
       console.log(show);
@@ -190,6 +196,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   connection={this.props.connection}
                   connected={this.props.connected}
                   updateStakeValidators={(validator: validatorI) => this.updateStakeValidators(validator)}
+                  clearStakeValidators={() => this.clearStakeValidators()}
                   stakeValidators={this.props.state.stakeValidators}
                   />,
               <LoadMoreButton
@@ -270,6 +277,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 key='multiStakeModal'
                 stakeValidators={this.props.stakeValidators}
                 updateStakeValidators={(validator: validatorI) => this.props.updateStakeValidators(validator)}
+                clearStakeValidators={() => this.props.clearStakeValidators()}
                 showStakeModal={this.props.showMultiStakeModal}
                 hideStakeModal={(alert,validator) => {
                     this.props.updateMultiStakeModal(false)

@@ -14,12 +14,13 @@ import { getStakeAccounts, StakeInput } from './common'
 export const MultiStakeDialog: FC<{
     stakeValidators: [validatorI],
     updateStakeValidators: Function,
+    clearStakeValidators: Function,
     showStakeModal: boolean,
     hideStakeModal: Function,
     clusterStats: clusterStatsI,
     allowAlertDialog?: boolean,
     laine: validatorI
-}> = ({stakeValidators,updateStakeValidators,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog, laine}) => {
+}> = ({stakeValidators,updateStakeValidators,clearStakeValidators,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog, laine}) => {
 
     enum DistributionMethods {
         Equal = 0,
@@ -40,12 +41,25 @@ export const MultiStakeDialog: FC<{
     const [stakeInput, setStakeInput] = useState({validator:null,amount:null});
 
     const [signed, setSigned] = useState(false);
+    const [submitError, setSubmitError] = useState(null)
     const [signatures, setSignatures] = useState([]);
     const [confirmations, setConfirmations] = useState([]);
     
     const [stakeDistribution, setStakeDistribution] = useState({})
     const [distributionMethod, setDistributionMethod] = useState(DistributionMethods.Equal);
 
+    const doHide = () => {
+        if(signed) clearStakeValidators()
+        hideStakeModal();
+        setTimeout(() => {
+            setSigned(false);
+            setStakeAmount(null);
+            setSignatures([])
+            setConfirmations([])
+            setSubmitError(null)
+        },500);
+        
+    }
 
     const validateAmount = (amount) => {
         setRenderTime(Math.floor(Date.now() / 1000));
@@ -307,21 +321,29 @@ export const MultiStakeDialog: FC<{
     const renderSignatureConfirmations = () => {
         let result = [];
 
-        signatures.map((signature) => {
+        signatures.map((signature, i) => {
             result.push((
-                <div className='flex-grow-1 flex-row flex-nowrap' key={'signature-result-'+signature+confirmations.length}>
-                    <div className='flex-shrink-1 text-truncate'>
-                        {signature}
+                <div className='d-flex align-items-center flex-grow-1 flex-row flex-nowrap stake-signature-row' key={'signature-result-'+signature+confirmations.length}>
+                    <div className='fw-bold badge rounded-pill bg-light text-dark'>
+                        {i+1}
                     </div>
-                    <div className='flex-grow-1 ms-2'>
+                    <div className='d-flex flex-grow-1 ms-2'>
                         {confirmations.includes(signature) ? (
-                            <div className="spinner-border spinner-border-sm mt-2" role="status">
-                                <span className="visually-hidden">Pending...</span>
+                            <div>
+                                <i className='bi bi-check text-success' style={{fontSize:'2rem'}}></i>
                             </div>
                             ) : (
-                                <i className='ms-2 bi bi-check text-success' style={{fontSize:'2rem'}}></i>    
+                                <div className="spinner-border spinner-border-sm m-2" role="status">
+                                    <span className="visually-hidden">Pending...</span>
+                                </div>        
                         )}
                     </div>
+                    <div className='d-flex flex-grow-1 ms-2 flex-nowrap w-25 link-dark'>
+                        <a href={config.EXPLORER_TX_BASE+signature} target="_blank" rel="noreferrer">View in Explorer<i className='bi bi-box-arrow-up-right ms-2'></i></a>
+                    </div>
+                    <div className='text-truncate ms-2'>
+                        {signature}
+                    </div> 
                 </div>
             ))
         })
@@ -383,7 +405,6 @@ export const MultiStakeDialog: FC<{
                 transactions[y].partialSign(keypair);
             })
             
-            console.log(transactions);
             let signedTx = await signAllTransactions(transactions);
             setSigned(true);
             let sigs = []
@@ -391,14 +412,14 @@ export const MultiStakeDialog: FC<{
             for(let i = 0; i < signedTx.length; i++) {
 
                 let signature = await connection.sendRawTransaction(signedTx[i].serialize())
-                setSignatures(signatures.concat(signature));
-                sigs.push(signature)
                 console.log('Submitted transaction with signature: '+signature);
-                
+                sigs.push(signature)
                 
             }
 
-            console.log(sigs)
+            setSignatures(sigs)
+
+            let confs = []
 
             for(let i = 0; i < sigs.length; i++) {
                 let confirmation = await connection.confirmTransaction({
@@ -407,11 +428,9 @@ export const MultiStakeDialog: FC<{
                     lastValidBlockHeight: recentBlockhash.lastValidBlockHeight}, 
                     'confirmed'
                 )
-                console.log(confirmation)
-                if(confirmation.value.err==null) setConfirmations(confirmations.concat(sigs[i]))
-                
-                
+                if(confirmation.value.err==null) confs.push(sigs[i])
             }
+            setConfirmations(confs)
         }
         catch(error) {
             console.log(error);
@@ -419,6 +438,7 @@ export const MultiStakeDialog: FC<{
             setSigned(false);
             setSignatures([]);
             setConfirmations([]);
+            setSubmitError(error.message)
         }
 
     };
@@ -426,7 +446,7 @@ export const MultiStakeDialog: FC<{
     if(stakeValidators!=null && clusterStats !=null && Object.keys(stakeDistribution).length>0) {
         
         return (
-            <Modal show={showStakeModal} onHide={() => hideStakeModal()} dialogClassName='modal-lg multi-stake-modal-modal'>
+            <Modal show={showStakeModal} onHide={() => doHide()} dialogClassName='modal-lg multi-stake-modal-modal'>
                 <Modal.Header closeButton>
                     <Modal.Title>Create stake accounts</Modal.Title>
                 </Modal.Header>
@@ -531,15 +551,25 @@ export const MultiStakeDialog: FC<{
                                     🚀 Stake
                                 </button>
                             </div>
+                            {(submitError!=null) ? (
+                                <div className="alert alert-danger show text-center mt-2">
+                                    {submitError}
+                                </div>
+                            ) : null}
                         </div>
                         
                     </div>
                 ) : (
                     <div className='my-2 flex-grow-1'>
                         <div className='flex-grow-1 my-2 fs-5 text-center'>
-                            Confirming transactions
+                            Staking ◎ {totalStake() / LAMPORTS_PER_SOL} to {totalValidators()} validators
                         </div>
                         {renderSignatureConfirmations()}
+                        <div className='flex-grow-1 my-2 text-center'>
+                            <button className='btn btn-outline-light' onClick={() => doHide()}>
+                                Close
+                            </button>
+                        </div>
                     </div>
                 )}
                 </Modal.Body>

@@ -118,6 +118,14 @@ input:focus {
   height:96px;
 }
 
+.link-dark a:hover {
+  color:#fff;
+}
+
+.stake-signature-row {
+  line-height:1rem;;
+}
+
 .vbox {
   background-image:url('../public/images/box-tile.png');
   background-repeat:repeat;
