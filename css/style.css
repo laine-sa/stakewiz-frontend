@@ -720,14 +720,23 @@ a:hover {
   .m-bottom-13{
     margin-bottom: 0;
   }
+
+  .navbar {
+    height:6rem!important;
+  }
+
   .logo {
-    margin:auto;
     text-align:center;
+    
   }
 
   .stakewiz-logo {
+    min-width:unset!important;
+    min-height:unset!important;
     width:15rem!important;
     height:auto!important;
+    margin:0!important;
+    margin-top:-0.5rem!important;
   }
 
   .validator-flex-container {
@@ -756,10 +765,6 @@ a:hover {
   }
   #support-box {
     display:none!important;
-  }
-
-  .logo {
-    padding-bottom:0.4rem!important;
   }
 
   .mobile-col-hide {
