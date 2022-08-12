@@ -126,6 +126,14 @@ input:focus {
   line-height:1rem;;
 }
 
+.multi-stake-input-container {
+  width: 15rem;
+}
+
+.wiz-score-distribution-button {
+  font-size:0.8rem;
+}
+
 .vbox {
   background-image:url('../public/images/box-tile.png');
   background-repeat:repeat;

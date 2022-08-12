@@ -211,7 +211,7 @@ export const MultiStakeDialog: FC<{
             let vl = [];
             stakeValidators.map((validator,index) => {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-light border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+validator.vote_identity}>
+                    <div className='d-flex align-items-center flex-row border border-secondary border-1 rounded mb-2 p-1 ps-2' key={'stake-validator-'+validator.vote_identity}>
                         <div className='d-flex flex-shrink-1'>
                             <RenderImage
                                 img={validator.image}
@@ -250,7 +250,7 @@ export const MultiStakeDialog: FC<{
                                         />
                             </div>
                         </div>
-                        <div className='mx-2 d-flex flex-grow-1'>
+                        <div className='ms-2 d-flex flex-grow-1'>
                             <i className='bi bi-x-lg pointer' onClick={() => updateStakeValidators(validator)}></i>
                         </div>
                     </div>
@@ -258,13 +258,9 @@ export const MultiStakeDialog: FC<{
             })
             if(!stakeValidators.includes(laine) && laine !=null) {
                 vl.push((
-                    <div className='d-flex align-items-center flex-row border border-secondary bg-dark text-white border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+laine.vote_identity}>
+                    <div className='d-flex align-items-center flex-row border border-secondary bg-secondary text-white border-1 rounded mb-1 p-1 px-2' key={'stake-validator-'+laine.vote_identity}>
                         
-                        <div className='me-2 text-truncate d-flex'>
-                            <button className='btn btn-outline-light btn-sm' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
-                                <i className='bi bi-plus me-1'></i>Add Laine
-                            </button>
-                        </div>
+                        
                         <div className='d-flex flex-shrink-1'>
                             <RenderImage
                                 img={laine.image}
@@ -272,8 +268,29 @@ export const MultiStakeDialog: FC<{
                                 vote_identity={laine.vote_identity}
                             />
                         </div>
-                        <div className='ps-2 w-25 text-truncate d-flex flex-grow-1'>
+                        <div className='ps-2 text-truncate me-5'>
                             {renderName(laine)}
+                        </div>
+                        <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>
+                            <div className='badge bg-light text-dark ms-1'>
+                                APY {laine.apy_estimate} %
+                            </div>
+                            <div className='badge bg-light text-dark ms-1'>
+                                Comm {laine.commission} %
+                            </div>
+                            <div className='badge bg-light text-dark ms-1'>
+                                <span className='wiz-font me-2'>Wiz</span> {laine.wiz_score} %
+                            </div>
+                            
+                        </div>
+                        <div className='me-2 text-truncate d-flex'>
+                            <button className='btn btn-outline-light btn-sm' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
+                                <i className='bi bi-plus me-1'></i>Add Laine
+                            </button>
+                        </div>
+                        
+                        <div className='mx-2 d-flex flex-grow-1'>
+                            
                         </div>
                     </div>
                 ))
@@ -455,23 +472,25 @@ export const MultiStakeDialog: FC<{
                 {(!signed) ? (
                     <div className='d-flex flex-column'>
                         
-                        <div className='p-2 flex-grow-1 border border-light border-2'>
+                        <div className='p-2 flex-grow-1 border border-secondary border-2'>
                             <div className='fs-5 flex-grow-1 text-center'>
                                 Total to Stake
                             </div>
-                            <div>
-                                <StakeInput
-                                    key={'stake-range-slider-'+totalStake()}
-                                    balance={balance}
-                                    minStakeAmount={minTotalStakeAmount()}
-                                    stakeAmount={totalStake() / LAMPORTS_PER_SOL}
-                                    updateAmount={(amount) => validateAmount(amount)}
-                                    readOnly={(distributionMethod == DistributionMethods.Custom) ? true : false}
-                                />
+                            <div className='d-flex flex-grow-1 justify-content-center'>
+                                <div className='multi-stake-input-container'>
+                                    <StakeInput
+                                        key={'stake-range-slider-'+totalStake()}
+                                        balance={balance}
+                                        minStakeAmount={minTotalStakeAmount()}
+                                        stakeAmount={totalStake() / LAMPORTS_PER_SOL}
+                                        updateAmount={(amount) => validateAmount(amount)}
+                                        readOnly={(distributionMethod == DistributionMethods.Custom) ? true : false}
+                                    />
+                                </div>
                             </div>
                             <div className='d-flex flex-row justify-content-center align-items-center'>
-                                <div className='flex-grow-1'>
-                                    <div className='input-group input-group-lg'>
+                                <div className='d-flex flex-grow-1 justify-content-center'>
+                                    <div className='input-group input-group multi-stake-input-container'>
                                         <span className='input-group-text' id='stakeAmountInputText'>◎</span>
                                         <input  
                                             key={'stake-amount-input'+totalStake}
@@ -488,10 +507,10 @@ export const MultiStakeDialog: FC<{
                                 </div>
                             </div>
                             <div className='flex-grow-1'>
-                                <div className="balance-sm text-end text-light">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
+                                <div className="balance-sm text-center text-light">Balance: ◎ {balance/LAMPORTS_PER_SOL}</div>
                             </div>
                         </div>
-                        <div className='p-2 my-2 flex-grow-1 border border-light border-2'>
+                        <div className='p-2 my-2 flex-grow-1 border border-secondary border-2'>
                             <div className='fs-5 mb-2 flex-grow-1 text-center'>
                                 Stake distribution
                             </div>
@@ -499,7 +518,7 @@ export const MultiStakeDialog: FC<{
                                 <button className='btn btn-outline-light flex-grow-1 mx-2' disabled={(distributionMethod==DistributionMethods.Equal)} onClick={() => setDistributionMethod(DistributionMethods.Equal)}>
                                     Equal
                                 </button>
-                                <button className='btn btn-outline-light flex-grow-1 mx-2 wiz-font' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => setDistributionMethod(DistributionMethods.WizScore)}>
+                                <button className='btn btn-outline-light flex-grow-1 mx-2 wiz-font wiz-score-distribution-button' disabled={(distributionMethod==DistributionMethods.WizScore)} onClick={() => setDistributionMethod(DistributionMethods.WizScore)}>
                                     Wiz Score
                                 </button> 
                                 <button className='btn btn-outline-light flex-grow-1 mx-2' disabled={(distributionMethod==DistributionMethods.APY)} onClick={() => setDistributionMethod(DistributionMethods.APY)}>
@@ -510,7 +529,7 @@ export const MultiStakeDialog: FC<{
                                 </button>
                             </div>
                         </div>
-                        <div className='flex-grow-1 border border-light border-2 p-1'>
+                        <div className='flex-grow-1 border border-warning border-2 p-1 pb-3'>
                             <div className='fs-5 py-2 flex-grow-1 text-center'>
                                 Your validator selection
                             </div>
