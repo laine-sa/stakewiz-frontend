@@ -41,7 +41,7 @@ class SearchBar extends React.Component<
         }
 
         return (
-            <div className='d-flex mx-2'>
+            <div className='d-flex mx-2 justify-content-center'>
                 <button className='btn btn-sm btn-outline-light' onClick={() => this.props.updateMultiStakeModal(true)} disabled={(selectCount==0) ? true : false}>
                     {(selectCount==0) ? <i className='bi bi-minecart me-2'></i> : <i className='bi bi-minecart-loaded me-2'></i> }
                     {selectCount} selected

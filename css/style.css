@@ -745,6 +745,10 @@ a:hover {
     flex-direction: column!important;
   }
 
+  .validator-search-filter-row div {
+    margin-bottom:0.2rem!important;
+  }
+
   #support-label {
     justify-content:center!important;
     margin-top:0.4rem!important;
