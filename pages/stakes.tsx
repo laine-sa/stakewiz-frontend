@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer, Spinner} from '../components/common'
 import { WizScoreWeightings } from '../components/wizscore';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { getStakeAccounts } from 'components/stake';
+import { getStakeAccounts } from 'components/stake/common';
 import { ValidatorContext } from '../components/validator/validatorhook';
 import { RenderImage, RenderName } from 'components/validator/common';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';

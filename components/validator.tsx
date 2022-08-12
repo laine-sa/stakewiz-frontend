@@ -17,7 +17,8 @@ import { StakeLabel, RenderUrl, RenderImage, RenderName } from './validator/comm
 import { Gauges } from './validator/gauges';
 import { EpochStakeChart } from './validator/epoch_stake'
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
-import { StakeDialog, MultiStakeDialog } from './stake';
+import { StakeDialog } from './stake/single-stake';
+import { MultiStakeDialog } from './stake/multi-stake';
 import { ValidatorContext } from './validator/validatorhook'
 import ordinal from 'ordinal'
 
