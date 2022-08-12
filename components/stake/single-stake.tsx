@@ -381,13 +381,13 @@ export const StakeDialog: FC<{
                         {(balance > stakeRentExemptAmount) ? ([
 
                                 <Button 
-                                    variant="success" 
+                                    variant="outline-light" 
                                     onClick={() => doStake()}
                                     className='w-100 btn-lg'
                                     key='stake-confirm-button'
                                     disabled={submitted}
                                     >
-                                        Stake
+                                        🚀 Stake
                                 </Button>
                             ,
                             <div 

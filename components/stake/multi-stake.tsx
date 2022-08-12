@@ -53,7 +53,6 @@ export const MultiStakeDialog: FC<{
         hideStakeModal();
         setTimeout(() => {
             setSigned(false);
-            setStakeAmount(null);
             setSignatures([])
             setConfirmations([])
             setSubmitError(null)
