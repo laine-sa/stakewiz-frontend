@@ -464,11 +464,6 @@ class AlertForm extends React.Component<AlertFormI, {
 
     render() {
         const recaptchaRef = React.createRef();
-        const close_button = (this.props.hideAlertModal==null) ? '' : (
-            <Button variant="secondary" onClick={() => this.props.hideAlertModal()} className='btn btn-secondary mx-2'>
-                 Close   
-            </Button>
-        );
         const reset_button = (this.props.hideAlertModal!=null) ? '' : (
             <Button variant="secondary" onClick={this.resetState.bind(this)} className='btn btn-secondary mx-2'>
                  New Alert   
@@ -621,10 +616,9 @@ class AlertForm extends React.Component<AlertFormI, {
                             </div>
                             <div className="d-flex"> 
                                 <input type="hidden" id="alertRecaptchaToken" name="token" />
-                                {close_button}
-                                <Button variant="success" type="submit" disabled={isSubmitting} className='btn btn-success mx-2'>
+                                <button type="submit" disabled={isSubmitting} className='btn btn-outline-light mx-2'>
                                     Submit   
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </Form>
