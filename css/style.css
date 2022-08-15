@@ -150,11 +150,11 @@ input:focus {
 }
 
 .bg-wizlight {
-  background-color:#8792a7;
+  background-color:#404449;
 }
 
 .bg-wizdark {
-  background-color: #6c788d;
+  background-color: #2c2d31;
 }
 
 .social-icons {
@@ -195,6 +195,10 @@ a:hover {
 .wiz-font {
   font-family:fullpack;
   text-transform:uppercase;
+}
+
+.my-stake-box {
+  width:24%;
 }
 
 .click-to-copy {
@@ -348,14 +352,6 @@ a:hover {
   left:0;
   border-top-left-radius: 0;
   z-index:100;
-}
-
-.validator-box-selected {
-  background-color:#2c2d31;
-}
-
-.validator-box-unselected {
-  background-color:#404449;
 }
 
 .btn-validator-selected {
@@ -580,6 +576,10 @@ a:hover {
   line-height: 23px;
 }
 
+.stake-image {
+  margin-top:-30px;
+}
+
 .wiz-one-line span{
   margin-right : 8px;
 }
@@ -600,6 +600,11 @@ a:hover {
 @media only screen and (max-width:1200px) {
   .validator-flex-container {
     width:45%!important;
+  }
+
+  
+  .my-stake-box {
+    width:32%;
   }
 }
 @media only screen and (max-width: 991px) {
@@ -757,6 +762,13 @@ a:hover {
   .validator-flex-container {
     width:100%!important;
   }
+  
+  
+.my-stake-box {
+  width:100%;
+}
+
+
 
   .desktop-visible{
     display:none!important;

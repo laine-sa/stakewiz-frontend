@@ -391,7 +391,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
     }
 
     const borderColor = (validator.delinquent) ? 'border-danger' : 'border-secondary';
-    const bgColor = (isStakeValidator) ? 'validator-box-selected' : 'validator-box-unselected';    
+    const bgColor = (isStakeValidator) ? 'bg-wizdark' : 'bg-wizlight';    
 
     return (
         <div className={'d-flex position-relative w-25 flex-grow-1 rounded border p-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor+' '+bgColor}>
@@ -588,7 +588,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         } 
                     >
                         <button className='btn btn-outline-light btn-sm w-100' onClick={() => showWizModal()}>
-                            <i className='bi bi-list-columns pe-1 alert-btn-icon'></i>
+                            <i className='bi bi-list-nested pe-1 alert-btn-icon'></i>
                         </button>
                     </OverlayTrigger>
                 </div>

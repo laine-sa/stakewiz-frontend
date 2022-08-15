@@ -95,3 +95,35 @@ export const StakeInput: FC<{
     )
 
 }
+
+export enum DistributionMethods {
+    Equal = 0,
+    WizScore = 1,
+    APY = 2,
+    Custom = 3
+};
+
+export enum StakeStatus {
+    Inactive = 0,
+    Activating = 1,
+    Active = 2,
+    Deactivating = 3,
+    Unknown = 4
+}
+
+export const getStakeStatus = (stake,epoch) => {
+
+    let activation = stake.account.data.parsed.info.stake.delegation.activationEpoch
+    let deactivation = stake.account.data.parsed.info.stake.delegation.deactivationEpoch
+
+    if(epoch!=null) {
+        if(deactivation<epoch) return StakeStatus.Inactive
+        else if(deactivation==epoch) {
+            if(activation==deactivation) return StakeStatus.Inactive
+            if(activation < deactivation) return StakeStatus.Deactivating
+        }
+        else if(activation == epoch)    return StakeStatus.Activating
+        else if(activation < epoch)     return StakeStatus.Active
+    }
+    else return StakeStatus.Unknown
+}

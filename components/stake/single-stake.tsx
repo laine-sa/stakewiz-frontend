@@ -7,6 +7,7 @@ import config from '../../config.json';
 import { getStakeAccounts, StakeInput } from './common'
 import { getEpochInfo, Spinner } from '../common';
 import { RenderImage, RenderName } from '../validator/common';
+import { createStake } from './transactions'
 
 export const StakeDialog: FC<{
     validator: validatorI, 
@@ -133,32 +134,10 @@ export const StakeDialog: FC<{
         setSubmitted(true);
 
         try {
-            
-            let stakeKeys = Keypair.generate();
-            let auth = new Authorized(
-                publicKey,
-                publicKey
-            );
-
-            let stakeTx = StakeProgram.createAccount({
-                authorized: auth,
-                fromPubkey: publicKey,
-                lamports: stakeAmount*LAMPORTS_PER_SOL,
-                lockup: new Lockup(0,0, publicKey),
-                stakePubkey: stakeKeys.publicKey
-            });
-
 
             let recentBlockhash = await connection.getLatestBlockhash();
+            let [stakeTx, delegateIx, stakeKeys] = createStake(publicKey, validator, stakeAmount*LAMPORTS_PER_SOL)
             
-            let votePubkey = new PublicKey(validator.vote_identity);
-
-            let delegateIx = StakeProgram.delegate({
-                authorizedPubkey: publicKey,
-                stakePubkey: stakeKeys.publicKey,
-                votePubkey: votePubkey
-            });
-
             stakeTx.add(delegateIx);
 
             stakeTx.feePayer = publicKey;
@@ -173,10 +152,18 @@ export const StakeDialog: FC<{
 
             setSignature(signature);
 
-            let proc = await connection.confirmTransaction(signature, 'processed');
+            let proc = await connection.confirmTransaction({
+                signature: signature, 
+                blockhash: recentBlockhash.blockhash,
+                lastValidBlockHeight: recentBlockhash.lastValidBlockHeight
+            }, 'processed');
             if(proc.value.err==null) {
                 setProcessed(true);
-                let conf = await connection.confirmTransaction(signature, 'confirmed');
+                let conf = await connection.confirmTransaction({
+                    signature: signature, 
+                    blockhash: recentBlockhash.blockhash,
+                    lastValidBlockHeight: recentBlockhash.lastValidBlockHeight
+                }, 'confirmed');
                 if(conf.value.err==null) {
                     setConfirmed(true);    
                 }

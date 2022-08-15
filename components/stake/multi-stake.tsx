@@ -7,9 +7,8 @@ import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, S
 import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage, RenderName } from '../validator/common';
 import { getEpochInfo, Spinner } from '../common';
-import { getStakeAccounts, StakeInput } from './common'
-
-
+import { getStakeAccounts, StakeInput, DistributionMethods } from './common'
+import { createStake } from './transactions'
 
 export const MultiStakeDialog: FC<{
     stakeValidators: [validatorI],
@@ -22,12 +21,7 @@ export const MultiStakeDialog: FC<{
     laine: validatorI
 }> = ({stakeValidators,updateStakeValidators,clearStakeValidators,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog, laine}) => {
 
-    enum DistributionMethods {
-        Equal = 0,
-        WizScore = 1,
-        APY = 2,
-        Custom = 3
-    };
+    
 
     const { connection } = useConnection();
     const {connected, publicKey, sendTransaction, signTransaction, signAllTransactions} = useWallet();
@@ -377,26 +371,8 @@ export const MultiStakeDialog: FC<{
             let recentBlockhash = await connection.getLatestBlockhash();
 
             stakeValidators.map((validator) => {
-                let stakeKeys = Keypair.generate();
-                let auth = new Authorized(
-                    publicKey,
-                    publicKey
-                );
-    
-                let stakeTx = StakeProgram.createAccount({
-                    authorized: auth,
-                    fromPubkey: publicKey,
-                    lamports: stakeDistribution[validator.vote_identity],
-                    stakePubkey: stakeKeys.publicKey
-                });
-                
-                let votePubkey = new PublicKey(validator.vote_identity);
-    
-                let delegateIx = StakeProgram.delegate({
-                    authorizedPubkey: publicKey,
-                    stakePubkey: stakeKeys.publicKey,
-                    votePubkey: votePubkey
-                });
+
+                let [stakeTx, delegateIx, stakeKeys] = createStake(publicKey, validator, stakeDistribution[validator.vote_identity])
 
                 txs.push(stakeTx);
                 txs.push(delegateIx);
