@@ -19,17 +19,14 @@ export default function Home() {
             <main>
                 <TopBar />
 
-                <div className='container text-center'>
-                    <h2 className='text-white py-2'>Manage your stake accounts</h2>
-                    {(connected && publicKey != null) ? (
-                        <div className='d-flex flex-wrap justify-content-center'>
-                            <Stakes 
-                                key={'stakes-container-'+publicKey.toString()}
-                                userPubkey={publicKey.toString()}
-                                connection={connection}
-                                connected={connected}
-                            /> 
-                        </div>
+                <div className='container p-relative'>
+                    {(connected) ? (
+                    <Stakes 
+                        key={'stakes-container-'+publicKey.toString()}
+                        userPubkey={publicKey.toString()}
+                        connection={connection}
+                        connected={connected}
+                    /> 
                     ) : null}
                 </div>
                 

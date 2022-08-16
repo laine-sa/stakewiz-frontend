@@ -7,7 +7,7 @@ import config from '../../config.json';
 import { getStakeAccounts, StakeInput } from './common'
 import { getEpochInfo, Spinner } from '../common';
 import { RenderImage, RenderName } from '../validator/common';
-import { createStake } from './transactions'
+import { addMeta, createStake } from './transactions'
 
 export const StakeDialog: FC<{
     validator: validatorI, 
@@ -140,8 +140,8 @@ export const StakeDialog: FC<{
             
             stakeTx.add(delegateIx);
 
-            stakeTx.feePayer = publicKey;
-            stakeTx.recentBlockhash = recentBlockhash.blockhash;
+            stakeTx = await addMeta(stakeTx,publicKey,connection)
+
             stakeTx.partialSign(stakeKeys);
 
             let signedTx = await signTransaction(stakeTx);

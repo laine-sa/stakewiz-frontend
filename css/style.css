@@ -150,11 +150,25 @@ input:focus {
 }
 
 .bg-wizlight {
-  background-color:#404449;
+  background-color:#8792a7;
 }
 
 .bg-wizdark {
-  background-color: #2c2d31;
+  background-color: #6c788d;
+}
+
+.card-light {
+  background-color:#404449;
+}
+
+.card-dark {
+  background-color:#2c2d31;
+}
+
+.my-stake-error {
+  position:fixed;
+  left:10px;
+  bottom:10px;
 }
 
 .social-icons {

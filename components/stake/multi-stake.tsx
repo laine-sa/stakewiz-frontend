@@ -8,7 +8,7 @@ import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage, RenderName } from '../validator/common';
 import { getEpochInfo, Spinner } from '../common';
 import { getStakeAccounts, StakeInput, DistributionMethods } from './common'
-import { createStake } from './transactions'
+import { addMeta, createStake } from './transactions'
 
 export const MultiStakeDialog: FC<{
     stakeValidators: [validatorI],
@@ -334,7 +334,7 @@ export const MultiStakeDialog: FC<{
 
         signatures.map((signature, i) => {
             result.push((
-                <div className='d-flex align-items-center flex-grow-1 flex-row flex-nowrap stake-signature-row' key={'signature-result-'+signature+confirmations.length}>
+                <div className='d-flex align-items-center flex-grow-1 flex-row flex-nowrap stake-signature-row px-3' key={'signature-result-'+signature+confirmations.length}>
                     <div className='fw-bold badge rounded-pill bg-light text-dark'>
                         {i+1}
                     </div>
@@ -379,18 +379,27 @@ export const MultiStakeDialog: FC<{
                 signers.push(stakeKeys);
             })
 
-            let transactions = [];
-            txs.map((tx, i) => {
-                let y = Math.floor(i / 4);
+            const buildTxs = async (txs) => {
+                let transactions = [];
+                let i = 0
+                for(const tx of txs) {
+                    let y = Math.floor(i / 4);
                 
-                if(transactions[y]==undefined) transactions[y] = new Transaction({
-                    blockhash: recentBlockhash.blockhash,
-                    lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
-                    feePayer: publicKey
-                });
+                    if(transactions[y]==undefined) {
+                        transactions[y] = new Transaction();
+                        transactions[y] = await addMeta(transactions[y],publicKey,connection)
+                        
+                    }
+    
+                    transactions[y].add(tx);
+                    i++
+                }
 
-                transactions[y].add(tx);
-            });
+                return transactions
+                
+            }
+
+            const transactions = await buildTxs(txs)
 
             signers.map((keypair, i) => {
                 let y = Math.floor(i / 2);

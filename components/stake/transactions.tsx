@@ -1,4 +1,17 @@
-import { Authorized, Keypair, PublicKey, StakeProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { Authorized, Connection, Keypair, PublicKey, StakeProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+
+export const addMeta = async (tx: Transaction, feePayer:PublicKey, connection: Connection) => {
+
+    let blockhash = await connection.getLatestBlockhash();
+
+    tx.recentBlockhash = blockhash.blockhash
+    tx.lastValidBlockHeight = blockhash.lastValidBlockHeight
+    tx.feePayer = feePayer
+
+    return tx
+
+}
 
 export const createStake = (publicKey, validator, lamports): [Transaction, Transaction, Keypair] => {
     let stakeKeys = Keypair.generate();
@@ -32,5 +45,24 @@ export const deactivateStake = (authorizedPubkey, stakePubkey): Transaction => {
         stakePubkey: stakePubkey
     })
 
+}
+
+export const closeStake = (authorizedPubkey, stakePubkey, lamports): Transaction => {
+
+    return StakeProgram.withdraw({
+        authorizedPubkey: authorizedPubkey,
+        lamports: lamports,
+        stakePubkey: stakePubkey,
+        toPubkey: authorizedPubkey
+    })
+}
+
+export const delegateStake = (authorizedPubkey, stakePubkey, votePubkey): Transaction => {
+
+    return StakeProgram.delegate({
+        authorizedPubkey: authorizedPubkey,
+        stakePubkey: stakePubkey,
+        votePubkey: votePubkey
+    })
 
 }
