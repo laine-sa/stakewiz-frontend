@@ -29,12 +29,15 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     const [delegateValidator, setDelegateValidator] = useState(null)
     const [delegateSearchInput, setDelegateSearchInput] = useState('')
     const [clusterStats, setClusterStats] = useState(null)
+    const [initialFetch, setInitialFetch] = useState(false)
 
     useEffect(() => {
         if(stakes == null) {
             getStakeAccounts(userPubkey, connection).then((stakes) => {
                 
                 setStakes(stakes);
+                setInitialFetch(true)
+
             })
             
         }
@@ -418,13 +421,15 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             
             setRenderResult(result); 
         }
-        else {
+        else if(stakes!=null && initialFetch) {
+            if(stakes.length==0) {
+                setRenderResult((
+                    <div className='d-flex justify-content-center text-white p-5 fs-5'>
+                        Uh oh... looks like you don&apos;t have any stake accounts or we&apos;re having trouble finding them.
+                    </div>
+                ))
+            }
             
-            setRenderResult((
-                <div className='d-flex justify-content-center text-white p-5 fs-5'>
-                    Uh oh... looks like you don&apos;t have any stake accounts or we&apos; having trouble finding them.
-                </div>
-            ))
         }
         
     }
