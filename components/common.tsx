@@ -9,7 +9,7 @@ import axios from 'axios';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
-import { EpochInfoI } from './validator/interfaces';
+import { clusterStatsI, EpochInfoI } from './validator/interfaces';
 import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
 
@@ -288,5 +288,21 @@ const WalletValidators = async(pubkey) => {
   });
 
 };
+
+export const getClusterStats = async ():Promise<clusterStatsI> => {
+    
+  try {
+    let response = await axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
+      headers: {'Content-Type':'application/json'}
+    })
+    let json = response.data;
+
+    return json
+   }
+   catch(e) {
+      console.log(e);
+      return null
+    }
+}
 
 export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper, ValidatorData, WalletValidators}

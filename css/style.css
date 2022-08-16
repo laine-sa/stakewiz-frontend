@@ -165,6 +165,18 @@ input:focus {
   background-color:#2c2d31;
 }
 
+.delegate-search-results {
+  margin-top:-5px;
+  position:absolute;
+  width:100%;
+  z-index:1000;
+}
+
+.delegate-search-results div:hover {
+  background-color:#ccc;
+  cursor:pointer;
+}
+
 .my-stake-error {
   position:fixed;
   left:10px;

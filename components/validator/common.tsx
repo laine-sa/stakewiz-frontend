@@ -60,12 +60,18 @@ export const RenderImage: FC<
 export const RenderName: FC<{
     validator: validatorI
 }> = ({validator}) => {
-    if(validator.name=='') {
-        return <span>{validator.vote_identity}</span>;
+    if(validator!=null) {
+        if(validator.name=='') {
+            return <span>{validator.vote_identity}</span>;
+        }
+        else {
+            return <span>{validator.name}</span>;
+        }
     }
     else {
-        return <span>{validator.name}</span>;
+        return null
     }
+    
 }
 
 export const RenderUrl: FC<{url:string}> = ({url}) => {

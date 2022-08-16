@@ -7,7 +7,7 @@ import {Alert, AlertForm} from './alert';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import {ConditionalWrapper, Spinner} from './common'
+import {ConditionalWrapper, getClusterStats, Spinner} from './common'
 import {Chart} from 'react-google-charts'
 import { Connection, ConnectionConfig, PublicKey } from '@solana/web3.js';
 import { checkSolflareEnabled } from './common';
@@ -435,7 +435,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='ms-auto badge bg-semidark align-self-start pointer'>
+                    <div className='ms-auto badge bg-wizdark align-self-start pointer'>
                         <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
                             i
                         </span>
@@ -450,7 +450,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='ms-1 badge bg-semidark align-self-start pointer'>
+                    <div className='ms-1 badge bg-wizdark align-self-start pointer'>
                         <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
                             v
                         </span>
@@ -465,7 +465,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                    <div className='ms-1 badge bg-semidark align-self-start'>
+                    <div className='ms-1 badge bg-wizdark align-self-start'>
                             <span>{index+1}</span>
                     </div>
                 </OverlayTrigger>
@@ -647,7 +647,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             clusterStats: null
         };
         if(this.props.vote_identity!='') this.getValidator();
-        if(this.state.clusterStats==null) this.getClusterStats();
+        if(this.state.clusterStats==null) getClusterStats().then((stats) => {
+            this.setState({
+                clusterStats: stats
+            });
+        });
     }
     getValidator() {
         axios(API_URL+config.API_ENDPOINTS.validator+'/'+this.props.vote_identity, {
@@ -671,23 +675,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             setTimeout(() => { this.getValidator() }, 5000);
           })
     }
-
-    getClusterStats() {
-        axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
-          headers: {'Content-Type':'application/json'}
-        })
-          .then(response => {
-            let json = response.data;
-    
-            this.setState({
-                clusterStats: json
-            });
-          })
-          .catch(e => {
-            console.log(e);
-            setTimeout(() => { this.getClusterStats() }, 5000);
-          })
-      }
 
     renderName() {
         if(this.state.validator.name=='') {
