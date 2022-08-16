@@ -388,9 +388,25 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                 validator={validator}
                             />
                         </div> 
-                        <div className='justify-content-center fs-6 p-1 px-3 badge bg-dark flex-nowrap'>
-                            ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
-                        </div>
+                        
+                            <div className='d-flex align-items-center'>
+                                <div className='justify-content-center fs-6 p-1 px-3 badge bg-dark flex-nowrap ms-4'>
+                                    ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
+                                </div>
+                                <div>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                Delegated amount, excludes rent exempt amount<br />(~ ◎ 0.002)
+                                            </Tooltip>
+                                        } 
+                                    >
+                                        <i className='bi bi-info-circle ms-2'></i>
+                                    </OverlayTrigger>
+                                </div>
+                            </div>
+                        
                         <div className={'p-1 my-1 px-3 badge '+statusbg+' '+statustext}>
                             {StakeStatus[status]}
                         </div>
