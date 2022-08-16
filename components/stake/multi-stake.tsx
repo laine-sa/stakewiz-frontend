@@ -212,7 +212,7 @@ export const MultiStakeDialog: FC<{
                                 vote_identity={validator.vote_identity}
                             />
                         </div>
-                        <div className='ps-2 w-25 text-truncate d-flex flex-grow-1 multi-stake-validator-name'>
+                        <div className='ps-2 w-25 text-truncate flex-grow-1 multi-stake-validator-name'>
                             {renderName(validator)}
                         </div>
                         <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>

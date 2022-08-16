@@ -336,7 +336,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
             stakeWidth = validator.stake_ratio*1000;
         }        
 
-        let btnColor = (isStakeValidator) ? 'btn-outline-success btn-validator-selected' : 'btn-outline-light';
+        let btnColor = (isStakeValidator) ? 'btn-outline-success btn-validator-selected' : 'btn-outline-warning';
 
         return (
             [
@@ -360,7 +360,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         >
                             <span>
                                 
-                                <button className={'btn btn-sm ms-2 py-0 '+btnColor} onClick={() => updateStakeValidators(validator)} disabled={!connected}>
+                                <button className={'btn ms-2 py-0 '+btnColor} onClick={() => updateStakeValidators(validator)} disabled={!connected}>
                                     {(!isStakeValidator) ? (
                                         <span>
                                             <i className='bi bi-plus pe-1 alert-btn-icon'></i>
