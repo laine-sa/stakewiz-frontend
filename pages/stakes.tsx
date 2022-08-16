@@ -27,7 +27,11 @@ export default function Home() {
                         connection={connection}
                         connected={connected}
                     /> 
-                    ) : null}
+                    ) : (
+                        <div className='d-flex justify-content-center fs-5 text-white py-5'>
+                            Please connect your wallet to manage your stake accounts.
+                        </div>
+                    )}
                 </div>
                 
             </main>
