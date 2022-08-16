@@ -98,7 +98,7 @@ interface ValidatorData {
             let vote_identity = searchValidators[i].vote_identity;
             
             if (txtValue.toUpperCase().indexOf(searchTitle.toUpperCase()) > -1 ) {
-              let sf = "rank_asc"
+              let sf = "rank_asc";
               sf = sf.substring(0,sf.length-4);
               filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));
               filteredValidators.push(searchValidators[i]);
