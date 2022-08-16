@@ -346,7 +346,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     }
 
     const renderStakes = () => {
-        if(stakes!=null) {
+        if(stakes!=null && stakes.length > 0) {
             let result = []
 
             stakes.sort((a,b) => {
@@ -417,6 +417,14 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             })
             
             setRenderResult(result); 
+        }
+        else {
+            
+            setRenderResult((
+                <div className='d-flex justify-content-center text-white p-5 fs-5'>
+                    Uh oh... looks like you don&apos;t have any stake accounts or we&apos; having trouble finding them.
+                </div>
+            ))
         }
         
     }
