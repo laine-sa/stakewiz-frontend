@@ -1,54 +1,13 @@
 import React, {useEffect, useState, FC, useCallback} from 'react';
-import { clusterStatsI, EpochInfoI, validatorI } from './validator/interfaces'
-import config from '../config.json';
-import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Modal, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Authorized, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, SIGNATURE_LENGTH_IN_BYTES, StakeProgram,  Transaction, ValidatorInfo } from '@solana/web3.js';
+import { clusterStatsI, EpochInfoI, validatorI } from '../validator/interfaces'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Authorized, Connection, Keypair, LAMPORTS_PER_SOL, Lockup, PublicKey, StakeProgram, Transaction } from '@solana/web3.js';
-import RangeSlider from 'react-bootstrap-range-slider'
-import { RenderImage } from './validator/common';
-import { getEpochInfo, Spinner } from './common';
-
-
-const StakeInput: FC<{
-    balance: number;
-    minStakeAmount: number;
-    stakeAmount: number;
-    updateAmount: Function;
-}> = ({balance, minStakeAmount, stakeAmount, updateAmount}) => {
-    
-
-    const [sliderValue, setSliderValue] = useState(stakeAmount);
-
-    const processUpdate = (amount) => {
-        updateAmount(amount);
-        setSliderValue(amount);
-    }
-
-
-    return (
-        <div className='row my-2 d-flex align-items-center pe-0'>
-            <div className='col col-md-1 me-1'>
-                <span onClick={() => processUpdate(minStakeAmount/LAMPORTS_PER_SOL)} className='pointer'>Min</span>
-            </div>
-            <div className='col'>
-                <RangeSlider 
-                    value={sliderValue} 
-                    min={minStakeAmount/LAMPORTS_PER_SOL}
-                    max={(balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL} 
-                    step={5000/LAMPORTS_PER_SOL}
-                    onChange={(event) => processUpdate(parseFloat(event.target.value))}
-                    tooltip='off'
-                    variant='light'
-                />
-            </div>
-            <div className='col col-md-1 text-end px-0'>
-                <span onClick={() => processUpdate((balance-config.TX_RESERVE_LAMPORTS)/LAMPORTS_PER_SOL)} className='pointer'>Max</span>
-            </div>
-        </div>
-        
-    )
-
-}
+import config from '../../config.json';
+import { getStakeAccounts, StakeInput } from './common'
+import { getEpochInfo, Spinner } from '../common';
+import { RenderImage, RenderName } from '../validator/common';
+import { addMeta, createStake } from './transactions'
 
 export const StakeDialog: FC<{
     validator: validatorI, 
@@ -71,12 +30,13 @@ export const StakeDialog: FC<{
     const [epochReturn, setEpochReturn] = useState(0);
     const [monthReturn, setMonthReturn] = useState(0);
 
-    const [submitError, setSubmitError] = useState<string>(undefined);
+    const [submitError, setSubmitError] = useState<string | undefined>(undefined);
     const [submitted, setSubmitted] = useState(false);
     const [signed, setSigned] = useState(false);
     const [processed, setProcessed] = useState(false);
     const [confirmed, setConfirmed] = useState(false);
     const [signature, setSignature] = useState<string>();
+
 
     const calculateReturns = async () => {
         let epoch;
@@ -139,7 +99,8 @@ export const StakeDialog: FC<{
             getStakeRentExemptAmount();
 
         }
-    }, [renderTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [connection, publicKey, renderTime]);
 
     const renderName = () => {
         if(validator!=null) {
@@ -173,36 +134,14 @@ export const StakeDialog: FC<{
         setSubmitted(true);
 
         try {
-            
-            let stakeKeys = Keypair.generate();
-            let auth = new Authorized(
-                publicKey,
-                publicKey
-            );
-
-            let stakeTx = StakeProgram.createAccount({
-                authorized: auth,
-                fromPubkey: publicKey,
-                lamports: stakeAmount*LAMPORTS_PER_SOL,
-                lockup: new Lockup(0,0, publicKey),
-                stakePubkey: stakeKeys.publicKey
-            });
-
 
             let recentBlockhash = await connection.getLatestBlockhash();
+            let [stakeTx, delegateIx, stakeKeys] = createStake(publicKey, validator, stakeAmount*LAMPORTS_PER_SOL)
             
-            let votePubkey = new PublicKey(validator.vote_identity);
-
-            let delegateIx = StakeProgram.delegate({
-                authorizedPubkey: publicKey,
-                stakePubkey: stakeKeys.publicKey,
-                votePubkey: votePubkey
-            });
-
             stakeTx.add(delegateIx);
 
-            stakeTx.feePayer = publicKey;
-            stakeTx.recentBlockhash = recentBlockhash.blockhash;
+            stakeTx = await addMeta(stakeTx,publicKey,connection)
+
             stakeTx.partialSign(stakeKeys);
 
             let signedTx = await signTransaction(stakeTx);
@@ -213,10 +152,18 @@ export const StakeDialog: FC<{
 
             setSignature(signature);
 
-            let proc = await connection.confirmTransaction(signature, 'processed');
+            let proc = await connection.confirmTransaction({
+                signature: signature, 
+                blockhash: recentBlockhash.blockhash,
+                lastValidBlockHeight: recentBlockhash.lastValidBlockHeight
+            }, 'processed');
             if(proc.value.err==null) {
                 setProcessed(true);
-                let conf = await connection.confirmTransaction(signature, 'confirmed');
+                let conf = await connection.confirmTransaction({
+                    signature: signature, 
+                    blockhash: recentBlockhash.blockhash,
+                    lastValidBlockHeight: recentBlockhash.lastValidBlockHeight
+                }, 'confirmed');
                 if(conf.value.err==null) {
                     setConfirmed(true);    
                 }
@@ -421,13 +368,13 @@ export const StakeDialog: FC<{
                         {(balance > stakeRentExemptAmount) ? ([
 
                                 <Button 
-                                    variant="success" 
+                                    variant="outline-light" 
                                     onClick={() => doStake()}
                                     className='w-100 btn-lg'
                                     key='stake-confirm-button'
                                     disabled={submitted}
                                     >
-                                        Stake
+                                        🚀 Stake
                                 </Button>
                             ,
                             <div 

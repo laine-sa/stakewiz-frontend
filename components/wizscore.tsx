@@ -18,7 +18,7 @@ function WizScoreRow(props) {
         </Tooltip>
       );
 
-    let thresholdColor = 'text-black';
+    let thresholdColor = 'text-white';
     if(props.color=='green') {
         thresholdColor = 'text-success';
     }
@@ -48,7 +48,7 @@ function WizScoreRow(props) {
                     <td>
                         {props.value}
                     </td>
-                    <td className={color}>
+                    <td>
                         {score}
                     </td>
                 </tr>
@@ -116,7 +116,7 @@ class WizScoreBody extends React.Component<{
             <div className="row scorecard-wiz-score">
                 <div className={"col text-center text-white fst-italic p-3 mx-5 "}>
                     <h5 className="mb-0">
-                        <span className={'wiz-font me-2 '+color}>WIZ SCORE:</span> 
+                        <span className={'wiz-font me-2 '}>WIZ SCORE:</span> 
                             <span id="scorecard-wizscore">
                             {' '+new Intl.NumberFormat().format(Number(this.props.validator.wiz_score.toFixed(2)))+'% '}
                             </span> 
@@ -144,7 +144,7 @@ class WizScoreBody extends React.Component<{
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
                             <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
                         </p>
-                        <table className="table table-sm table-dark"> 
+                        <table className={"table table-sm text-white"}> 
                             <thead>
                                 <tr> 
                                     <th scope="col">
@@ -332,7 +332,7 @@ class WizScore extends React.Component<{
     
     render() {
         return (
-            <Modal show={this.props.showWizModal} onHide={() => this.props.hideWizModal()} dialogClassName='modal-lg'>
+            <Modal show={this.props.showWizModal} onHide={() => this.props.hideWizModal()} dialogClassName='modal-lg scorecard-modal'>
                 <Modal.Header closeButton>
                     <Modal.Title>{this.renderName()}</Modal.Title>
                 </Modal.Header>
