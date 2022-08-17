@@ -45,7 +45,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
 
     useEffect(() => {
         renderStakes()
-    }, [stakes, validatorList, awaitingSignature, updatingStakes])
+    }, [stakes, validatorList, awaitingSignature, updatingStakes, initialFetch])
 
     useEffect(() => {
         if(connected && epoch == 0) {
