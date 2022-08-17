@@ -875,7 +875,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         <div className='col fw-bold'>
                                             Stake
                                         </div>
-                                        <div className='col'>
+                                        <div className='col d-flex align-items-center'>
                                             ◎ {activated_stake}
                                             <StakeLabel
                                                 stake={this.state.stake_change}
