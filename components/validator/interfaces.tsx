@@ -109,6 +109,7 @@ export interface ValidatorListI {
     updateStakeValidators: Function;
     clearStakeValidators: Function;
     stakeValidators: [validatorI];
+    laine: validatorI;
 }
 
 export interface ValidatorListingI {
@@ -127,7 +128,8 @@ export interface ValidatorListingI {
         showStakeModal: boolean,
         walletValidators: [string],
         solflareNotificationsEnabled: boolean,
-        showMultiStakeModal: boolean
+        showMultiStakeModal: boolean,
+        laine: validatorI
       },
     updateState: Function;
     userPubkey: string;
