@@ -464,11 +464,6 @@ class AlertForm extends React.Component<AlertFormI, {
 
     render() {
         const recaptchaRef = React.createRef();
-        const close_button = (this.props.hideAlertModal==null) ? '' : (
-            <Button variant="secondary" onClick={() => this.props.hideAlertModal()} className='btn btn-secondary mx-2'>
-                 Close   
-            </Button>
-        );
         const reset_button = (this.props.hideAlertModal!=null) ? '' : (
             <Button variant="secondary" onClick={this.resetState.bind(this)} className='btn btn-secondary mx-2'>
                  New Alert   
@@ -523,14 +518,14 @@ class AlertForm extends React.Component<AlertFormI, {
                                     checked={this.state.deliveryMethod == 'telegram' ? true : false}
                                     onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
                                 />
-                                <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delTelegram">
+                                <label className="my-1 mx-1 btn btn-outline-light" htmlFor="delTelegram">
                                     Telegram
                                 </label>
                                 <Field className="btn-check" type="radio" name="deliveryMethod" id="delEmail" autoComplete="off" value="email"
                                     checked={this.state.deliveryMethod == 'email' ? true : false}
                                     onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
                                 />
-                                <label className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delEmail">
+                                <label className="my-1 mx-1 btn btn-outline-light" htmlFor="delEmail">
                                     Email
                                 </label>
                                 <ConditionalWrapper
@@ -554,7 +549,7 @@ class AlertForm extends React.Component<AlertFormI, {
                                             checked={(this.state.deliveryMethod == 'solflare' && this.props.solflareEnabled && this.props.userPubkey) ? true : false}
                                             onChange={(event) => {this.setState({deliveryMethod: event.target.value})}}
                                         />
-                                        <label key='solflare-alert-label' className="my-1 mx-1 btn btn-outline-secondary" htmlFor="delSolflare">
+                                        <label key='solflare-alert-label' className="my-1 mx-1 btn btn-outline-light" htmlFor="delSolflare">
                                             Solflare
                                         </label>
                                     </div>
@@ -621,10 +616,9 @@ class AlertForm extends React.Component<AlertFormI, {
                             </div>
                             <div className="d-flex"> 
                                 <input type="hidden" id="alertRecaptchaToken" name="token" />
-                                {close_button}
-                                <Button variant="success" type="submit" disabled={isSubmitting} className='btn btn-success mx-2'>
+                                <button type="submit" disabled={isSubmitting} className='btn btn-outline-light mx-2'>
                                     Submit   
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </Form>

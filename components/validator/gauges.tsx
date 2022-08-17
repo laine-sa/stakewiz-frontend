@@ -82,8 +82,8 @@ export const Gauges: FC<{
                         cornerRadius={0}
                     />
                     </div>
-                    <div className='fs-6 fw-bold'>
-                        <span className='wiz-font me-2'>WIZ</span> score
+                    <div className='fs-6'>
+                        <span className='wiz-font me-2'>WIZ</span><span className='fw-bold'>score</span>
                     </div>
                 </div>
                 <div className='flex-grow-1 d-flex flex-column align-items-center'>

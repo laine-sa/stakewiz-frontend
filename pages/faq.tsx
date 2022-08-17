@@ -4,8 +4,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from '../components/common'
 import { WizScoreWeightings } from '../components/wizscore';
 
-const API_URL = process.env.API_BASE_URL;
-
 export default function Home() {
     return (
         <div>

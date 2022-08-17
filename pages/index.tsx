@@ -21,6 +21,7 @@ class Homepage extends React.Component<
     validators: [validatorI],
     clusterStats: clusterStatsI,
     filteredValidators: [validatorI],
+    stakeValidators: [validatorI],
     hasData: boolean,
     visibleCount: number,
     showWizModal: boolean,
@@ -30,7 +31,8 @@ class Homepage extends React.Component<
     walletValidators: [string],
     solflareNotificationsEnabled: boolean;
     stakeValidator: validatorI,
-    showStakeModal: boolean
+    showStakeModal: boolean,
+    showMultiStakeModal: boolean
   }> {
   constructor(props) {
     super(props);
@@ -39,6 +41,7 @@ class Homepage extends React.Component<
       validators: null,
       clusterStats: null,
       filteredValidators: null,
+      stakeValidators: null,
       hasData: false,
       visibleCount: config.DEFAULT_LIST_SIZE,
       showWizModal: false,
@@ -48,7 +51,8 @@ class Homepage extends React.Component<
       walletValidators: null,
       solflareNotificationsEnabled: false,
       stakeValidator: null,
-      showStakeModal: false
+      showStakeModal: false,
+      showMultiStakeModal: false
     };
 
     if(this.props.userPubkey) this.checkSolflare(this.props.userPubkey);

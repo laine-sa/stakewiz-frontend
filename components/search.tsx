@@ -5,7 +5,10 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 interface searchI {
     validators: [validatorI];
     setFilter: Function;
-    walletValidators: [string]
+    walletValidators: [string];
+    stakeValidators: [validatorI];
+    showMultiStakeModal: boolean;
+    updateMultiStakeModal: Function;
 }
 
 class SearchBar extends React.Component<
@@ -31,6 +34,22 @@ class SearchBar extends React.Component<
         };
     }
 
+    renderStakeSelection() {
+        let selectCount = 0;
+        if(this.props.stakeValidators!=null) {
+            selectCount = this.props.stakeValidators.length;
+        }
+
+        return (
+            <div className='d-flex mx-2 justify-content-center'>
+                <button className='btn btn-sm btn-outline-light' onClick={() => this.props.updateMultiStakeModal(true)} disabled={(selectCount==0) ? true : false}>
+                    {(selectCount==0) ? <i className='bi bi-minecart me-2'></i> : <i className='bi bi-minecart-loaded me-2'></i> }
+                    {selectCount} selected
+                </button>
+            </div>
+        )
+    }
+
 
     doSearch(key,value) {
         
@@ -41,7 +60,7 @@ class SearchBar extends React.Component<
             },() => {
                 const {textInput, hideAnonymous, onlyMine, hideHighStake } = this.state;
                 const list = this.props.validators;
-                var filteredValidators = [];
+                let filteredValidators: validatorI[] = [];
 
 
                 var counter = 0;
@@ -50,7 +69,6 @@ class SearchBar extends React.Component<
                 for (let i = 0; i < list.length; i++) {
             
                     let stakeRatio = list[i].stake_ratio*1000;
-                    let commission = list[i].commission;
                     let name = list[i].name;
                     let txtValue = list[i].name + list[i].identity + list[i].vote_identity;
                     let vote_identity = list[i].vote_identity;
@@ -164,11 +182,11 @@ class SearchBar extends React.Component<
                             <option value='asncity_concentration'>ASN+City Concentration ↓</option>
                         </select>
                     </div>
-                </div>
-                
-                <div className='d-flex align-items-end'>
-                    <div className="d-flex align-items-center bg-dark text-white p-2 rounded justify-content-center" id="resultsno">
-                        {this.state.validatorCount} validators
+                    <div className='d-flex flex-row'>
+                        <div className="d-flex align-items-center bg-dark text-white p-1 px-2 ms-2 mt-0 rounded justify-content-center" id="resultsno">
+                            {this.state.validatorCount} validators
+                        </div>
+                        {this.renderStakeSelection()}
                     </div>
                 </div>
                 

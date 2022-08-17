@@ -14,14 +14,14 @@ export const StakeLabel: FC<{stake: number}> = ({stake}) => {
         if(stake<0) {
             
             return (
-                <span className="text-danger ms-1">
+                <span className="ms-2">
                     - ◎ {n}
                 </span>
             );
         }
         else {
             return (
-                <span className="text-success ms-1">
+                <span className="ms-2">
                     + ◎ {n}
                 </span>
             );
@@ -42,8 +42,9 @@ export const RenderImage: FC<
     }> = ({ img, vote_identity, size, className }) => {
         
     return (
+        
         <Link href={'/validator/'+vote_identity} passHref>
-            <a>
+            <a className='d-flex'>
                 <Image 
                     className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} 
                     src={(img==null) ? '/images/validator-image-na.png' : img} 
@@ -59,12 +60,18 @@ export const RenderImage: FC<
 export const RenderName: FC<{
     validator: validatorI
 }> = ({validator}) => {
-    if(validator.name=='') {
-        return <span>{validator.vote_identity}</span>;
+    if(validator!=null) {
+        if(validator.name=='') {
+            return <span>{validator.vote_identity}</span>;
+        }
+        else {
+            return <span>{validator.name}</span>;
+        }
     }
     else {
-        return <span>{validator.name}</span>;
+        return null
     }
+    
 }
 
 export const RenderUrl: FC<{url:string}> = ({url}) => {

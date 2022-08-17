@@ -9,7 +9,7 @@ import axios from 'axios';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
-import { EpochInfoI } from './validator/interfaces';
+import { clusterStatsI, EpochInfoI } from './validator/interfaces';
 import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
 
@@ -90,11 +90,11 @@ const TopBar: FC = () => {
               <div className='text-light text-center epoch-progress-text'>
                 Epoch {epochInfo.epoch}
               </div>
-              <div className="progress epoch-progress w-100">
+              <div className="progress epoch-progress w-100" style={{height: '5px'}}>
                 <div className="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
                 </div>
               </div>
-              <div className='epoch-progress-label text-secondary'>
+              <div className='epoch-progress-label text-light'>
                 {(epochInfo.slot_height/config.SLOTS_PER_EPOCH*100).toFixed(1)} % complete
                 &nbsp;
                 ({(r_days>0) ? <span>{r_days}d</span> : null} {(r_hours>0) ? <span>{r_hours}h</span> : null} {r_minutes}m of {d_days}d {d_hours}h {d_minutes}m remaining)
@@ -129,10 +129,12 @@ const TopBar: FC = () => {
         <Navbar key='navbar' bg="none" variant="dark" expand="lg">
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
-                <img 
+                <Image 
                   src={"/images/new-logo-white.webp"}
                   className='stakewiz-logo'
                   alt="Stakewiz Logo" 
+                  width={300}
+                  height={96}
                 />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -141,8 +143,13 @@ const TopBar: FC = () => {
               <Nav>
                 <GlobalSearch mobilehide="mobile-col-hide tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop" />
                 <Nav.Link href="/" className='text-white'>Home</Nav.Link>
+                <Nav.Link href="/stakes" className='text-white'>My Stakes</Nav.Link>
                 <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
-                <Nav.Link href="https://laine.co.za/solana" target="_new" className='text-white'>Support Laine</Nav.Link>
+                <Nav.Link href="/validator/GE6atKoWiQ2pt3zL7N13pjNHjdLVys8LinG8qeJLcAiL" target="_new" className='text-white'>Support Laine</Nav.Link>
+                <a href="https://discord.gg/3JXdTavv6x" target="_new" className='text-white me-2 nav-discord'>
+                  <i className="bi bi-discord p-2 pointer"></i>
+                  <span className='d-none'>Join Discord</span>
+                </a>
               </Nav>
               <div className='wallet-container'>
                   <WalletMultiButton
@@ -189,6 +196,7 @@ class Footer extends React.Component {
                       src='/images/gg-logo.png'
                       width='267px'
                       height='30px'
+                      alt='GenesysGo Logo'
                     />
                   </div>
               </div>
@@ -280,5 +288,21 @@ const WalletValidators = async(pubkey) => {
   });
 
 };
+
+export const getClusterStats = async ():Promise<clusterStatsI> => {
+    
+  try {
+    let response = await axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
+      headers: {'Content-Type':'application/json'}
+    })
+    let json = response.data;
+
+    return json
+   }
+   catch(e) {
+      console.log(e);
+      return null
+    }
+}
 
 export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper, ValidatorData, WalletValidators}
