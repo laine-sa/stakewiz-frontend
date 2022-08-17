@@ -2,28 +2,49 @@ import { FC } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { validatorI } from "./interfaces";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export const StakeLabel: FC<{stake: number}> = ({stake}) => {
     
     if(stake!=null) {
         let s = (stake<0) ? stake*-1 : stake;
         let n = new Intl.NumberFormat().format(Number(s.toFixed(0)));
+        let color = (stake<0) ? 'bg-danger' : 'bg-white text-black'
+        color = (stake>0) ? 'bg-success' : color
         
         s = parseFloat(n);
         
         if(stake<0) {
             
             return (
-                <span className="ms-2">
-                    - ◎ {n}
-                </span>
+                <OverlayTrigger
+                    placement="top"
+                    overlay={
+                        <Tooltip>
+                            Pending changes
+                        </Tooltip>
+                    } 
+                >
+                    <span className={"ms-2 badge fw-normal "+color}>
+                        - ◎ {n}
+                    </span>
+                </OverlayTrigger>
             );
         }
         else {
             return (
-                <span className="ms-2">
-                    + ◎ {n}
-                </span>
+                <OverlayTrigger
+                    placement="top"
+                    overlay={
+                        <Tooltip>
+                            Pending changes
+                        </Tooltip>
+                    } 
+                >
+                    <span className={"ms-2 badge fw-normal "+color}>
+                        + ◎ {n}
+                    </span>
+                </OverlayTrigger>
             );
         }
     }
