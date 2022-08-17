@@ -200,6 +200,7 @@ export const MultiStakeDialog: FC<{
     }
 
     const renderStakeValidators = () => {
+        console.log(laine)
         if(stakeValidators!=null) {
             let vl = [];
             stakeValidators.map((validator,index) => {
