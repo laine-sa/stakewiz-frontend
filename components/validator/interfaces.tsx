@@ -69,6 +69,7 @@ export interface validatorI {
     updateTitle: Function;
     userPubkey: string;
     solflareEnabled: boolean;
+    skip_rate_ignored: boolean;
 };
 
 export interface clusterStatsI {
