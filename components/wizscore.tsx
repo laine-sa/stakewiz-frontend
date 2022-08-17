@@ -164,27 +164,37 @@ class WizScoreBody extends React.Component<{
                                     tooltip="Ratio of credits vs slots completed this epoch."
                                     value={this.props.validator.vote_success+'%'}
                                     score={this.props.validator.vote_success_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
                                 /> 
                                 <WizScoreRow
                                     label='Slot Skip Rate'
-                                    tooltip="Percentage of leader slots in which this validator failed to produce a block."
+                                    tooltip="Percentage of leader slots in which this validator failed to produce a block. Score is ignored for low-staked validators."
                                     value={new Intl.NumberFormat().format(Number(this.props.validator.skip_rate.toFixed(1)))+'%'}
                                     score={this.props.validator.skip_rate_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
                                 /> 
                                 <WizScoreRow
+                                    label='Skip rate ignored'
+                                    tooltip="Skip rate is ignored if validator's stake is below a threshold (see FAQ)."
+                                    value={(this.props.validator.skip_rate_ignored) ? 'Yes' : 'No'}
+                                    score={(this.props.validator.skip_rate_ignored) ? 'scaled up' : 'N/A'}
+                                    addPercent={false}
+                                    threshold='0'
+                                    color='green'
+                                    sign=''
+                                />
+                                <WizScoreRow
                                     label='Published Information'
                                     tooltip="2% for each of these: name, logo, description, keybase ID &amp; website."
                                     value={this.renderInfoCount()+' out of 5'}
                                     score={this.props.validator.info_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
@@ -194,7 +204,7 @@ class WizScoreBody extends React.Component<{
                                     tooltip="Up to +5% score for commission of 0%. No score for 10% commission and above."
                                     value={this.props.validator.commission+'%'}
                                     score={this.props.validator.commission_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
@@ -204,7 +214,7 @@ class WizScoreBody extends React.Component<{
                                     tooltip="Up to +10% for having at least 10 epoch history (counted from first epoch with stake)."
                                     value={this.props.validator.first_epoch_distance+' epochs'}
                                     score={this.props.validator.epoch_distance_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
@@ -214,7 +224,7 @@ class WizScoreBody extends React.Component<{
                                     tooltip="Up to +15%, 0% for any stake that is >= 10% of the largest validator's stake."
                                     value={this.props.validator.stake_weight+'%'}
                                     score={this.props.validator.stake_weight_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
@@ -224,47 +234,47 @@ class WizScoreBody extends React.Component<{
                                     tooltip="Having the vote account withdraw authority set to the validator's identity keypair is a bad security practice and incurs a -20% penalty."
                                     value={this.renderWithdrawAuthorityValue()}
                                     score={this.props.validator.withdraw_authority_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='red'
-                                    inverse='true'
+                                    inverse={true}
                                 />
                                 <WizScoreRow
                                     label={`ASN Concentration (${(this.props.validator.ip_asn) ? this.props.validator.ip_asn : 'N/A'})`}
                                     tooltip="Stake concentration by ASN (ASN can comprise multiple physical locations). Penalty applied relative to the highest-staked ASN (which incurs the max penalty)."
                                     value={this.props.validator.asn_concentration+'%'}
                                     score={this.props.validator.asn_concentration_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='red'
-                                    inverse='true'
+                                    inverse={true}
                                 />
                                 <WizScoreRow
                                     label={`City Concentration (${(this.props.validator.ip_city) ? this.props.validator.ip_city : 'N/A'})`}
                                     tooltip="Stake concentration by City (city can comprise multiple data centres). Penalty applied relative to the highest-staked city (which incurs the max penalty)."
                                     value={this.props.validator.city_concentration+'%'}
                                     score={this.props.validator.city_concentration_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='red'
-                                    inverse='true'
+                                    inverse={true}
                                 />
                                 <WizScoreRow
                                     label={`ASN + City Concentration (${(this.props.validator.ip_asn) ? this.props.validator.ip_asn : 'N/A'} + ${(this.props.validator.ip_city) ? this.props.validator.ip_city : 'N/A' })`}
                                     tooltip="Stake concentration by City (city can comprise multiple data centres). Penalty applied relative to the highest-staked city (which incurs the max penalty)."
                                     value={this.props.validator.asncity_concentration+'%'}
                                     score={this.props.validator.asncity_concentration_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='red'
-                                    inverse='true'
+                                    inverse={true}
                                 />
                                 <WizScoreRow
                                     label='Uptime (30 days)'
                                     tooltip="Percentage of time a validator was not delinquent over the past 30 days (or since the validator was added to our database if less than 30 days)."
                                     value={this.props.validator.uptime+'%'}
                                     score={this.props.validator.uptime_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='green'
                                     sign='+'
@@ -274,20 +284,20 @@ class WizScoreBody extends React.Component<{
                                     tooltip="A penalty is applied for running an outdated or not recommended software version."
                                     value={this.props.validator.version}
                                     score={this.props.validator.invalid_version_score}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='red'
-                                    inverse='true'
+                                    inverse={true}
                                 />
                                 <WizScoreRow
                                     label='Superminority Penalty'
                                     tooltip="A penalty is applied to validators in the superminority (highest 33.3% of stake weight)."
                                     value={this.renderSuperminorityValue()}
                                     score={this.props.validator.superminority_penalty}
-                                    addPercent='true'
+                                    addPercent={true}
                                     threshold='0'
                                     color='red'
-                                    inverse='true'
+                                    inverse={true}
                                 />
                             </tbody>
                         </table>
@@ -429,6 +439,17 @@ class WizScoreWeightings extends React.Component<{},
                                 </td>
                                 <td>
                                     Cluster average * this multiplier gives us the value which has a 0 score. If the average skip rate is 5% and the multiplier is 2, then a 10% skip rate or above will have a score of 0, and anything below 10% will have a score higher than 0.
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td>
+                                    Skip rate min stake
+                                </td>
+                                <td className='text-nowrap'>
+                                    ◎ {this.state.weightings.skip_rate_min_stake}
+                                </td>
+                                <td>
+                                    For validators with less than this amount of activated stake we ignore the skip rate. The remaining score is scaled up by the skip rate weight to achieve a score out of 100%. This is because skip rate is highly variable and for validators with low stake and few leader slots it can lead to extremely high variance that it not necessarily reflective of the quality of the node&apos;s operation.
                                 </td>
                             </tr>
                             <tr> 
