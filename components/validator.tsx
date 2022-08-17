@@ -28,7 +28,11 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     constructor(props, context ) {
       super(props);
 
-      if(this.props.state.clusterStats==null) this.getClusterStats();
+      if(this.props.state.clusterStats==null) getClusterStats().then((stats) => {
+        this.props.updateState({
+            clusterStats: stats
+        });
+      })
       
       if(this.props.userPubkey) {
           this.getWalletValidators(this.props.userPubkey);
@@ -38,10 +42,17 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
     componentDidUpdate() {
         const validatorsContext : any = this.context
         if(this.props.state.validators == null && (validatorsContext) && (validatorsContext.length > 0)){
+
+            let laine = null;
+            validatorsContext.map((validator) => {
+                if(validator.vote_identity == config.LAINE_VOTE_IDENTITY) laine = validator;
+            })
+
             this.props.updateState({
                 validators: validatorsContext,
                 filteredValidators: validatorsContext,
                 hasData: true,
+                laine: laine
             });
         }
     }
@@ -60,23 +71,6 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
         .catch(e => {
           console.log(e);
           setTimeout(() => { this.getWalletValidators(pubkey) }, 5000);
-        })
-    }
-  
-    getClusterStats() {
-      axios(API_URL+config.API_ENDPOINTS.cluster_stats, {
-        headers: {'Content-Type':'application/json'}
-      })
-        .then(response => {
-          let json = response.data;
-  
-          this.props.updateState({
-              clusterStats: json
-          });
-        })
-        .catch(e => {
-          console.log(e);
-          setTimeout(() => { this.getClusterStats() }, 5000);
         })
     }
   
@@ -198,6 +192,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   updateStakeValidators={(validator: validatorI) => this.updateStakeValidators(validator)}
                   clearStakeValidators={() => this.clearStakeValidators()}
                   stakeValidators={this.props.state.stakeValidators}
+                  laine={this.props.state.laine}
                   />,
               <LoadMoreButton
                   key='loadMoreButton'
@@ -239,11 +234,6 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
   
     render() {
       let list = [];
-      let laine = null;
-      
-      for(let i=0; i<this.props.validators.length; i++) {
-        if(this.props.validators[i].vote_identity==config.LAINE_VOTE_IDENTITY) laine = this.props.validators[i];
-      }
 
       for(let i=0; i<this.props.validators.length && i < this.props.listSize; i++) {
         list.push(this.renderValidator(i));
@@ -285,7 +275,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 }}
                 clusterStats={this.props.clusterStats}
                 allowAlertDialog={true}
-                laine={laine}
+                laine={this.props.laine}
             />
           ]
       );
