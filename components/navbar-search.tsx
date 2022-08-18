@@ -40,8 +40,8 @@ interface ValidatorData {
             </div>
             <a href={"/validator/" + filteredValidator.vote_identity} onClick={() => {validatorClick}}>
               <div className="validator-info">
-                <div className="validator-title">
-                    <b>{filteredValidator.name}</b>
+                <div className={`validator-title ${(filteredValidator.name) ? '' : 'text-truncate'}`}>
+                    <b>{filteredValidator.name ? filteredValidator.name : filteredValidator.vote_identity}</b>
                   
                 </div>
                 <div className={`scroll-description ${(!filteredValidator.image) ? 'scroll-descrip-full-Width' : ''}`}>
@@ -93,15 +93,10 @@ interface ValidatorData {
             let txtValue = searchValidators[i].name + searchValidators[i].identity + searchValidators[i].vote_identity;
             
             if (txtValue.toUpperCase().indexOf(searchTitle.toUpperCase()) > -1 ) {
-                if((name=='')) {
-                  continue;
-                }
-                else{
-                  let sf = "rank_asc"
-                  sf = sf.substring(0,sf.length-4);
-                  filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));
-                  filteredValidators.push(searchValidators[i]);
-                }
+              let sf = "rank_asc";
+              sf = sf.substring(0,sf.length-4);
+              filteredValidators.sort((a,b) => (a[sf] > b[sf]) ? 1 : ((b[sf] > a[sf]) ? -1 : 0));
+              filteredValidators.push(searchValidators[i]);
             }   
         }
           if(filteredValidators.length > 0){
