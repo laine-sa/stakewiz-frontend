@@ -20,7 +20,8 @@
         "wallet_validators": "stake_validators_by_withdraw_authority",
         "solflare_check": "solflare_check",
         "epoch_info": "epoch_info",
-        "gossip_stake": "gossip_stake"
+        "gossip_stake": "gossip_stake",
+        "validator_rewards_since_epoch": "validator_rewards_since_epoch"
     },
     "DEFAULT_LIST_SIZE": 50,
     "WIZ_SCORE_RANK_GROUPS": {
@@ -37,5 +38,6 @@
     "DEFAULT_STAKE_RENT_LAMPORTS": 2282880,
     "SLOTS_PER_EPOCH": 432000,
     "DEFAULT_SEARCH_KEY_COUNT": 2,
-    "LAINE_VOTE_IDENTITY": "GE6atKoWiQ2pt3zL7N13pjNHjdLVys8LinG8qeJLcAiL"
+    "LAINE_VOTE_IDENTITY": "GE6atKoWiQ2pt3zL7N13pjNHjdLVys8LinG8qeJLcAiL",
+    "GA_TRACKING_ID": "G-L7C5EZ0C4F"
 }

@@ -8,6 +8,7 @@ import { getStakeAccounts, StakeInput } from './common'
 import { getEpochInfo, Spinner } from '../common';
 import { RenderImage, RenderName } from '../validator/common';
 import { addMeta, createStake } from './transactions'
+import * as gtag from '../../lib/gtag.js'
 
 export const StakeDialog: FC<{
     validator: validatorI, 
@@ -149,6 +150,13 @@ export const StakeDialog: FC<{
             let signature = await connection.sendRawTransaction(signedTx.serialize());
             console.log('Submitted transaction signature: '+signature);
             setSigned(true);
+
+            gtag.event({
+                action: 'single-stake-tx',
+                category: 'delegate',
+                label: signature,
+                value: stakeAmount * LAMPORTS_PER_SOL
+              })
 
             setSignature(signature);
 
