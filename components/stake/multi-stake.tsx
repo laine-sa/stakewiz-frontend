@@ -10,6 +10,8 @@ import { getEpochInfo, Spinner } from '../common';
 import { getStakeAccounts, StakeInput, DistributionMethods } from './common'
 import { addMeta, createStake } from './transactions'
 
+import * as gtag from '../../lib/gtag.js'
+
 export const MultiStakeDialog: FC<{
     stakeValidators: [validatorI],
     updateStakeValidators: Function,
@@ -421,6 +423,13 @@ export const MultiStakeDialog: FC<{
             }
 
             setSignatures(sigs)
+
+            gtag.event({
+                action: 'multi-stake-tx',
+                category: 'delegate',
+                label: stakeValidators.length,
+                value: stakeAmount * LAMPORTS_PER_SOL
+              })
 
             let confs = []
 

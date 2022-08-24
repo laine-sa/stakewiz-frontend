@@ -12,6 +12,8 @@ import { validatorI } from "components/validator/interfaces";
 import ordinal from "ordinal";
 import { arrayBuffer } from "node:stream/consumers";
 
+import * as gtag from '../../lib/gtag.js'
+
 const API_URL = process.env.API_BASE_URL;
 
 export const Stakes: FC<{userPubkey: string, connection: Connection, connected: boolean}> = ({userPubkey, connection, connected}) => {
@@ -255,10 +257,19 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         }, 5000)
     }
 
-    const submitTx = async (tx, stake, isClose:Boolean = false) => {
+    const submitTx = async (tx, stake, isClose:Boolean = false, type = 'none', value = 0) => {
+
 
         let signature = await connection.sendRawTransaction(tx.serialize())
         console.log('Transaction signature: '+signature)
+
+        
+        gtag.event({
+            action: 'my-stake-tx',
+            category: type,
+            label: signature,
+            value: value
+          })
         
         setUpdatingStakes(updatingStakes => [...updatingStakes, stake])
         setDelegatingStake(null)
@@ -338,7 +349,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             tx = await addMeta(tx,publicKey,connection)
     
             await signTransaction(tx)
-            await submitTx(tx,stake)
+            await submitTx(tx,stake,false,'deactivate',stake.account.lamports)
     
         }
         catch(e) {
@@ -359,7 +370,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             tx = await addMeta(tx,publicKey,connection)
 
             await signTransaction(tx)
-            await submitTx(tx,stake,true)
+            await submitTx(tx,stake,true,'close',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
@@ -380,7 +391,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             tx = await addMeta(tx,publicKey,connection)
 
             await signTransaction(tx)
-            await submitTx(tx,stake)
+            await submitTx(tx,stake,false,'delegate',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
