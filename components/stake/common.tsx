@@ -1,8 +1,11 @@
 import React, {useEffect, useState, FC, useCallback} from 'react';
-import { Connection, StakeProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, StakeProgram, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import RangeSlider from 'react-bootstrap-range-slider'
 import config from '../../config.json';
+import axios from 'axios';
+
+const API_URL = process.env.API_BASE_URL;
 
 export const getStakeAccounts = async (pubkey,connection: Connection) => {
 
@@ -126,4 +129,18 @@ export const getStakeStatus = (stake,epoch) => {
         else if(activation < epoch)     return StakeStatus.Active
     }
     else return StakeStatus.Unknown
+}
+
+export const getRewards = async (stake, epoch, connection: Connection) => {
+    try {
+        
+        let response = await connection.getInflationReward([stake.pubkey],epoch)
+
+        return response
+    
+       }
+       catch(e) {
+          console.log(e);
+          return null
+        }
 }

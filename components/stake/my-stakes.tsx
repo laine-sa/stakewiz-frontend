@@ -1,7 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import config from '../../config.json';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { getStakeAccounts, StakeStatus, getStakeStatus } from './common';
+import { getStakeAccounts, StakeStatus, getStakeStatus, getRewards } from './common';
 import { ValidatorContext } from '../validator/validatorhook';
 import { getClusterStats, Spinner} from '../common'
 import { RenderImage, RenderName } from '../validator/common'
@@ -10,6 +10,7 @@ import { addMeta, closeStake, deactivateStake, delegateStake } from "./transacti
 import { useWallet } from "@solana/wallet-adapter-react";
 import { validatorI } from "components/validator/interfaces";
 import ordinal from "ordinal";
+import { arrayBuffer } from "node:stream/consumers";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -30,6 +31,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     const [delegateSearchInput, setDelegateSearchInput] = useState('')
     const [clusterStats, setClusterStats] = useState(null)
     const [initialFetch, setInitialFetch] = useState(false)
+    const [rewardsStake, setRewardsStake] = useState(null)
+    const [rewardsData, setRewardsData] = useState({})
+    const [rewardsTable, setRewardsTable] = useState(null)
 
     useEffect(() => {
         if(stakes == null) {
@@ -54,15 +58,89 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 setEpoch(epoch.epoch)
             })
         }
-        getClusterStats()
-        .then((results) => {
-            setClusterStats(results)
-        })
+        if(clusterStats==null) {
+            getClusterStats()
+            .then((results) => {
+                setClusterStats(results)
+            })
+        }
+        
     })
 
     useEffect(() => {
         doSearch(delegateSearchInput)
     }, [delegateSearchInput])
+
+    useEffect(() => {
+        if(rewardsStake!=null) {
+
+            for(let i = epoch-1; i > rewardsStake.account.data.parsed.info.stake.delegation.activationEpoch; i--) {
+                
+                console.log('fetch rewards')
+                getRewards(rewardsStake, i, connection)
+                .then((result) => {
+                    let rewards = {}
+                    rewards[i] = result
+                    setRewardsData({...rewardsData,...rewards})
+                    
+                })
+            }
+            
+        }
+    }, [rewardsStake])
+
+    useEffect(() => {
+        console.log(rewardsData)
+        if(rewardsStake!=null) {
+            let rewardsEpochs = []
+
+            for(let i = epoch-1; i > rewardsStake.account.data.parsed.info.stake.delegation.activationEpoch; i--) {
+                rewardsEpochs.push(i)
+            }
+    
+    
+            setRewardsTable(
+                <div className='d-flex flex-column'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope='col'>
+                                    Epoch
+                                </th>
+                                <th scope='col'>
+                                    Change
+                                </th>
+                                <th scope='col'>
+                                    Delegated stake
+                                </th>
+                                <th scope='col'>
+                                    APR
+                                </th>
+                                <th scope='col'>
+                                    Commission
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {rewardsEpochs.map((epoch) => {
+                                return (
+                                    <tr key={'rewards-epoch-row-'+epoch}>
+                                        <th scope='row'>
+                                            {epoch}
+                                        </th>
+                                        <td>
+                                            {(rewardsData[epoch]!=undefined) ? '+ ◎'+rewardsData[epoch][0].amount / LAMPORTS_PER_SOL : null}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )
+        }
+        
+    }, [rewardsData, rewardsStake])
 
     const findStakeValidator = (vote_identity) => {
         
@@ -78,6 +156,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
 
     const renderStakeButtons = (stake, status) => {
         
+
         if(updatingStakes.includes(stake)) {
             return (
                 <div className='spinner-grow text-light' role="status">
@@ -86,22 +165,25 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             )
         }
         else {
+            let buttons = []
             if(status == 2 || status == 1) {
-                return (
+                buttons.push(
                     <OverlayTrigger
                     placement="bottom"
+                    key={'stake-deactivate-'+stake.pubkey}
                     overlay={
                         <Tooltip>
                             Deactivate
                         </Tooltip>
                     } 
                     > 
-                        <button className='btn btn-outline-light btn-sm px-4' onClick={() => doDeactivate(stake)} disabled={awaitingSignature}><i className='bi bi-chevron-double-down fs-6'></i></button>
+                        <button className='btn btn-outline-light btn-sm px-4 me-1' onClick={() => doDeactivate(stake)} disabled={awaitingSignature}><i className='bi bi-chevron-double-down fs-6'></i></button>
                     </OverlayTrigger>
+                    
                 )
             }
             if(status == 0) {
-                return (
+                buttons.push(
                     [
                         <OverlayTrigger
                         placement="bottom"
@@ -129,7 +211,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 )
             }
             if(status ==3 ) {
-                return (
+                buttons.push(
                     <OverlayTrigger
                         placement="bottom"
                         key={'delegate-button-'+stake.pubkey.toString()}
@@ -143,7 +225,23 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                         </OverlayTrigger>
                 )
             }
-            
+            if((status==2 || status ==3) && stake.account.data.parsed.info.stake.delegation.activationEpoch < (epoch-1)) {
+                buttons.push(
+                    <OverlayTrigger
+                    placement="bottom"
+                    key={'stake-rewards-'+stake.pubkey}
+                    overlay={
+                        <Tooltip>
+                            Rewards
+                        </Tooltip>
+                    } 
+                    > 
+                        <button className='btn btn-outline-light btn-sm px-4' onClick={() => setRewardsStake(stake)} disabled={awaitingSignature}><i className='bi bi-bank2 fs-6'></i></button>
+                    </OverlayTrigger>
+                )
+            }
+
+            return buttons
         }
         
     }
@@ -348,132 +446,10 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         setDelegateSearchInput('')
     }
 
-    const renderStakes = () => {
-        if(stakes!=null && stakes.length > 0) {
-            let result = []
 
-            stakes.sort((a,b) => {
-                if(b.account.data.parsed.info.stake.delegation.stake === a.account.data.parsed.info.stake.delegation.stake) {
-
-                    return b.pubkey.toString().toLowerCase().localeCompare(a.pubkey.toString().toLowerCase())
-                }
-                else {
-                    return b.account.data.parsed.info.stake.delegation.stake - a.account.data.parsed.info.stake.delegation.stake
-                }
-
-            })
-
-            stakes.map((stake) => {
-                let validator = findStakeValidator(stake.account.data.parsed.info.stake.delegation.voter);
-                let status = getStakeStatus(stake,epoch);
-                let statusbg = (status == 2) ? 'bg-success' : 'bg-secondary';
-                statusbg = (status == 1) ? 'bg-info' : statusbg;
-                statusbg = (status == 3) ? 'bg-warning' : statusbg;
-                let statustext = (status==3 || status ==1) ? 'text-dark' : 'text-white'
-                
-                result.push((
-                    <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5'>
-                        <div className='me-2 stake-image'>
-                            {(validator!=null) ? (
-                            <RenderImage
-                                img={validator.image}
-                                vote_identity={validator.vote_identity}
-                                size={60}
-                                className='border border-2 border-dark'
-                            />   
-                            ) : null}
-                        </div>
-                        <div className='fs-5 text-truncate w-100 px-3 text-center'>
-                            <RenderName
-                                validator={validator}
-                            />
-                        </div> 
-                        
-                            <div className='d-flex align-items-center'>
-                                <div className='justify-content-center fs-6 p-1 px-3 badge bg-dark flex-nowrap ms-4'>
-                                    ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
-                                </div>
-                                <div>
-                                    <OverlayTrigger
-                                        placement="top"
-                                        overlay={
-                                            <Tooltip>
-                                                Delegated amount, excludes rent exempt amount<br />(~ ◎ 0.002)
-                                            </Tooltip>
-                                        } 
-                                    >
-                                        <i className='bi bi-info-circle ms-2'></i>
-                                    </OverlayTrigger>
-                                </div>
-                            </div>
-                        
-                        <div className={'p-1 my-1 px-3 badge '+statusbg+' '+statustext}>
-                            {StakeStatus[status]}
-                        </div>
-                        <div className='w-100 text-truncate p-1 px-3 text-center'>
-                            <OverlayTrigger
-                                placement="top"
-                                overlay={
-                                    <Tooltip>
-                                        Click to copy stake account address
-                                    </Tooltip>
-                                } 
-                            >
-                        
-                                <span className='pointer' onClick={() => {navigator.clipboard.writeText(stake.pubkey.toString())}}>
-                                    <i className='bi bi-key me-2'></i>{stake.pubkey.toString()}
-                                </span>
-                            
-                            </OverlayTrigger>
-                            
-                        </div>
-                        <div className='p-1'>
-                            {renderStakeButtons(stake,status)}
-                        </div>
-                    </div>
-                    
-                ))
-            })
-            
-            setRenderResult(result); 
-        }
-        else if(stakes!=null && initialFetch) {
-            if(stakes.length==0) {
-                setRenderResult((
-                    <div className='d-flex justify-content-center text-white p-5 fs-5'>
-                        Uh oh... looks like you don&apos;t have any stake accounts or we&apos;re having trouble finding them.
-                    </div>
-                ))
-            }
-            
-        }
-        
-    }
-    
-    if(!connected || userPubkey == null) {
+    const renderRedelegateModal = () => {
         return (
-            <div className='w-50 p-2 border border-light text-light rounded text-center fs-5 m-auto mt-5'>
-                Please connect your wallet to view your stake accounts.
-            </div>
-        )
-    }
-    else {
-        return (
-            <React.Fragment>
-                [
-                <div className='d-flex flex-wrap justify-content-center' key='my-stakes'>
-                    {renderResult}
-                </div>,
-                <Alert 
-                    show={(message!=null)} 
-                    variant={(messageType=='error') ? 'danger' : 'success'} 
-                    key='alert'
-                    dismissible
-                    className='my-stake-error'
-                    >
-                        {message}
-                </Alert>,
-                <Modal show={(delegatingStake!=null)} onHide={() => {setDelegatingStake(null); setDelegateValidator(null)}} dialogClassName='modal-md'>
+            <Modal show={(delegatingStake!=null)} onHide={() => {setDelegatingStake(null); setDelegateValidator(null)}} dialogClassName='modal-md'>
                     <Modal.Header closeButton>
                         <Modal.Title>Delegate to a validator</Modal.Title>
                     </Modal.Header>
@@ -655,6 +631,157 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
 
                     </Modal.Body>
                 </Modal>
+        )
+    }
+
+    const renderRewardsModal = () => {
+
+        if(rewardsStake!=null) {
+            
+
+            return (
+                <Modal show={(rewardsStake!=null)} onHide={() => {setRewardsStake(null); setRewardsData({})}} dialogClassName='modal-md'>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Your stake rewards</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className='d-flex flex-column'>
+            
+                        {rewardsTable}
+
+                    </Modal.Body>
+                </Modal>
+            )
+        }
+        else return null
+    }
+
+    const renderStakes = () => {
+        if(stakes!=null && stakes.length > 0) {
+            let result = []
+
+            stakes.sort((a,b) => {
+                if(b.account.data.parsed.info.stake.delegation.stake === a.account.data.parsed.info.stake.delegation.stake) {
+
+                    return b.pubkey.toString().toLowerCase().localeCompare(a.pubkey.toString().toLowerCase())
+                }
+                else {
+                    return b.account.data.parsed.info.stake.delegation.stake - a.account.data.parsed.info.stake.delegation.stake
+                }
+
+            })
+
+            stakes.map((stake) => {
+                let validator = findStakeValidator(stake.account.data.parsed.info.stake.delegation.voter);
+                let status = getStakeStatus(stake,epoch);
+                let statusbg = (status == 2) ? 'bg-success' : 'bg-secondary';
+                statusbg = (status == 1) ? 'bg-info' : statusbg;
+                statusbg = (status == 3) ? 'bg-warning' : statusbg;
+                let statustext = (status==3 || status ==1) ? 'text-dark' : 'text-white'
+                
+                result.push((
+                    <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5'>
+                        <div className='me-2 stake-image'>
+                            {(validator!=null) ? (
+                            <RenderImage
+                                img={validator.image}
+                                vote_identity={validator.vote_identity}
+                                size={60}
+                                className='border border-2 border-dark'
+                            />   
+                            ) : null}
+                        </div>
+                        <div className='fs-5 text-truncate w-100 px-3 text-center'>
+                            <RenderName
+                                validator={validator}
+                            />
+                        </div> 
+                        
+                            <div className='d-flex align-items-center'>
+                                <div className='justify-content-center fs-6 p-1 px-3 badge bg-dark flex-nowrap ms-4'>
+                                    ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
+                                </div>
+                                <div>
+                                    <OverlayTrigger
+                                        placement="top"
+                                        overlay={
+                                            <Tooltip>
+                                                Delegated amount, excludes rent exempt amount<br />(~ ◎ 0.002)
+                                            </Tooltip>
+                                        } 
+                                    >
+                                        <i className='bi bi-info-circle ms-2'></i>
+                                    </OverlayTrigger>
+                                </div>
+                            </div>
+                        
+                        <div className={'p-1 my-1 px-3 badge '+statusbg+' '+statustext}>
+                            {StakeStatus[status]}
+                        </div>
+                        <div className='w-100 text-truncate p-1 px-3 text-center'>
+                            <OverlayTrigger
+                                placement="top"
+                                overlay={
+                                    <Tooltip>
+                                        Click to copy stake account address
+                                    </Tooltip>
+                                } 
+                            >
+                        
+                                <span className='pointer' onClick={() => {navigator.clipboard.writeText(stake.pubkey.toString())}}>
+                                    <i className='bi bi-key me-2'></i>{stake.pubkey.toString()}
+                                </span>
+                            
+                            </OverlayTrigger>
+                            
+                        </div>
+                        <div className='p-1'>
+                            {renderStakeButtons(stake,status)}
+                        </div>
+                    </div>
+                    
+                ))
+            })
+            
+            setRenderResult(result); 
+        }
+        else if(stakes!=null && initialFetch) {
+            if(stakes.length==0) {
+                setRenderResult((
+                    <div className='d-flex justify-content-center text-white p-5 fs-5'>
+                        Uh oh... looks like you don&apos;t have any stake accounts or we&apos;re having trouble finding them.
+                    </div>
+                ))
+            }
+            
+        }
+        
+    }
+    
+    if(!connected || userPubkey == null) {
+        return (
+            <div className='w-50 p-2 border border-light text-light rounded text-center fs-5 m-auto mt-5'>
+                Please connect your wallet to view your stake accounts.
+            </div>
+        )
+    }
+    else {
+        return (
+            <React.Fragment>
+                [
+                <div className='d-flex flex-wrap justify-content-center' key='my-stakes'>
+                    {renderResult}
+                </div>,
+                <Alert 
+                    show={(message!=null)} 
+                    variant={(messageType=='error') ? 'danger' : 'success'} 
+                    key='alert'
+                    dismissible
+                    className='my-stake-error'
+                    >
+                        {message}
+                </Alert>,
+                {renderRedelegateModal()},
+                {renderRewardsModal()}
                 ]
             </React.Fragment>
         )
