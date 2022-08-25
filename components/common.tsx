@@ -141,7 +141,7 @@ const TopBar: FC = () => {
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
               {renderEpochProgress()}
               <Nav>
-                <GlobalSearch mobilehide="mobile-col-hide tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop" />
+                <GlobalSearch mediaScreenHide="tablet-off" key="searchValidatorDesktop" elementID="searchValidatorDesktop" />
                 <Nav.Link href="/" className='text-white'>Home</Nav.Link>
                 <Nav.Link href="/stakes" className='text-white'>My Stakes</Nav.Link>
                 <Nav.Link href="/faq" className='text-white'>FAQs</Nav.Link>
