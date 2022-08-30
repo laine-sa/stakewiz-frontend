@@ -622,6 +622,8 @@ a:hover {
   width: 250px; /* 285 */
   padding: 0 0 0 16px;
 }
+.w-73{width: 73px;}
+.max-w-25{max-width: 25%;}
 /*-----------*/
 @media only screen and (max-width:1200px) {
   .card-view .validator-flex-container {

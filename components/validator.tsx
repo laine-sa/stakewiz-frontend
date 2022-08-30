@@ -409,75 +409,78 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </OverlayTrigger>
                 </div>
             ) : null}
-            <div className={'validator-flex-logo align-items-center d-flex'+(showListView?' w-25':'')}>
-                <div className='flex-shrink-0 my-3'>
-                    <RenderImage
-                        img={validator.image}
-                        vote_identity={validator.vote_identity}
-                        size={50}
-                    />
-                </div>
-                <div className={'fs-6 my-3 ms-2'+(showListView?(validator.name?' d-flex align-items-start':' text-truncate'):' text-truncate')}>
-                    <Link href={'/validator/'+validator.vote_identity} passHref>
-                        <span className="ms-2 vlist-name-inner pointer">
-                            <RenderName
-                                validator={validator}    
-                            />
-                        </span>  
-                    </Link>              
-                </div>
-                
-                <OverlayTrigger
-                    placement="top"
-                    overlay={
-                        <Tooltip>
-                            Copy identity: {validator.identity}
-                        </Tooltip>
-                    } 
-                >
-                    <div className='ms-auto badge bg-wizdark align-self-start pointer'>
-                        <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
-                            i
-                        </span>
+            <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' max-w-25 flex-column':'')}>
+                <div className='d-flex align-items-center'>
+                    <div className='flex-shrink-0 my-3'>
+                        <RenderImage
+                            img={validator.image}
+                            vote_identity={validator.vote_identity}
+                            size={50}
+                        />
                     </div>
-                </OverlayTrigger>
-
-                <OverlayTrigger
-                    placement="top"
-                    overlay={
-                        <Tooltip>
-                            Copy vote account: {validator.vote_identity}
-                        </Tooltip>
-                    } 
-                >
-                    <div className='ms-1 badge bg-wizdark align-self-start pointer'>
-                        <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
-                            v
-                        </span>
+                    <div className={'fs-6 my-3 ms-2'+(showListView?((validator.name && validator.name != validator.vote_identity && validator.name != validator.identity)?' d-flex align-items-start':' text-truncate'):' text-truncate')}>
+                        <Link href={'/validator/'+validator.vote_identity} passHref>
+                            <span className="ms-2 vlist-name-inner pointer">
+                                <RenderName
+                                    validator={validator}    
+                                />
+                            </span>  
+                        </Link>              
                     </div>
-                </OverlayTrigger>
-                
-                <OverlayTrigger
+                </div>
+                <div className='d-flex'>
+                    <OverlayTrigger
                         placement="top"
                         overlay={
                             <Tooltip>
-                                Ranking in these search results
+                                Copy identity: {validator.identity}
                             </Tooltip>
                         } 
                     >
-                    <div className='ms-1 badge bg-wizdark align-self-start'>
-                            <span>{index+1}</span>
-                    </div>
-                </OverlayTrigger>
+                        <div className='ms-auto badge bg-wizdark align-self-start pointer'>
+                            <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
+                                i
+                            </span>
+                        </div>
+                    </OverlayTrigger>
+
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Tooltip>
+                                Copy vote account: {validator.vote_identity}
+                            </Tooltip>
+                        } 
+                    >
+                        <div className='ms-1 badge bg-wizdark align-self-start pointer'>
+                            <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
+                                v
+                            </span>
+                        </div>
+                    </OverlayTrigger>
+                    
+                    <OverlayTrigger
+                            placement="top"
+                            overlay={
+                                <Tooltip>
+                                    Ranking in these search results
+                                </Tooltip>
+                            } 
+                        >
+                        <div className='ms-1 badge bg-wizdark align-self-start'>
+                                <span>{index+1}</span>
+                        </div>
+                    </OverlayTrigger>
+                </div>
             </div>  
             
             <div className={'d-flex my-2' + (showListView?' text-left flex-column':' text-center')}>
-                <div className='flex-grow-1'>
-                    <span className='pointer wiz-font me-3 ' onClick={() => showWizModal()}>WIZ SCORE</span>
+                <div className={'flex-grow-1'+(showListView?' d-flex flex-column-reverse align-items-center':'')}>
+                    <span className={'pointer '+(showListView?'':' me-3 wiz-font')} onClick={() => showWizModal()}>WIZ SCORE</span>
                     <span className='fw-bold'>{validator.wiz_score}%</span>
                 </div>
                 <div className='flex-grow-1'>
-                    <span className='wiz-font me-3'>WIZ RANK</span>
+                    <span className={'me-3'+(showListView?'':' wiz-font')}> {showListView?'RANK:':'WIZ RANK'}</span>
                     <span className='fw-bold'>{ordinal(validator.rank)}</span>
                 </div>
             </div>
@@ -491,7 +494,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
                         <div className='p-2'>
                             {validator.skip_rate.toFixed(1)}%
                         </div>
@@ -514,7 +517,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
                         <div className='p-2'>   
                             {validator.credit_ratio.toFixed(1)}%
                         </div>
@@ -537,7 +540,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
                         <div className='p-2'>
                             {validator.commission}%
                         </div>
@@ -560,7 +563,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
                         <div className='p-2'>
                             {validator.apy_estimate}%
                         </div>
@@ -587,7 +590,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <button className='btn btn-outline-light btn-sm w-100' onClick={() => showWizModal()}>
+                        <button className={'btn btn-outline-light btn-sm w-100'+(showListView?' p-2':'')} onClick={() => showWizModal()}>
                             <i className='bi bi-list-nested pe-1 alert-btn-icon'></i>
                         </button>
                     </OverlayTrigger>
@@ -601,7 +604,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <button className='btn btn-outline-light btn-sm w-100' onClick={() => showAlertModal()}>
+                        <button className={'btn btn-outline-light btn-sm w-100'+(showListView?' p-2':'')} onClick={() => showAlertModal()}>
                             <i className='bi bi-bell pe-1 alert-btn-icon'></i>
                         </button>
                     </OverlayTrigger>
@@ -617,7 +620,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     >
                         <span>
                             <Link href={'/validator/'+validator.vote_identity} passHref>
-                                <button className='btn btn-outline-light btn-sm w-100'>
+                                <button className={'btn btn-outline-light btn-sm w-100'+(showListView?' p-2':'')}>
                                     <i className='bi bi-info-lg pe-1 alert-btn-icon'></i>
                                 </button>
                             </Link>
