@@ -249,12 +249,12 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
         list.push(this.renderValidator(i));
       }
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-1'></div>);
-      list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);
-  
+      list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);    
+      const viewType = (this.props.showListView) ? ' list-view' : ' card-view';  
 
       return (
           [
-            <div className='d-flex justify-content-center' key='flex-list-container'>
+            <div className={'d-flex justify-content-center'+viewType} key='flex-list-container'>
                 <div className={'d-flex flex-wrap w-100'}>
                     {list}
                 </div>
@@ -392,10 +392,9 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
 
     const borderColor = (validator.delinquent) ? 'border-danger' : 'border-secondary';
     const bgColor = (isStakeValidator) ? 'card-dark' : 'card-light';    
-    const viewType = (showListView) ? 'list-view' : 'card-view';    
 
     return (
-        <div className={'d-flex position-relative flex-grow-1 rounded border p-2 m-1 validator-flex-container '+borderColor+' '+bgColor+ ' '+viewType+ (showListView?' w-100 flex-row justify-content-between align-items-center flex-wrap':' w-25 flex-column justify-content-center')}>
+        <div className={'d-flex position-relative flex-grow-1 rounded border p-2 m-1 validator-flex-container '+borderColor+' '+bgColor+ ' '+ (showListView?' w-100 flex-row justify-content-between align-items-center flex-wrap':' w-25 flex-column justify-content-center')}>
             {(validator.delinquent) ? (
                 <div className='badge bg-danger delinquent-badge'>
                    <OverlayTrigger

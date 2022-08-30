@@ -624,7 +624,7 @@ a:hover {
 }
 /*-----------*/
 @media only screen and (max-width:1200px) {
-  .validator-flex-container {
+  .card-view .validator-flex-container {
     width:45%!important;
   }
 

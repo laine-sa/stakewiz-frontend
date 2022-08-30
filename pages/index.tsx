@@ -33,7 +33,8 @@ class Homepage extends React.Component<
     stakeValidator: validatorI,
     showStakeModal: boolean,
     showMultiStakeModal: boolean,
-    laine: validatorI
+    laine: validatorI,
+    showListView: boolean
   }> {
   constructor(props) {
     super(props);
@@ -54,7 +55,8 @@ class Homepage extends React.Component<
       stakeValidator: null,
       showStakeModal: false,
       showMultiStakeModal: false,
-      laine: null
+      laine: null,
+      showListView: false
     };
 
     if(this.props.userPubkey) this.checkSolflare(this.props.userPubkey);
