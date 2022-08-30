@@ -148,7 +148,7 @@ class SearchBar extends React.Component<
             
                 <div className="d-flex flex-row validator-search-filter-row w-100 justify-content-center">
                     
-                    <div className="d-flex align-items-center text-left form-check form-switch searchToggle ps-0">
+                    <div className="d-flex align-items-center text-left form-check form-switch searchToggle show-list-view ps-0">
                         <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="showListView" id="showlistview" role="switch" onChange={event => this.props.updateListView(event.target.checked)} checked={this.props.showListView} />
                         <label htmlFor="showlistview">List view</label>
                     </div>
