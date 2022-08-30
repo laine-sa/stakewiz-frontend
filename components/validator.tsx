@@ -418,7 +418,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             size={50}
                         />
                     </div>
-                    <div className={'fs-6 my-3 ms-2'+(showListView?((validator.name && validator.name != validator.vote_identity && validator.name != validator.identity)?' d-flex align-items-start':' text-truncate'):' text-truncate')}>
+                    <div className={'fs-6 my-3 ms-2'+(showListView?((validator.name && validator.name != validator.vote_identity && validator.name != validator.identity)?' d-flex align-items-start':' d-flex align-items-start text-break'):' text-truncate')}>
                         <Link href={'/validator/'+validator.vote_identity} passHref>
                             <span className="ms-2 vlist-name-inner pointer">
                                 <RenderName
