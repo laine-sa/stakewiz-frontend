@@ -151,6 +151,12 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
             showMultiStakeModal: show
         });
     }
+
+    updateShowListView(show:boolean) {        
+        this.props.updateState({
+            showListView: show
+        });
+    }
   
     render() {
       if(!this.props.state.hasData || this.props.state.clusterStats == null) {
@@ -170,6 +176,8 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   stakeValidators={this.props.state.stakeValidators}
                   showMultiStakeModal={this.props.state.showMultiStakeModal}
                   updateMultiStakeModal={(show: boolean) => this.updateMultiStakeModalVisibility(show)}
+                  showListView={ this.props.state.showListView }
+                  updateListView={(show: boolean) => this.updateShowListView(show)}
                   key='searchBar'
                   />,
               <ValidatorList 
@@ -193,6 +201,7 @@ class ValidatorListing extends React.Component<ValidatorListingI, {}> {
                   clearStakeValidators={() => this.clearStakeValidators()}
                   stakeValidators={this.props.state.stakeValidators}
                   laine={this.props.state.laine}
+                  showListView={this.props.state.showListView}
                   />,
               <LoadMoreButton
                   key='loadMoreButton'
@@ -218,6 +227,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
                 index={i}
                 updateStakeValidators={(validator: validatorI) => this.props.updateStakeValidators(validator)}
                 isStakeValidator={this.isStakeValidator(this.props.validators[i])}
+                showListView={this.props.showListView}
               />
       );
     }
@@ -302,7 +312,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       }
 }
 
-const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,connected,index,updateStakeValidators,isStakeValidator}) => {
+const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizModal,showAlertModal,connected,index,updateStakeValidators,isStakeValidator, showListView}) => {
 
     const renderStakeBar = () => {
 
@@ -382,9 +392,10 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
 
     const borderColor = (validator.delinquent) ? 'border-danger' : 'border-secondary';
     const bgColor = (isStakeValidator) ? 'card-dark' : 'card-light';    
+    const viewType = (showListView) ? 'list-view' : 'card-view';    
 
     return (
-        <div className={'d-flex position-relative w-25 flex-grow-1 rounded border p-2 m-1 flex-column validator-flex-container justify-content-center '+borderColor+' '+bgColor}>
+        <div className={'d-flex position-relative flex-grow-1 rounded border p-2 m-1 validator-flex-container '+borderColor+' '+bgColor+ ' '+viewType+ (showListView?' w-100 flex-row justify-content-between align-items-center flex-wrap':' w-25 flex-column justify-content-center')}>
             {(validator.delinquent) ? (
                 <div className='badge bg-danger delinquent-badge'>
                    <OverlayTrigger
@@ -399,7 +410,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </OverlayTrigger>
                 </div>
             ) : null}
-            <div className='validator-flex-logo align-items-center d-flex'>
+            <div className={'validator-flex-logo align-items-center d-flex'+(showListView?' w-25':'')}>
                 <div className='flex-shrink-0 my-3'>
                     <RenderImage
                         img={validator.image}
@@ -407,7 +418,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         size={50}
                     />
                 </div>
-                <div className='text-truncate fs-6 my-3 ms-2'>
+                <div className={'fs-6 my-3 ms-2'+(showListView?(validator.name?' d-flex align-items-start':' text-truncate'):' text-truncate')}>
                     <Link href={'/validator/'+validator.vote_identity} passHref>
                         <span className="ms-2 vlist-name-inner pointer">
                             <RenderName
@@ -460,8 +471,8 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </div>
                 </OverlayTrigger>
             </div>  
-
-            <div className='d-flex text-center my-2'>
+            
+            <div className={'d-flex my-2' + (showListView?' text-left flex-column':' text-center')}>
                 <div className='flex-grow-1'>
                     <span className='pointer wiz-font me-3 ' onClick={() => showWizModal()}>WIZ SCORE</span>
                     <span className='fw-bold'>{validator.wiz_score}%</span>
