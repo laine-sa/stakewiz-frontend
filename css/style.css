@@ -788,7 +788,7 @@ a:hover {
     margin-top:-0.5rem!important;
   }
 
-  .validator-flex-container {
+  .vcard-view .validator-flex-container {
     width:100%!important;
   }
   
@@ -964,8 +964,12 @@ a:hover {
   }
   .search-result-div {width: 330px;}
   .wiz-one-line { display: block;}
+  .vlist-view .max-w-25{max-width: 58%;}
+  .vlist-view .vlw-100{width: 100%;}
 }
 /*----------------------*/
 @media only screen and (max-width: 359px) {
   .search-result-div {width: 294px;}
+  .vlist-view .w-70{width: initial;}
+  .vlist-view .max-w-25{max-width: 50%;}
 }

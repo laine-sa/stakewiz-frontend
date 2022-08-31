@@ -485,7 +485,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                 </div>
             </div>
 
-            <div className='d-flex my-2'>
+            <div className='d-flex my-2 vlw-100'>
                 <OverlayTrigger
                     placement="bottom"
                     overlay={
@@ -577,10 +577,10 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </div>
                 </OverlayTrigger>
             </div>
-            <div className='d-flex flex-column my-2'>
+            <div className='d-flex flex-column my-2 vlw-100'>
                 {renderStakeBar()}
             </div>
-            <div className='d-flex my-2'>
+            <div className='d-flex my-2 vlw-100'>
                 <div className='flex-grow-1 mx-1'>
                     <OverlayTrigger
                         placement="bottom"
