@@ -250,7 +250,7 @@ class ValidatorList extends React.Component<ValidatorListI, {}> {
       }
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-1'></div>);
       list.push(<div className='d-flex w-25 flex-grow-1' key='spacer-2'></div>);    
-      const viewType = (this.props.showListView) ? ' list-view' : ' card-view';  
+      const viewType = (this.props.showListView) ? ' vlist-view' : ' vcard-view';  
 
       return (
           [
@@ -410,7 +410,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                 </div>
             ) : null}
             <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' max-w-25 flex-column':'')}>
-                <div className='d-flex align-items-center'>
+                <div className='d-flex flex-row align-items-center min-w-0 w-100'>
                     <div className='flex-shrink-0 my-3'>
                         <RenderImage
                             img={validator.image}
@@ -418,7 +418,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             size={50}
                         />
                     </div>
-                    <div className={'fs-6 my-3 ms-2'+(showListView?((validator.name && validator.name != validator.vote_identity && validator.name != validator.identity)?' d-flex align-items-start':' d-flex align-items-start text-break'):' text-truncate')}>
+                    <div className={'fs-6 my-3 ms-2 text-truncate'}>
                         <Link href={'/validator/'+validator.vote_identity} passHref>
                             <span className="ms-2 vlist-name-inner pointer">
                                 <RenderName
@@ -494,7 +494,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-70':'')}>
                         <div className='p-2'>
                             {validator.skip_rate.toFixed(1)}%
                         </div>
@@ -517,7 +517,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-70':'')}>
                         <div className='p-2'>   
                             {validator.credit_ratio.toFixed(1)}%
                         </div>
@@ -540,7 +540,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-70':'')}>
                         <div className='p-2'>
                             {validator.commission}%
                         </div>
@@ -563,7 +563,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         </Tooltip>
                     } 
                 >
-                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-73':'')}>
+                    <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-70':'')}>
                         <div className='p-2'>
                             {validator.apy_estimate}%
                         </div>
