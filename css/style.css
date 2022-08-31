@@ -626,6 +626,9 @@ a:hover {
 .max-w-25{max-width: 25%;}
 .min-w-0{min-width: 0;}
 /*-----------*/
+@media only screen and (min-width:992px) and (max-width:1199px) {
+  .vlist-view .validator-flex-logo.w-25{width: 45% !important;}
+}
 @media only screen and (max-width:1200px) {
   .vcard-view .validator-flex-container {
     width:45%!important;
@@ -964,12 +967,12 @@ a:hover {
   }
   .search-result-div {width: 330px;}
   .wiz-one-line { display: block;}
-  .vlist-view .max-w-25{max-width: 58%;}
+  .vlist-view .validator-flex-logo.w-25{width: 58% !important;}
   .vlist-view .vlw-100{width: 100%;}
 }
 /*----------------------*/
 @media only screen and (max-width: 359px) {
   .search-result-div {width: 294px;}
   .vlist-view .w-70{width: initial;}
-  .vlist-view .max-w-25{max-width: 50%;}
+  .vlist-view .validator-flex-logo.w-25{width: 50% !important;}
 }

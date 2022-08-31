@@ -409,7 +409,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </OverlayTrigger>
                 </div>
             ) : null}
-            <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' max-w-25 flex-column':'')}>
+            <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' w-25 flex-column':'')}>
                 <div className='d-flex flex-row align-items-center min-w-0 w-100'>
                     <div className='flex-shrink-0 my-3'>
                         <RenderImage
