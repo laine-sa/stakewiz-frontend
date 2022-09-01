@@ -409,7 +409,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </OverlayTrigger>
                 </div>
             ) : null}
-            <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' w-25 flex-column':'')}>
+            <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' w-25 flex-column-reverse ps-2':'')}>
                 <div className='d-flex flex-row align-items-center min-w-0 w-100'>
                     <div className='flex-shrink-0 my-3'>
                         <RenderImage
@@ -476,7 +476,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
             
             <div className={'d-flex my-2' + (showListView?' text-left flex-column':' text-center')}>
                 <div className={'flex-grow-1'+(showListView?' d-flex flex-column-reverse align-items-center':'')}>
-                    <span className={'pointer '+(showListView?'':' me-3 wiz-font')} onClick={() => showWizModal()}>WIZ SCORE</span>
+                    <span className={'pointer '+(showListView?' wiz-font':' me-3 wiz-font')} onClick={() => showWizModal()}>WIZ SCORE</span>
                     <span className='fw-bold'>{validator.wiz_score}%</span>
                 </div>
                 <div className='flex-grow-1'>

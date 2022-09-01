@@ -955,7 +955,6 @@ a:hover {
   .mobile-gauge-div {
     width:75%!important;
   }
-  .show-list-view.ps-0{padding-left:2.5em !important}
 }
 /* navbar search css start */
 @media only screen and (max-width: 767px) {

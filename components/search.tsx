@@ -148,11 +148,6 @@ class SearchBar extends React.Component<
             
                 <div className="d-flex flex-row validator-search-filter-row">
                     
-                    <div className="d-flex align-items-center text-left form-check form-switch searchToggle show-list-view ps-0">
-                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="showListView" id="showlistview" role="switch" onChange={event => this.props.updateListView(event.target.checked)} checked={this.props.showListView} />
-                        <label htmlFor="showlistview">List view</label>
-                    </div>
-                    
                     <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideAnonymous" id="vhideanonymous" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideAnonymous} />
                         <label htmlFor="vhideanonymous">Hide unnamed</label>
@@ -196,6 +191,11 @@ class SearchBar extends React.Component<
                             {this.state.validatorCount} validators
                         </div>
                         {this.renderStakeSelection()}
+                        <div className="d-flex align-items-center show-list-view pe-0X">
+                            <label htmlFor="showlistview" className="btn btn-sm btn-outline-light" onClick={() => this.props.updateListView(this.props.showListView ? false : true)}>
+                                {this.props.showListView ? <i className="bi bi-filter-square"></i> : <i className="bi bi-list"></i>}
+                            </label>
+                        </div>
                     </div>
                 </div>
                 
