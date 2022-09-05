@@ -380,6 +380,11 @@ a:hover {
   z-index:100;
 }
 
+.vlist-view .delinquent-badge {
+  bottom:0;
+  top: unset;
+}
+
 .btn-validator-selected {
   background-color: #198754;
   color:#fff;
@@ -628,6 +633,7 @@ a:hover {
 /*-----------*/
 @media only screen and (min-width:992px) and (max-width:1199px) {
   .vlist-view .validator-flex-logo.w-25{width: 45% !important;}
+  .vlist-view .delinquent-badge{left: unset;right: 0;top: 0;bottom: unset;}
 }
 @media only screen and (max-width:1200px) {
   .vcard-view .validator-flex-container {
@@ -657,6 +663,7 @@ a:hover {
   .mobile-col-hide {
     display:none!important;;
   }
+  .vlist-view .delinquent-badge{left: unset;right: 0;top: 0;bottom: unset;}
 }
 
 @media only screen and (max-width: 800px) {
