@@ -40,7 +40,7 @@ interface ValidatorData {
             </div>
             <a href={"/validator/" + filteredValidator.vote_identity} onClick={() => {validatorClick}}>
               <div className="validator-info">
-                <div className={`validator-title ${(filteredValidator.name) ? '' : 'text-truncate'}`}>
+                <div className={`validator-title ${(filteredValidator.name) ? '' : 'text-truncate width100'}`}>
                     <b>{filteredValidator.name ? filteredValidator.name : filteredValidator.vote_identity}</b>
                   
                 </div>
@@ -68,11 +68,11 @@ interface ValidatorData {
   }
 
   const GlobalSearch: FC<{
-    mobilehide : string,
+    mediaScreenHide : string,
     elementID : string,
     validatorList ? : string[],
     showSearchValidators ? : boolean
-    }> = ({ mobilehide, elementID }) => {
+    }> = ({ mediaScreenHide, elementID }) => {
     const validatorList = useContext(ValidatorContext);
     useEffect(() => {
       setSearchValidators(validatorList)
@@ -115,7 +115,7 @@ interface ValidatorData {
  
   return (
     <>
-      <div className={`search-container ${mobilehide}`} >
+      <div className={`search-container ${mediaScreenHide}`} >
           <input className={`search expandright ${(showSearchValidators) ? 'src-active' : ''}`} id={elementID} type="search" name="search" placeholder="Search validators..."        
           onChange={(e) => {doSearch(e.target.name, e.target.value)}}  autoComplete="off" value={searchInput} />
           <label className={`btnSearch searchbtn ${(showSearchValidators) ? 'btnSearch-active' : ''}`} htmlFor={elementID}>
