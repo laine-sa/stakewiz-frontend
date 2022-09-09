@@ -10,6 +10,7 @@ import {
     SolletExtensionWalletAdapter,
     SolletWalletAdapter,
     TorusWalletAdapter,
+    ExodusWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { AppProps } from 'next/app';
@@ -44,6 +45,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
           new LedgerWalletAdapter(),
           new SolletWalletAdapter({ network }),
           new SolletExtensionWalletAdapter({ network }),
+          new ExodusWalletAdapter({ network }),
       ],
       [network]
   );
