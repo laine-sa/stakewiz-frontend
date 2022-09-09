@@ -411,14 +411,14 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
             ) : null}
             <div className={'validator-flex-logo align-items-start d-flex justify-content-between'+(showListView?' w-25 flex-column-reverse ps-2':'')}>
                 <div className='d-flex flex-row align-items-center min-w-0 w-100'>
-                    <div className='flex-shrink-0 my-3'>
+                    <div className={'flex-shrink-0'+(showListView?' my-2':' my-3')}>
                         <RenderImage
                             img={validator.image}
                             vote_identity={validator.vote_identity}
                             size={50}
                         />
                     </div>
-                    <div className={'fs-6 my-3 ms-2 text-truncate'}>
+                    <div className={'fs-6 ms-2 text-truncate'+(showListView?' my-2':' my-3')}>
                         <Link href={'/validator/'+validator.vote_identity} passHref>
                             <span className="ms-2 vlist-name-inner pointer">
                                 <RenderName
@@ -437,7 +437,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <div className='ms-auto badge bg-wizdark align-self-start pointer'>
+                        <div className={'badge bg-wizdark align-self-start pointer'+(showListView?' ms-1 order-2':' ms-auto')}>
                             <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
                                 i
                             </span>
@@ -452,7 +452,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <div className='ms-1 badge bg-wizdark align-self-start pointer'>
+                        <div className={'ms-1 badge bg-wizdark align-self-start pointer' + (showListView?' order-3':'')}>
                             <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.vote_identity)}}>
                                 v
                             </span>
@@ -467,7 +467,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                                 </Tooltip>
                             } 
                         >
-                        <div className='ms-1 badge bg-wizdark align-self-start'>
+                        <div className={'badge bg-wizdark align-self-start'+ (showListView?' order-1 ms-auto':' ms-1')}>
                                 <span>{index+1}</span>
                         </div>
                     </OverlayTrigger>

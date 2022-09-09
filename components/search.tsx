@@ -190,12 +190,17 @@ class SearchBar extends React.Component<
                         <div className="d-flex align-items-center bg-dark text-white p-1 px-2 ms-2 mt-0 rounded justify-content-center" id="resultsno">
                             {this.state.validatorCount} validators
                         </div>
+                        <OverlayTrigger
+                            placement='top'    
+                            overlay={<Tooltip>{this.props.showListView?'List':'Card'} view</Tooltip>}
+                        >
+                            <div className="d-flex align-items-center show-list-view ps-2">
+                                <label htmlFor="showlistview" className="btn btn-sm btn-outline-light" onClick={() => this.props.updateListView(this.props.showListView ? false : true)}>
+                                    {this.props.showListView ? <i className="bi bi-filter-square"></i> : <i className="bi bi-list"></i>}
+                                </label>
+                            </div>
+                        </OverlayTrigger>
                         {this.renderStakeSelection()}
-                        <div className="d-flex align-items-center show-list-view pe-0X">
-                            <label htmlFor="showlistview" className="btn btn-sm btn-outline-light" onClick={() => this.props.updateListView(this.props.showListView ? false : true)}>
-                                {this.props.showListView ? <i className="bi bi-filter-square"></i> : <i className="bi bi-list"></i>}
-                            </label>
-                        </div>
                     </div>
                 </div>
                 
