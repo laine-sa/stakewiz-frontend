@@ -194,7 +194,7 @@ class SearchBar extends React.Component<
                             placement='top'    
                             overlay={<Tooltip>{this.props.showListView?'Card':'List'} view</Tooltip>}
                         >
-                            <div className="d-flex align-items-center show-list-view ps-2">
+                            <div className="d-flex align-items-center show-list-view ps-2 mobile-col-hide">
                                 <label htmlFor="showlistview" className="btn btn-sm btn-outline-light" onClick={() => this.props.updateListView(this.props.showListView ? false : true)}>
                                     {this.props.showListView ? <i className="bi bi-filter-square"></i> : <i className="bi bi-list"></i>}
                                 </label>
