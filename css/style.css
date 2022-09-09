@@ -380,6 +380,11 @@ a:hover {
   z-index:100;
 }
 
+.vlist-view .delinquent-badge {
+  bottom:0;
+  top: unset;
+}
+
 .btn-validator-selected {
   background-color: #198754;
   color:#fff;
@@ -615,10 +620,17 @@ a:hover {
   width: 250px; /* 285 */
   padding: 0 0 0 16px;
 }
+.w-70{width: 70px;}
+.max-w-25{max-width: 25%;}
+.min-w-0{min-width: 0;}
 .width100{width: 100%;}
 /*-----------*/
+@media only screen and (min-width:992px) and (max-width:1199px) {
+  .vlist-view .validator-flex-logo.w-25{width: 45% !important;}
+  .vlist-view .delinquent-badge{left: unset;right: 0;top: 0;bottom: unset;}
+}
 @media only screen and (max-width:1200px) {
-  .validator-flex-container {
+  .vcard-view .validator-flex-container {
     width:45%!important;
   }
 
@@ -640,6 +652,11 @@ a:hover {
     width: 77vw; /* 77 */
   }
   .search-result-div {width: 678px;}
+  
+  .mobile-col-hide {
+    display:none!important;;
+  }
+  .vlist-view .delinquent-badge{left: unset;right: 0;top: 0;bottom: unset;}
 }
 
 @media only screen and (min-width: 801px){
@@ -784,7 +801,7 @@ a:hover {
     margin-top:-0.5rem!important;
   }
 
-  .validator-flex-container {
+  .vcard-view .validator-flex-container {
     width:100%!important;
   }
   
@@ -959,8 +976,12 @@ a:hover {
 /* navbar search css start */
 @media only screen and (max-width: 767px) {
   .wiz-one-line { display: block;}
+  .vlist-view .validator-flex-logo.w-25{width: 58% !important;}
+  .vlist-view .vlw-100{width: 100%;}
 }
 /*----------------------*/
 @media only screen and (max-width: 359px) {
-
+  .search-result-div {width: 294px;}
+  .vlist-view .w-70{width: initial;}
+  .vlist-view .validator-flex-logo.w-25{width: 50% !important;}
 }
