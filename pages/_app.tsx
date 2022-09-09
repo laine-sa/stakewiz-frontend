@@ -80,3 +80,4 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
 };
 
 export default Stakewiz;
+
