@@ -671,11 +671,10 @@ class WizScoreChart extends React.Component<{
             
             let wiz_scores = [];
             wiz_scores.push(['Time', 'Wiz Score']);
-
-            let isSafari:boolean = browser.check('Safari');
+            let isMacOs:boolean = browser.check('Macintosh; Intel Mac OS');
 
             for(var i in json) {
-                if(isSafari){
+                if(isMacOs){
                     let timeZone = json[i].created_at.slice(-3)+':00';
                     wiz_scores.push([new Date(json[i].created_at.substring(0, 19).replace(/-/g, "/")+timeZone), parseFloat(json[i].avg_wiz_score)]);
                 }else{                
