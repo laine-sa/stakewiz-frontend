@@ -6,17 +6,9 @@ import axios from 'axios';
 import {Chart} from 'react-google-charts'
 import {Spinner} from './common'
 import { validatorI } from './validator/interfaces';
-
+import * as browser from 'lib/browser';
 
 const API_URL = process.env.API_BASE_URL;
-
-let isSafari:boolean;
-if (typeof window !== "undefined") {
-    // browser check
-    console.log("OKL");
-    isSafari = navigator.userAgent.indexOf('Safari') != -1;
-}
-
 
 function WizScoreRow(props) {
 
@@ -668,7 +660,7 @@ class WizScoreChart extends React.Component<{
             wiz_scores: null
         };
         if(this.state.wiz_scores==null) this.getWizScores(this.props.vote_identity);
-    }
+    }    
 
     getWizScores(vote_identity) {
         axios(API_URL+config.API_ENDPOINTS.validator_wiz_scores+"/"+vote_identity, {
@@ -679,6 +671,8 @@ class WizScoreChart extends React.Component<{
             
             let wiz_scores = [];
             wiz_scores.push(['Time', 'Wiz Score']);
+
+            let isSafari:boolean = browser.check('Safari');
 
             for(var i in json) {
                 if(isSafari){
