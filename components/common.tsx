@@ -52,8 +52,8 @@ class Header extends React.Component<HeaderProps, {}> {
                 <meta property="og:title" content={this.props.title} />
                 <meta property="og:description" content="Validator analytics, monitoring and alerting for Solana." />
                 <meta property="og:url" content="https://stakewiz.com" />
-                <meta property="og:image" content="https://stakewiz.com/images/wiz-square.webp" />
-                <link rel="icon" href="/images/wiz-square.webp" />.
+                <meta property="og:image" content="https://stakewiz.com/images/wiz-square-new.webp" />
+                <link rel="icon" href="/images/wiz-square-new.webp" />.
             </Head>
         )
     }
