@@ -20,6 +20,7 @@ export const createStake = (publicKey, validator, lamports): [Transaction, Trans
         publicKey
     );
 
+
     let stakeTx = StakeProgram.createAccount({
         authorized: auth,
         fromPubkey: publicKey,

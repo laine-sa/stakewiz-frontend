@@ -34,7 +34,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     const [clusterStats, setClusterStats] = useState(null)
     const [initialFetch, setInitialFetch] = useState(false)
     const [rewardsStake, setRewardsStake] = useState(null)
-    const [rewardsData, setRewardsData] = useState({})
+    const [rewardsData, setRewardsData] = useState([])
     const [rewardsTable, setRewardsTable] = useState(null)
 
     useEffect(() => {
@@ -81,10 +81,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 console.log('fetch rewards')
                 getRewards(rewardsStake, i, connection)
                 .then((result) => {
-                    let rewards = {}
-                    rewards[i] = result
-                    setRewardsData({...rewardsData,...rewards})
-                    
+                    let rewards = []
+                    rewards[i] = result 
+                    setRewardsData(rewardsData => [...rewardsData,result])
                 })
             }
             
@@ -92,14 +91,22 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     }, [rewardsStake])
 
     useEffect(() => {
-        console.log(rewardsData)
         if(rewardsStake!=null) {
+            
+            let staleLamports = rewardsStake.account.lamports - rewardsStake.account.data.parsed.info.stake.delegation.stake;
+
             let rewardsEpochs = []
 
             for(let i = epoch-1; i > rewardsStake.account.data.parsed.info.stake.delegation.activationEpoch; i--) {
                 rewardsEpochs.push(i)
             }
     
+            let sortedRewardsData = {}
+            rewardsData.map((data) => {
+                if(data!=null) {
+                    sortedRewardsData[data[0].epoch] = data[0]
+                }
+            })
     
             setRewardsTable(
                 <div className='d-flex flex-column'>
@@ -125,13 +132,30 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                         </thead>
                         <tbody>
                             {rewardsEpochs.map((epoch) => {
+                                console.log(sortedRewardsData[epoch])
+                                
+                                let preBalance = 0
+
+                                if(sortedRewardsData[epoch] !=undefined) {
+                                    preBalance = sortedRewardsData[epoch].postBalance - sortedRewardsData[epoch].amount
+                                }
+
                                 return (
                                     <tr key={'rewards-epoch-row-'+epoch}>
                                         <th scope='row'>
                                             {epoch}
                                         </th>
                                         <td>
-                                            {(rewardsData[epoch]!=undefined) ? '+ ◎'+rewardsData[epoch][0].amount / LAMPORTS_PER_SOL : null}
+                                            {(sortedRewardsData[epoch]!=undefined) ? '+ ◎ '+sortedRewardsData[epoch].amount / LAMPORTS_PER_SOL : null}
+                                        </td>
+                                        <td>
+                                            {(sortedRewardsData[epoch]!=undefined) ? '◎ '+(sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL : null}
+                                        </td>
+                                        <td>
+                                            {(sortedRewardsData[epoch]!=undefined) ? (sortedRewardsData[epoch].amount / preBalance * 100).toFixed(3)+' %' : null}
+                                        </td>
+                                        <td>
+                                            {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
                                         </td>
                                     </tr>
                                 )
@@ -651,7 +675,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             
 
             return (
-                <Modal show={(rewardsStake!=null)} onHide={() => {setRewardsStake(null); setRewardsData({})}} dialogClassName='modal-md'>
+                <Modal show={(rewardsStake!=null)} onHide={() => {setRewardsStake(null); setRewardsData([])}} dialogClassName='modal-lg'>
                     <Modal.Header closeButton>
                         <Modal.Title>Your stake rewards</Modal.Title>
                     </Modal.Header>
