@@ -9,6 +9,8 @@ interface searchI {
     stakeValidators: [validatorI];
     showMultiStakeModal: boolean;
     updateMultiStakeModal: Function;
+    showListView: boolean;
+    updateListView: Function;
 }
 
 class SearchBar extends React.Component<
@@ -18,6 +20,7 @@ class SearchBar extends React.Component<
             hideAnonymous:boolean,
             onlyMine:boolean,
             hideHighStake:boolean,
+            showListView:boolean,
             validatorCount: number;
             sortField: string;
         }
@@ -29,6 +32,7 @@ class SearchBar extends React.Component<
             hideAnonymous: false,
             onlyMine: false,
             hideHighStake: false,
+            showListView: this.props.showListView,
             validatorCount: this.props.validators.length,
             sortField: 'rank_asc'
         };
@@ -163,7 +167,7 @@ class SearchBar extends React.Component<
                     </div>
                     <div className="d-flex align-items-center text-left form-check form-switch searchSort">
                         <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
-                        <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)}>
+                        <select className='form-select form-select-sm' name='sortField' onChange={event => this.doSearch(event.target.name,event.target.value)} value={this.state.sortField} >
                             <option value='rank'>Wiz Score ↑</option>
                             <option value='rank_asc'>Wiz Score ↓</option>
                             <option value='activated_stake_asc'>Stake ↑</option>
@@ -182,10 +186,20 @@ class SearchBar extends React.Component<
                             <option value='asncity_concentration'>ASN+City Concentration ↓</option>
                         </select>
                     </div>
-                    <div className='d-flex flex-row'>
+                    <div className='d-flex flex-row justify-content-center'>
                         <div className="d-flex align-items-center bg-dark text-white p-1 px-2 ms-2 mt-0 rounded justify-content-center" id="resultsno">
                             {this.state.validatorCount} validators
                         </div>
+                        <OverlayTrigger
+                            placement='top'    
+                            overlay={<Tooltip>{this.props.showListView?'Card':'List'} view</Tooltip>}
+                        >
+                            <div className="d-flex align-items-center show-list-view ps-2 mobile-col-hide">
+                                <label htmlFor="showlistview" className="btn btn-sm btn-outline-light" onClick={() => this.props.updateListView(this.props.showListView ? false : true)}>
+                                    {this.props.showListView ? <i className="bi bi-filter-square"></i> : <i className="bi bi-list"></i>}
+                                </label>
+                            </div>
+                        </OverlayTrigger>
                         {this.renderStakeSelection()}
                     </div>
                 </div>
