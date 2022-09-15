@@ -6,9 +6,9 @@ import axios from 'axios';
 import {Chart} from 'react-google-charts'
 import {Spinner} from './common'
 import { validatorI } from './validator/interfaces';
+import * as browser from 'lib/browser';
 
 const API_URL = process.env.API_BASE_URL;
-
 
 function WizScoreRow(props) {
 
@@ -660,7 +660,7 @@ class WizScoreChart extends React.Component<{
             wiz_scores: null
         };
         if(this.state.wiz_scores==null) this.getWizScores(this.props.vote_identity);
-    }
+    }    
 
     getWizScores(vote_identity) {
         axios(API_URL+config.API_ENDPOINTS.validator_wiz_scores+"/"+vote_identity, {
@@ -671,9 +671,16 @@ class WizScoreChart extends React.Component<{
             
             let wiz_scores = [];
             wiz_scores.push(['Time', 'Wiz Score']);
+
+            let isSafari:boolean = browser.check('Safari');
+
             for(var i in json) {
-                let timeZone = json[i].created_at.slice(-3)+':00';
-                wiz_scores.push([new Date(json[i].created_at.substring(0, 19).replace(/-/g, "/")+timeZone), parseFloat(json[i].avg_wiz_score)]);
+                if(isSafari){
+                    let timeZone = json[i].created_at.slice(-3)+':00';
+                    wiz_scores.push([new Date(json[i].created_at.substring(0, 19).replace(/-/g, "/")+timeZone), parseFloat(json[i].avg_wiz_score)]);
+                }else{                
+                    wiz_scores.push([new Date(json[i].created_at), parseFloat(json[i].avg_wiz_score)]);
+                }
             }
 
             this.setState({
