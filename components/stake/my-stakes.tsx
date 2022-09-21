@@ -66,7 +66,6 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 })
 
                 setEpochHistory(epochHistory)
-                console.log(epochHistory)
             })
         }
     })
@@ -160,7 +159,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                 if(sortedRewardsData[epoch] !=undefined) {
                                     preBalance = sortedRewardsData[epoch].postBalance - sortedRewardsData[epoch].amount
                                     apy = Math.pow(1 + (sortedRewardsData[epoch].amount / preBalance), epochs_per_year) - 1
-                                    console.log(sortedRewardsData[epoch].amount / preBalance)
+                                    
                                 }
 
                                 return (
