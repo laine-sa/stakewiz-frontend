@@ -3,7 +3,7 @@ import config from '../../config.json';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { getStakeAccounts, StakeStatus, getStakeStatus, getRewards } from './common';
 import { ValidatorContext } from '../validator/validatorhook';
-import { getClusterStats, Spinner} from '../common'
+import { getAllEpochHistory, getClusterStats, Spinner} from '../common'
 import { RenderImage, RenderName } from '../validator/common'
 import { Alert, Form, InputGroup, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { addMeta, closeStake, deactivateStake, delegateStake } from "./transactions";
@@ -36,6 +36,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     const [rewardsStake, setRewardsStake] = useState(null)
     const [rewardsData, setRewardsData] = useState([])
     const [rewardsTable, setRewardsTable] = useState(null)
+    const [epochHistory, setEpochHistory] = useState([])
 
     useEffect(() => {
         if(stakes == null) {
@@ -52,6 +53,23 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     useEffect(() => {
         renderStakes()
     }, [stakes, validatorList, awaitingSignature, updatingStakes, initialFetch])
+
+    useEffect(() => {
+        if(epochHistory.length==0) {
+
+            getAllEpochHistory()
+            .then((result: [{epoch: number, start, end, duration_seconds}]) => {
+                let epochHistory = []
+                result.map((epoch) => {
+                    if(epoch.epoch != undefined) epochHistory[epoch.epoch] = epoch
+                    
+                })
+
+                setEpochHistory(epochHistory)
+                console.log(epochHistory)
+            })
+        }
+    })
 
     useEffect(() => {
         if(connected && epoch == 0) {
@@ -123,7 +141,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                     Delegated stake
                                 </th>
                                 <th scope='col'>
-                                    APR
+                                    APY
                                 </th>
                                 <th scope='col'>
                                     Commission
@@ -135,9 +153,14 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                 console.log(sortedRewardsData[epoch])
                                 
                                 let preBalance = 0
+                                let apy = 0
+                                let epochs_per_year = 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds
+                                
 
                                 if(sortedRewardsData[epoch] !=undefined) {
                                     preBalance = sortedRewardsData[epoch].postBalance - sortedRewardsData[epoch].amount
+                                    apy = Math.pow(1 + (sortedRewardsData[epoch].amount / preBalance), epochs_per_year) - 1
+                                    console.log(sortedRewardsData[epoch].amount / preBalance)
                                 }
 
                                 return (
@@ -152,7 +175,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                             {(sortedRewardsData[epoch]!=undefined) ? '◎ '+(sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL : null}
                                         </td>
                                         <td>
-                                            {(sortedRewardsData[epoch]!=undefined) ? (sortedRewardsData[epoch].amount / preBalance * 100).toFixed(3)+' %' : null}
+                                            {(sortedRewardsData[epoch]!=undefined) ? (apy * 100).toFixed(3)+' %' : null}
                                         </td>
                                         <td>
                                             {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
