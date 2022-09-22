@@ -24,6 +24,7 @@
         "validator_rewards_since_epoch": "validator_rewards_since_epoch",
         "all_epoch_history": "all_epochs_history"
     },
+    "MIN_AVAILABLE_EPOCH_HISTORY": 273,
     "DEFAULT_LIST_SIZE": 50,
     "WIZ_SCORE_RANK_GROUPS": {
         "TOP": 50,
