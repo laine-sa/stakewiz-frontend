@@ -258,6 +258,26 @@ const getEpochInfo = async (): Promise<Object> => {
   return result;
 }
 
+const getAllEpochHistory = async (): Promise<Object> => {
+
+  
+  let result = await axios(API_URL+config.API_ENDPOINTS.all_epoch_history, {
+      headers: {'Content-Type':'application/json'}
+  })
+    .then(response => {
+      if(response.status==200) return response.data;
+      else return false;
+
+      
+    })
+    .catch(e => {
+      console.log(e);
+      return false;
+    });
+
+  return result;
+}
+
 const ValidatorData = async() => {
 
   return await new Promise((resolve, reject) => {
@@ -305,4 +325,4 @@ export const getClusterStats = async ():Promise<clusterStatsI> => {
     }
 }
 
-export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, ConditionalWrapper, ValidatorData, WalletValidators}
+export {Header, TopBar, Footer, Spinner, checkSolflareEnabled, getEpochInfo, getAllEpochHistory, ConditionalWrapper, ValidatorData, WalletValidators}

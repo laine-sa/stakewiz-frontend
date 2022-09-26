@@ -3,7 +3,7 @@ import config from '../../config.json';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { getStakeAccounts, StakeStatus, getStakeStatus, getRewards } from './common';
 import { ValidatorContext } from '../validator/validatorhook';
-import { getClusterStats, Spinner} from '../common'
+import { getAllEpochHistory, getClusterStats, Spinner} from '../common'
 import { RenderImage, RenderName } from '../validator/common'
 import { Alert, Form, InputGroup, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { addMeta, closeStake, deactivateStake, delegateStake } from "./transactions";
@@ -34,8 +34,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     const [clusterStats, setClusterStats] = useState(null)
     const [initialFetch, setInitialFetch] = useState(false)
     const [rewardsStake, setRewardsStake] = useState(null)
-    const [rewardsData, setRewardsData] = useState({})
+    const [rewardsData, setRewardsData] = useState([])
     const [rewardsTable, setRewardsTable] = useState(null)
+    const [epochHistory, setEpochHistory] = useState([])
 
     useEffect(() => {
         if(stakes == null) {
@@ -52,6 +53,22 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     useEffect(() => {
         renderStakes()
     }, [stakes, validatorList, awaitingSignature, updatingStakes, initialFetch])
+
+    useEffect(() => {
+        if(epochHistory.length==0) {
+
+            getAllEpochHistory()
+            .then((result: [{epoch: number, start, end, duration_seconds}]) => {
+                let epochHistory = []
+                result.map((epoch) => {
+                    if(epoch.epoch != undefined) epochHistory[epoch.epoch] = epoch
+                    
+                })
+
+                setEpochHistory(epochHistory)
+            })
+        }
+    })
 
     useEffect(() => {
         if(connected && epoch == 0) {
@@ -81,10 +98,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 console.log('fetch rewards')
                 getRewards(rewardsStake, i, connection)
                 .then((result) => {
-                    let rewards = {}
-                    rewards[i] = result
-                    setRewardsData({...rewardsData,...rewards})
-                    
+                    let obj = {}
+                    obj[i] = result
+                    setRewardsData(rewardsData => [...rewardsData,obj])
                 })
             }
             
@@ -92,14 +108,28 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     }, [rewardsStake])
 
     useEffect(() => {
-        console.log(rewardsData)
         if(rewardsStake!=null) {
+            
+            let staleLamports = rewardsStake.account.lamports - rewardsStake.account.data.parsed.info.stake.delegation.stake;
+
             let rewardsEpochs = []
 
             for(let i = epoch-1; i > rewardsStake.account.data.parsed.info.stake.delegation.activationEpoch; i--) {
                 rewardsEpochs.push(i)
             }
     
+            let sortedRewardsData = {}
+            
+            rewardsData.map((data) => {
+
+                const epoch = Object.keys(data)[0]
+
+                let rewards = null;
+
+                if(data[epoch]!=null && data[epoch] != undefined) rewards = data[epoch][0]
+                sortedRewardsData[epoch] = rewards
+                 
+            })
     
             setRewardsTable(
                 <div className='d-flex flex-column'>
@@ -116,7 +146,17 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                     Delegated stake
                                 </th>
                                 <th scope='col'>
-                                    APR
+                                    TrueAPY
+                                    <OverlayTrigger
+                                        placement="bottom"
+                                        overlay={
+                                            <Tooltip>
+                                                Our True APY excludes non-delegated amounts and uses the precise epoch duration, giving you the accurate compounded, annualised yield
+                                            </Tooltip>
+                                        } 
+                                    >
+                                        <i className='bi bi-info-circle ms-2'></i>
+                                    </OverlayTrigger>
                                 </th>
                                 <th scope='col'>
                                     Commission
@@ -125,13 +165,41 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                         </thead>
                         <tbody>
                             {rewardsEpochs.map((epoch) => {
+
+                                let preBalance = 0
+                                let apy: any = 0
+                                let epochs_per_year = (epoch > config.MIN_AVAILABLE_EPOCH_HISTORY) ? 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds : 0;
+                                
+
+                                if(sortedRewardsData[epoch] !=undefined) {
+                                    preBalance = sortedRewardsData[epoch].postBalance - sortedRewardsData[epoch].amount
+                                    apy = Math.pow(1 + (sortedRewardsData[epoch].amount / (preBalance - staleLamports)), epochs_per_year) - 1
+                                    if(epochs_per_year==0) apy = 'N/A'
+                                }
+
                                 return (
                                     <tr key={'rewards-epoch-row-'+epoch}>
                                         <th scope='row'>
                                             {epoch}
                                         </th>
                                         <td>
-                                            {(rewardsData[epoch]!=undefined) ? '+ ◎'+rewardsData[epoch][0].amount / LAMPORTS_PER_SOL : null}
+                                            {(sortedRewardsData[epoch]!==undefined) ? (
+                                                (sortedRewardsData[epoch]!==null) ? '+ ◎ '+(sortedRewardsData[epoch].amount / LAMPORTS_PER_SOL).toFixed(9) : 'Not found  '
+                                                ) : (
+                                                    <div className='spinner-border text-light h-100 w-auto' role="status">
+                                                        <span className='visually-hidden'>Loading...</span>
+                                                    </div>
+                                                )
+                                              }
+                                        </td>
+                                        <td>
+                                            {(sortedRewardsData[epoch]!=undefined) ? '◎ '+Number((sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL) : null}
+                                        </td>
+                                        <td>
+                                            {(sortedRewardsData[epoch]!=undefined) ? (apy * 100).toFixed(2)+' %' : null}
+                                        </td>
+                                        <td>
+                                            {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
                                         </td>
                                     </tr>
                                 )
@@ -651,7 +719,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             
 
             return (
-                <Modal show={(rewardsStake!=null)} onHide={() => {setRewardsStake(null); setRewardsData({})}} dialogClassName='modal-md'>
+                <Modal show={(rewardsStake!=null)} onHide={() => {setRewardsStake(null); setRewardsData([])}} dialogClassName='modal-lg'>
                     <Modal.Header closeButton>
                         <Modal.Title>Your stake rewards</Modal.Title>
                     </Modal.Header>
