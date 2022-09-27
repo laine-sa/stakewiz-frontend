@@ -559,7 +559,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     placement="bottom"
                     overlay={
                         <Tooltip>
-                            Estimated APY based on this epoch&apos;s performance
+                            Our TrueAPY is calculated by estimating the precise on-chain inflation for the current estimated epoch duration, giving you the most accurate compounded, annualised yield estimate based on real-time performance.
                         </Tooltip>
                     } 
                 >
@@ -876,7 +876,17 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                             <div className='col'>
                                     <div className='row mb-2'>
                                         <div className='col fw-bold'>
-                                            APY (estimate)
+                                            TrueAPY (estimate)
+                                            <OverlayTrigger
+                                                placement="bottom"
+                                                overlay={
+                                                    <Tooltip>
+                                                        Our TrueAPY is calculated by estimating the precise on-chain inflation for the current estimated epoch duration, giving you the most accurate compounded, annualised yield estimate based on real-time performance.
+                                                    </Tooltip>
+                                                } 
+                                            >
+                                                <i className='bi bi-info-circle ms-2'></i>
+                                            </OverlayTrigger>
                                         </div>
                                         <div className='col'>
                                             {this.state.validator.apy_estimate} %
