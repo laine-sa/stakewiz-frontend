@@ -13,6 +13,8 @@ import ordinal from "ordinal";
 import { arrayBuffer } from "node:stream/consumers";
 
 import * as gtag from '../../lib/gtag.js'
+import Chart from "react-google-charts";
+import { createNamedExports } from "typescript";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -119,20 +121,86 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             }
     
             let sortedRewardsData = {}
+
+            let rewards_chart = [];
+            rewards_chart.push(['Epoch', 'APY']);
+            let chart_data = [];
             
             rewardsData.map((data) => {
+
+                
 
                 const epoch = Object.keys(data)[0]
 
                 let rewards = null;
 
-                if(data[epoch]!=null && data[epoch] != undefined) rewards = data[epoch][0]
+                if(data[epoch]!==null && data[epoch] !== undefined && data[epoch][0]!==null) {
+                    rewards = data[epoch][0]
+                    console.log(rewards)
+
+                    let preBalance = 0
+                    let apy: any = 0
+                    let epochs_per_year = (rewards.epoch > config.MIN_AVAILABLE_EPOCH_HISTORY) ? 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds : 0;
+                    
+                    preBalance = rewards.postBalance - rewards.amount
+                    apy = Math.pow(1 + (rewards.amount / (preBalance - staleLamports)), epochs_per_year) - 1
+                    if(epochs_per_year==0) apy = 0
+                    
+                    rewards.apy = apy
+                    
+                    chart_data.push([epoch, rewards.apy]);
+                }
                 sortedRewardsData[epoch] = rewards
                  
             })
+
+            chart_data.sort((a,b) => {
+                if(a[0] < b[0]) return -1
+                else return 1
+            })
+
+            rewards_chart = rewards_chart.concat(chart_data)
     
             setRewardsTable(
                 <div className='d-flex flex-column'>
+                    <h5 className='text-center'>Your TrueAPY per epoch</h5>
+                    <Chart 
+                        chartType='LineChart'
+                        width="100%"
+                        height="20rem"
+                        data={rewards_chart}
+                        options={{
+                            backgroundColor: 'none',
+                            curveType: "function",
+                            colors: ['#fff', '#fff', '#fff'],
+                            lineWidth: 2,
+                            legend:{
+                                position:'none'
+                            },
+                            vAxis: {
+                                gridlines: {
+                                    color: 'transparent'
+                                },
+                                textStyle: {
+                                    color: '#fff'
+                                },
+                                format: 'percent'
+                            },
+                            hAxis: {
+                                gridlines: {
+                                    color: 'transparent'
+                                },
+                                textStyle: {
+                                    color: '#fff'
+                                }
+                            },
+                            chartArea: {
+                                left: 40,
+                                width:'100%',
+                                height:'80%'
+                            }
+                        }}
+                    />
                     <table>
                         <thead>
                             <tr>
@@ -166,17 +234,6 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                         <tbody>
                             {rewardsEpochs.map((epoch) => {
 
-                                let preBalance = 0
-                                let apy: any = 0
-                                let epochs_per_year = (epoch > config.MIN_AVAILABLE_EPOCH_HISTORY) ? 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds : 0;
-                                
-
-                                if(sortedRewardsData[epoch] !=undefined) {
-                                    preBalance = sortedRewardsData[epoch].postBalance - sortedRewardsData[epoch].amount
-                                    apy = Math.pow(1 + (sortedRewardsData[epoch].amount / (preBalance - staleLamports)), epochs_per_year) - 1
-                                    if(epochs_per_year==0) apy = 'N/A'
-                                }
-
                                 return (
                                     <tr key={'rewards-epoch-row-'+epoch}>
                                         <th scope='row'>
@@ -196,7 +253,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                                             {(sortedRewardsData[epoch]!=undefined) ? '◎ '+Number((sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL) : null}
                                         </td>
                                         <td>
-                                            {(sortedRewardsData[epoch]!=undefined) ? (apy * 100).toFixed(2)+' %' : null}
+                                            {(sortedRewardsData[epoch]!=undefined) ? (sortedRewardsData[epoch].apy * 100).toFixed(2)+' %' : null}
                                         </td>
                                         <td>
                                             {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
