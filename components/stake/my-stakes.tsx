@@ -918,7 +918,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                 [
                 <div className='d-flex text-white mx-3 my-stakes-title-bar'>
                     <div className='fs-5 flex-grow-1'>
-                        Manage stake accounts
+                        {(connected) ? 'Manage stake accounts' : 'View stake accounts'}
                     </div>
                     <div className='flex-shrink-1 align-items-center lh-1 my-stakes-connected-wallet-badge'>
                         <div className='badge bg-light text-dark d-flex align-items-center'>
