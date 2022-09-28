@@ -148,7 +148,14 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                     
                     rewards.apy = apy
                     
-                    chart_data.push([epoch, rewards.apy]);
+                    if(!chart_data.some((row,i) => {
+                        if(i>0) {
+                            if(row[0] == rewards.epoch) return row;
+                        }
+                        else console.log(row)
+                    })) chart_data.push([epoch, parseFloat(rewards.apy)]);
+
+
                 }
                 sortedRewardsData[epoch] = rewards
                  
@@ -163,106 +170,111 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     
             setRewardsTable(
                 <div className='d-flex flex-column'>
-                    <h5 className='text-center'>Your TrueAPY per epoch</h5>
-                    <Chart 
-                        chartType='LineChart'
-                        width="100%"
-                        height="20rem"
-                        data={rewards_chart}
-                        options={{
-                            backgroundColor: 'none',
-                            curveType: "function",
-                            colors: ['#fff', '#fff', '#fff'],
-                            lineWidth: 2,
-                            legend:{
-                                position:'none'
-                            },
-                            vAxis: {
-                                gridlines: {
-                                    color: 'transparent'
-                                },
-                                textStyle: {
-                                    color: '#fff'
-                                },
-                                format: 'percent'
-                            },
-                            hAxis: {
-                                gridlines: {
-                                    color: 'transparent'
-                                },
-                                textStyle: {
-                                    color: '#fff'
-                                }
-                            },
-                            chartArea: {
-                                left: 40,
-                                width:'100%',
-                                height:'80%'
-                            }
-                        }}
-                    />
-                    <table>
-                        <thead>
-                            <tr>
-                                <th scope='col'>
-                                    Epoch
-                                </th>
-                                <th scope='col'>
-                                    Change
-                                </th>
-                                <th scope='col'>
-                                    Delegated stake
-                                </th>
-                                <th scope='col'>
-                                    TrueAPY
-                                    <OverlayTrigger
-                                        placement="bottom"
-                                        overlay={
-                                            <Tooltip>
-                                                Our True APY excludes non-delegated amounts and uses the precise epoch duration, giving you the accurate compounded, annualised yield
-                                            </Tooltip>
-                                        } 
-                                    >
-                                        <i className='bi bi-info-circle ms-2'></i>
-                                    </OverlayTrigger>
-                                </th>
-                                <th scope='col'>
-                                    Commission
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rewardsEpochs.map((epoch) => {
+                    {(rewards_chart.length>1) ? (
+                        <div>
+                            <h5 className='text-center'>Your TrueAPY per epoch</h5>
+                            <Chart 
+                                chartType='LineChart'
+                                width="100%"
+                                height="20rem"
+                                data={rewards_chart}
+                                options={{
+                                    backgroundColor: 'none',
+                                    curveType: "function",
+                                    colors: ['#fff', '#fff', '#fff'],
+                                    lineWidth: 2,
+                                    pointsVisible: true,
+                                    vAxis: {
+                                        gridlines: {
+                                            color: 'transparent'
+                                        },
+                                        textStyle: {
+                                            color: '#fff'
+                                        },
+                                        format: '#.#%',
+                                        baseLine: 0,
+                                    },
+                                    hAxis: {
+                                        gridlines: {
+                                            color: 'transparent'
+                                        },
+                                        textStyle: {
+                                            color: '#fff'
+                                        }
+                                    },
+                                    chartArea: {
+                                        left: 40,
+                                        width:'100%',
+                                        height:'80%'
+                                    }
+                                }}
+                            />
+                        </div>
+                    ) : null}
+                    <div className='table-responsive-md'>
+                        <table className='table tabl-sm text-light'>
+                            <thead>
+                                <tr>
+                                    <th scope='col'>
+                                        Epoch
+                                    </th>
+                                    <th scope='col'>
+                                        Change
+                                    </th>
+                                    <th scope='col'>
+                                        Delegated stake
+                                    </th>
+                                    <th scope='col'>
+                                        TrueAPY
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            overlay={
+                                                <Tooltip>
+                                                    Our True APY excludes non-delegated amounts and uses the precise epoch duration, giving you the accurate compounded, annualised yield
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            <i className='bi bi-info-circle ms-2'></i>
+                                        </OverlayTrigger>
+                                    </th>
+                                    <th scope='col'>
+                                        Commission
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rewardsEpochs.map((epoch) => {
 
-                                return (
-                                    <tr key={'rewards-epoch-row-'+epoch}>
-                                        <th scope='row'>
-                                            {epoch}
-                                        </th>
-                                        <td>
-                                            {(sortedRewardsData[epoch]!==undefined) ? (
-                                                (sortedRewardsData[epoch]!==null) ? '+ ◎ '+(sortedRewardsData[epoch].amount / LAMPORTS_PER_SOL).toFixed(9) : 'Not found  '
-                                                ) : (
-                                                    <div className='spinner-border text-light h-100 w-auto' role="status">
-                                                        <span className='visually-hidden'>Loading...</span>
-                                                    </div>
-                                                )
-                                              }
-                                        </td>
-                                        <td>
-                                            {(sortedRewardsData[epoch]!=undefined) ? '◎ '+Number((sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL) : null}
-                                        </td>
-                                        <td>
-                                            {(sortedRewardsData[epoch]!=undefined) ? (sortedRewardsData[epoch].apy * 100).toFixed(2)+' %' : null}
-                                        </td>
-                                        <td>
-                                            {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                                    return (
+                                        <tr key={'rewards-epoch-row-'+epoch}>
+                                            <th scope='row'>
+                                                {epoch}
+                                            </th>
+                                            <td className='text-truncate'>
+                                                {(sortedRewardsData[epoch]!==undefined) ? (
+                                                    (sortedRewardsData[epoch]!==null) ? '+ ◎ '+(sortedRewardsData[epoch].amount / LAMPORTS_PER_SOL).toFixed(9) : 'Not found  '
+                                                    ) : (
+                                                        <div className='spinner-border text-light h-100 w-auto' role="status">
+                                                            <span className='visually-hidden'>Loading...</span>
+                                                        </div>
+                                                    )
+                                                }
+                                            </td>
+                                            <td className='text-truncate'>
+                                                {(sortedRewardsData[epoch]!=undefined) ? '◎ '+Number((sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL) : null}
+                                            </td>
+                                            <td className='text-truncate'>
+                                                {(sortedRewardsData[epoch]!=undefined) ? (sortedRewardsData[epoch].apy * 100).toFixed(2)+' %' : null}
+                                            </td>
+                                            <td>
+                                                {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
+                                            </td>
+                                        </tr>
+                                    )
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )
         }
