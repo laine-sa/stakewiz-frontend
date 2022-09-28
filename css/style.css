@@ -600,6 +600,14 @@ a:hover {
   line-height: 23px;
 }
 
+.my-stakes-manual-input {
+  width:40rem!important;
+}
+
+.my-stakes-manual-input input {
+  text-align:center!important;
+}
+
 .stake-image {
   margin-top:-30px;
 }
@@ -763,6 +771,20 @@ a:hover {
   }
 
   .epoch-progress-text {
+    width:100%!important;
+  }
+
+  .my-stakes-title-bar {
+    flex-direction:column!important;
+    align-items:center!important;
+    max-width:100%!important;
+  }
+
+  .my-stakes-connected-wallet-badge {
+    max-width:100%!important;
+  }
+
+  .my-stakes-manual-input {
     width:100%!important;
   }
 

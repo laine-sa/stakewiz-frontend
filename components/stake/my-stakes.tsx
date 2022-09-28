@@ -18,13 +18,13 @@ import { createNamedExports } from "typescript";
 
 const API_URL = process.env.API_BASE_URL;
 
-export const Stakes: FC<{userPubkey: string, connection: Connection, connected: boolean}> = ({userPubkey, connection, connected}) => {
+export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connected: boolean, unsetUserPublicKey: Function}> = ({userPubkey, connection, connected, unsetUserPublicKey}) => {
 
     const [ stakes, setStakes ] = useState(null);
     const [renderResult, setRenderResult] = useState<any>(<Spinner />)
     const validatorList = useContext(ValidatorContext)
     const [epoch, setEpoch] = useState(0)
-    const {publicKey, sendTransaction, signTransaction, signAllTransactions} = useWallet();
+    const {signTransaction, disconnect} = useWallet();
     const [awaitingSignature, setAwaitingSignature] = useState(false)
     const [updatingStakes, setUpdatingStakes] = useState([])
     const [message, setMessage] = useState(null)
@@ -39,10 +39,11 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     const [rewardsData, setRewardsData] = useState([])
     const [rewardsTable, setRewardsTable] = useState(null)
     const [epochHistory, setEpochHistory] = useState([])
+    const [activePubkey, setActivePubkey] = useState(userPubkey)
 
     useEffect(() => {
         if(stakes == null) {
-            getStakeAccounts(userPubkey, connection).then((stakes) => {
+            getStakeAccounts(activePubkey.toString(), connection).then((stakes) => {
                 
                 setStakes(stakes);
                 setInitialFetch(true)
@@ -50,7 +51,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             })
             
         }
-    }, [userPubkey])
+    }, [activePubkey])
 
     useEffect(() => {
         renderStakes()
@@ -70,10 +71,10 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 setEpochHistory(epochHistory)
             })
         }
-    })
+    }, [])
 
     useEffect(() => {
-        if(connected && epoch == 0) {
+        if(epoch == 0) {
             connection.getEpochInfo()
             .then((epoch) => {
                 setEpoch(epoch.epoch)
@@ -97,7 +98,6 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
 
             for(let i = epoch-1; i > rewardsStake.account.data.parsed.info.stake.delegation.activationEpoch; i--) {
                 
-                console.log('fetch rewards')
                 getRewards(rewardsStake, i, connection)
                 .then((result) => {
                     let obj = {}
@@ -136,7 +136,6 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
 
                 if(data[epoch]!==null && data[epoch] !== undefined && data[epoch][0]!==null) {
                     rewards = data[epoch][0]
-                    console.log(rewards)
 
                     let preBalance = 0
                     let apy: any = 0
@@ -150,9 +149,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                     
                     if(!chart_data.some((row,i) => {
                         if(i>0) {
-                            if(row[0] == rewards.epoch) return row;
+                            if(row[0] == rewards.epoch) return true;
                         }
-                        else console.log(row)
+                        else return false
                     })) chart_data.push([epoch, parseFloat(rewards.apy)]);
 
 
@@ -294,7 +293,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
     }
 
     const renderStakeButtons = (stake, status) => {
-        
+
 
         if(updatingStakes.includes(stake)) {
             return (
@@ -305,11 +304,11 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         }
         else {
             let buttons = []
-            if(status == 2 || status == 1) {
+            if(connected && (status == 2 || status == 1)) {
                 buttons.push(
                     <OverlayTrigger
                     placement="bottom"
-                    key={'stake-deactivate-'+stake.pubkey}
+                    key={'stake-deactivate-'+stake.pubkey.toString()}
                     overlay={
                         <Tooltip>
                             Deactivate
@@ -321,7 +320,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                     
                 )
             }
-            if(status == 0) {
+            if(connected && status == 0) {
                 buttons.push(
                     [
                         <OverlayTrigger
@@ -349,7 +348,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                     ]
                 )
             }
-            if(status ==3 ) {
+            if(connected && status ==3 ) {
                 buttons.push(
                     <OverlayTrigger
                         placement="bottom"
@@ -368,7 +367,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 buttons.push(
                     <OverlayTrigger
                     placement="bottom"
-                    key={'stake-rewards-'+stake.pubkey}
+                    key={'stake-rewards-'+stake.pubkey.toString()}
                     overlay={
                         <Tooltip>
                             Rewards
@@ -481,9 +480,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         
         try {
 
-            let tx = deactivateStake(publicKey,stake.pubkey)
+            let tx = deactivateStake(activePubkey,stake.pubkey)
 
-            tx = await addMeta(tx,publicKey,connection)
+            tx = await addMeta(tx,activePubkey,connection)
     
             await signTransaction(tx)
             await submitTx(tx,stake,false,'deactivate',stake.account.lamports)
@@ -502,9 +501,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         setAwaitingSignature(true)
         
         try {
-            let tx = closeStake(publicKey, stake.pubkey, stake.account.lamports)
+            let tx = closeStake(activePubkey, stake.pubkey, stake.account.lamports)
 
-            tx = await addMeta(tx,publicKey,connection)
+            tx = await addMeta(tx,activePubkey,connection)
 
             await signTransaction(tx)
             await submitTx(tx,stake,true,'close',stake.account.lamports)
@@ -523,9 +522,9 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         try {
             let votePubkey = new PublicKey(vote_identity)
 
-            let tx = delegateStake(publicKey, stake.pubkey, votePubkey)
+            let tx = delegateStake(activePubkey, stake.pubkey, votePubkey)
 
-            tx = await addMeta(tx,publicKey,connection)
+            tx = await addMeta(tx,activePubkey,connection)
 
             await signTransaction(tx)
             await submitTx(tx,stake,false,'delegate',stake.account.lamports)
@@ -567,7 +566,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
             delegateSearch.map((validator,i) => {
                 if(i<3) {
                     result.push((
-                        <div className='d-flex flex-row align-items-center px-2 py-1' onClick={() => selectDelegateValidator(validator)}>
+                        <div className='d-flex flex-row align-items-center px-2 py-1' onClick={() => selectDelegateValidator(validator)} key={'delegate-search-'+validator.vote_identity}>
                             <div className='me-2'>
                                 {(validator.image!=null) ? <RenderImage vote_identity={validator.vote_identity} img={validator.image} size={25} /> : null}
                             </div>
@@ -827,7 +826,7 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
                 let statustext = (status==3 || status ==1) ? 'text-dark' : 'text-white'
                 
                 result.push((
-                    <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5'>
+                    <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5' key={'stake-card-'+stake.pubkey.toString()}>
                         <div className='me-2 stake-image'>
                             {(validator!=null) ? (
                             <RenderImage
@@ -905,17 +904,41 @@ export const Stakes: FC<{userPubkey: string, connection: Connection, connected: 
         
     }
     
-    if(!connected || userPubkey == null) {
+    if(userPubkey == null) {
         return (
             <div className='w-50 p-2 border border-light text-light rounded text-center fs-5 m-auto mt-5'>
-                Please connect your wallet to view your stake accounts.
+                    Please connect your wallet to view your stake accounts
             </div>
+
         )
     }
     else {
         return (
             <React.Fragment>
                 [
+                <div className='d-flex text-white mx-3 my-stakes-title-bar'>
+                    <div className='fs-5 flex-grow-1'>
+                        Manage stake accounts
+                    </div>
+                    <div className='flex-shrink-1 align-items-center lh-1 my-stakes-connected-wallet-badge'>
+                        <div className='badge bg-light text-dark d-flex align-items-center'>
+                            {(connected) ? <span className='text-success'>Connected to</span> : <span className='text-success'>Viewing</span>} 
+                            <span className='px-1 text-truncate'>{activePubkey.toString()}</span>
+                            <OverlayTrigger
+                                placement="top"
+                                overlay={
+                                    <Tooltip>
+                                        {(connected) ? 'Disconnect' : 'Close wallet'}
+                                    </Tooltip>
+                                } 
+                            >
+                                <span className='pointer' onClick={() => {(connected) ? disconnect() : unsetUserPublicKey()}}>
+                                    <i className='bi bi-x fs-6 fw-bold'></i>
+                                </span>
+                            </OverlayTrigger>
+                        </div>
+                    </div>
+                </div>
                 <div className='d-flex flex-wrap justify-content-center' key='my-stakes'>
                     {renderResult}
                 </div>,
