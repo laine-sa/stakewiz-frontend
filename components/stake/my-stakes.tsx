@@ -123,7 +123,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
             let sortedRewardsData = {}
 
             let rewards_chart = [];
-            rewards_chart.push(['Epoch', 'APY']);
+            rewards_chart.push(['Epoch', 'APY', {type: 'string', role: 'tooltip'}]);
             let chart_data = [];
             
             rewardsData.map((data) => {
@@ -152,7 +152,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             if(row[0] == rewards.epoch) return true;
                         }
                         else return false
-                    })) chart_data.push([epoch, parseFloat(rewards.apy)]);
+                    })) chart_data.push([epoch, parseFloat(rewards.apy), (rewards.apy*100).toFixed(2)+'%']);
 
 
                 }
