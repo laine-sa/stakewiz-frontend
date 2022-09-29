@@ -12,6 +12,8 @@ import { DelinquencyChart } from './delinquency';
 import { EpochStakeChart } from './epoch_stake';
 import { AlertForm } from '../alert';
 import { StakeDialog } from '../stake/single-stake';
+import { getCommissionHistory } from '../stake/common';
+import { CommissionHistoryI } from '../stake/interfaces';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -21,6 +23,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         stake_change: number|null;
         showStakeModal: boolean;
         clusterStats: clusterStatsI|null;
+        commissionHistory: CommissionHistoryI[]|null;
     }> {
     constructor(props) {
         super(props);
@@ -28,7 +31,8 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             validator: null,
             stake_change: null,
             showStakeModal: false,
-            clusterStats: null
+            clusterStats: null,
+            commissionHistory: null
         };
         if(this.props.vote_identity!='') this.getValidator();
         if(this.state.clusterStats==null) getClusterStats().then((stats) => {
@@ -36,6 +40,12 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                 clusterStats: stats
             });
         });
+        if(this.state.commissionHistory==null) getCommissionHistory(this.props.vote_identity).then((history) => {
+            this.setState({
+                commissionHistory: history
+            })
+            console.log(history)
+        })
     }
     getValidator() {
         axios(API_URL+config.API_ENDPOINTS.validator+'/'+this.props.vote_identity, {
@@ -74,6 +84,75 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         this.setState({
             stake_change: change
         });
+    }
+
+    renderCommissionLabel() {
+        if(this.state.commissionHistory!==null && this.state.validator !== null) {
+            if(this.state.commissionHistory.length>0) {
+                if(this.state.commissionHistory[0].commission == this.state.validator.commission) {
+                    let since = new Date(this.state.commissionHistory[0].observed_at)
+                    return (
+                        <div className='badge bg-light text-dark badge-sm mx-1'>
+                            Since {since.toLocaleDateString(undefined, {
+                                dateStyle: "medium"
+                            })}
+                        </div>
+                    )
+                }
+            }
+        }
+    }
+
+    renderCommissionTable() {
+        if(this.state.commissionHistory!==null) {
+
+            let rows: JSX.Element[] = []
+            this.state.commissionHistory.map((event,i) => {
+                let formatted_date = new Date(event.observed_at)
+
+                let prev_comm = (this.state.commissionHistory!==null && i+1 < this.state.commissionHistory.length) ? this.state.commissionHistory[i+1].commission+' %' : 'N/A'
+
+                let row = (
+                    <tr>
+                        <th scope='row' className='fw-normal'>
+                            {formatted_date.toLocaleDateString(undefined,{dateStyle:'medium'})+' '+formatted_date.toLocaleTimeString()}
+                        </th>
+                        <td>
+                            {prev_comm}
+                        </td>
+                        <td>
+                            {event.commission} %
+                        </td>
+                    </tr>
+                )
+                rows.push(row)
+            })
+
+            return (
+                <table className='table table-sm text-light'>
+                    <thead>
+                        <tr>
+                            <th scope='col'>
+                                Observation time
+                            </th>
+                            <th scope='col'>
+                                Previous commission
+                            </th>
+                            <th scope='col'>
+                                New commission
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            )
+        }
+        else {
+            <div>No commission changes in our records for this validator.</div>
+        }
+        
     }
 
     render() {
@@ -162,7 +241,9 @@ class ValidatorDetail extends React.Component<validatorDetailI,
 
                     />
 
-                    <div className='d-flex flex-column p-2 text-white border border-white rounded'>
+                    <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box'>
+                        
+                        <div className='validator-detail-flex-opacity-bg'></div>
                     
                             <div className='row'>
                                 <div className='col'>
@@ -251,6 +332,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         </div>
                                         <div className='col'>
                                             {this.state.validator.commission} %
+                                            {this.renderCommissionLabel()}
                                         </div>
                                     </div>
                                 </div>
@@ -306,50 +388,86 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                     </div>
 
 
-                    <div className='row m-0'>
-                        <div className='col p-2 m-1 text-white text-center'>
-                        
-                            <h3>Active Stake (30 epochs)</h3>
-                            <StakeHistoryChart
-                                vote_identity={this.state.validator.vote_identity}
-                            />
-                        </div>
-                        <div className='col p-2 m-1 text-white text-center'>
-                            <h3>24h Moving Average Wiz Score</h3>
-                            <WizScoreChart 
-                                vote_identity={this.state.validator.vote_identity}
-                            />
-                        </div>
-                    </div>
-
-
-                    <div className='row m-0'>
-                        <div className='col p-2 m-1 text-white text-center'>
-                            <div>
-                                <h3>Delinquencies (30 days)</h3>
-                                <DelinquencyChart
-                                    vote_identity={this.state.validator.vote_identity}
-                                />
+                    <div className='d-flex my-2 flex-grow-1 flex-wrap validator-detail-flex-container'>
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                            <div className='validator-detail-flex-opacity-bg'></div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
+                                    Delinquencies (30 days)
+                                </div>
+                                <div className='card-body'>
+                                    <DelinquencyChart
+                                        vote_identity={this.state.validator.vote_identity}
+                                    />
+                                </div>
+                                
                             </div>
-                            <div>
-                                <h3>
+                        </div>
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                            <div className='validator-detail-flex-opacity-bg'></div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
+                                    24h Moving Average Wiz Score
+                                </div>
+                                <div className='card-body'>
+                                    <WizScoreChart 
+                                        vote_identity={this.state.validator.vote_identity}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                            <div className='validator-detail-flex-opacity-bg'></div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
+                                    Active Stake (30 epochs)
+                                </div>
+                                <div className='card-body'>
+                                    <StakeHistoryChart
+                                        vote_identity={this.state.validator.vote_identity}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                            <div className='validator-detail-flex-opacity-bg'></div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
                                     Stake changes this epoch: 
                                     <StakeLabel
                                         stake={(this.state.stake_change!==null) ? this.state.stake_change : 0}
                                     />
-                                </h3>
-                                <EpochStakeChart 
-                                    vote_identity={this.state.validator.vote_identity}
-                                    updateStake={(change) => this.updateStakeChange(change)}
-                                />
+                                </div>
+                                <div className='card-body'>
+                                    <EpochStakeChart 
+                                        vote_identity={this.state.validator.vote_identity}
+                                        updateStake={(change) => this.updateStakeChange(change)}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className='col p-2 m-1 text-white text-center'>
-                            <h3>Scorecard</h3>
-                            <div className='text-start text-white validator-detail-scorecard'>
-                                <WizScoreBody
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                            <div className='validator-detail-flex-opacity-bg'></div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
+                                    Scorecard
+                                </div>
+                                <div className='card-body validator-detail-scorecard'>
+                                    <WizScoreBody
                                     validator={this.state.validator}
                                 />
+                                </div>
+                            </div>
+                        </div>
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                            <div className='validator-detail-flex-opacity-bg'></div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
+                                    Commission History
+                                </div>
+                                <div className='card-body'>
+                                    {this.renderCommissionTable()}
+                                </div>
                             </div>
                         </div>
                     </div>
