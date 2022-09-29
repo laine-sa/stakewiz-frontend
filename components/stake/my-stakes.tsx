@@ -24,7 +24,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
     const [renderResult, setRenderResult] = useState<any>(<Spinner />)
     const validatorList = useContext(ValidatorContext)
     const [epoch, setEpoch] = useState(0)
-    const {signTransaction, disconnect} = useWallet();
+    const {signTransaction} = useWallet();
     const [awaitingSignature, setAwaitingSignature] = useState(false)
     const [updatingStakes, setUpdatingStakes] = useState([])
     const [message, setMessage] = useState(null)
@@ -932,7 +932,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                                     </Tooltip>
                                 } 
                             >
-                                <span className='pointer' onClick={() => {(connected) ? disconnect() : unsetUserPublicKey()}}>
+                                <span className='pointer' onClick={() => unsetUserPublicKey()}>
                                     <i className='bi bi-x fs-6 fw-bold'></i>
                                 </span>
                             </OverlayTrigger>
