@@ -44,7 +44,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             this.setState({
                 commissionHistory: history
             })
-            console.log(history)
         })
     }
     getValidator() {
@@ -113,7 +112,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                 let prev_comm = (this.state.commissionHistory!==null && i+1 < this.state.commissionHistory.length) ? this.state.commissionHistory[i+1].commission+' %' : 'N/A'
 
                 let row = (
-                    <tr>
+                    <tr key={'commission-history-row-'+i}>
                         <th scope='row' className='fw-normal'>
                             {formatted_date.toLocaleDateString(undefined,{dateStyle:'medium'})+' '+formatted_date.toLocaleTimeString()}
                         </th>

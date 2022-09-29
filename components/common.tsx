@@ -12,6 +12,7 @@ import config from '../config.json'
 import { clusterStatsI, EpochInfoI } from './validator/interfaces';
 import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
+import { PublicKey } from '@solana/web3.js';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -214,27 +215,35 @@ const ConditionalWrapper = ({
 
 const checkSolflareEnabled = async (pubkey: string): Promise<boolean> => {
 
-  
-  let result = await axios(API_URL+config.API_ENDPOINTS.solflare_check+'/'+pubkey, {
-      headers: {'Content-Type':'application/json'}
-  })
-    .then(response => {
-      let json = response.data;
-
-      if(json.message!='Not found') {
-
-          return true
-      }
-
-      
+  try {
+    let pk = new PublicKey(pubkey)
+    let result = await axios(API_URL+config.API_ENDPOINTS.solflare_check+'/'+pubkey, {
+        headers: {'Content-Type':'application/json'}
     })
-    .catch(e => {
-      console.log(e);
-      return false;
-    });
+      .then(response => {
+        let json = response.data;
+
+        if(json.message!='Not found') {
+
+            return true
+        }
+
+        
+      })
+      .catch(e => {
+        console.log(e);
+        return false;
+      });
 
 
-  return result;
+    return result;
+  }
+  catch(e) {
+    console.log(e.message)
+    return false
+  }
+  
+  
   
 }
 
