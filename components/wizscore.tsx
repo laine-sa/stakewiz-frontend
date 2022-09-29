@@ -113,10 +113,10 @@ class WizScoreBody extends React.Component<{
             color = 'text-warning';
         }
         return (
-            <div className="row scorecard-wiz-score">
-                <div className={"col text-center text-white fst-italic p-3 mx-5 "}>
-                    <h5 className="mb-0">
-                        <span className={'wiz-font me-2 '}>WIZ SCORE:</span> 
+            <div className="d-flex flex-grow-1 justify-content-center text-center text-white mx-5 p-3 text-italic scorecard-wiz-score align-items-center">
+                    
+                        <div className={'wiz-font me-2 '}>WIZ SCORE:</div> 
+                        <div>
                             <span id="scorecard-wizscore">
                             {' '+new Intl.NumberFormat().format(Number(this.props.validator.wiz_score.toFixed(2)))+'% '}
                             </span> 
@@ -125,8 +125,9 @@ class WizScoreBody extends React.Component<{
                                     {' '+this.props.validator.rank}
                                 </span>
                                 )
-                    </h5>
-                </div>
+                        </div>
+                    
+                
             </div>
         );
     }

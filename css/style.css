@@ -608,6 +608,29 @@ a:hover {
   text-align:center!important;
 }
 
+.validator-detail-flex-card {
+  width:40%;
+  position:relative;
+  z-index:10;
+}
+
+.validator-detail-flex-card .card {
+  border-radius:0;
+  border:0;
+  background-color:transparent;
+}
+
+.validator-detail-flex-opacity-bg {
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0;
+  left:0;
+  background-color:#333;
+  opacity:0.5;
+  z-index:0;
+}
+
 .stake-image {
   margin-top:-30px;
 }
@@ -722,6 +745,10 @@ a:hover {
     flex-direction: column!important;
   }
 
+  .validator-detail-flex-card {
+    width:90%!important;
+  }
+
   .navbar-flex-container {
     flex-direction:column;
   }
@@ -832,7 +859,9 @@ a:hover {
   width:100%;
 }
 
-
+.scorecard-wiz-score {
+  flex-direction:column;
+}
 
   .desktop-visible{
     display:none!important;
