@@ -20,8 +20,10 @@ export default function Home(urlPubkey?: string|string[]|undefined) {
     const setPublicKey = () => {
         setManualError('')
         try {
-            setUserPublicKey(new PublicKey(manualEntry))
+            new PublicKey(manualEntry)
+            let pk = manualEntry
             setManualEntry('')
+            Router.push('/stakes/'+pk, undefined, { shallow: true })
         }
         catch(e) {
             console.log(e.message)
