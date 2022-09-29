@@ -139,7 +139,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
                     let preBalance = 0
                     let apy: any = 0
-                    let epochs_per_year = (rewards.epoch > config.MIN_AVAILABLE_EPOCH_HISTORY) ? 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds : 0;
+                    let epochs_per_year = 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds;
                     
                     preBalance = rewards.postBalance - rewards.amount
                     apy = Math.pow(1 + (rewards.amount / (preBalance - staleLamports)), epochs_per_year) - 1
