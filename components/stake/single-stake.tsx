@@ -14,7 +14,7 @@ export const StakeDialog: FC<{
     validator: validatorI, 
     showStakeModal: boolean, 
     hideStakeModal: Function,
-    clusterStats: clusterStatsI,
+    clusterStats: clusterStatsI|null,
     allowAlertDialog?: boolean
 }> = ({validator,showStakeModal,hideStakeModal,clusterStats,allowAlertDialog}) => {
 

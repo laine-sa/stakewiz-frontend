@@ -28,7 +28,7 @@ interface CancelProps {
 
 interface AlertFormI {
     validator: validatorI;
-    hideAlertModal: Function;
+    hideAlertModal: Function|null;
     userPubkey: string;
     solflareEnabled: boolean;
 }

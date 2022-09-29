@@ -65,7 +65,9 @@ export default function Home(urlPubkey?: string|string[]|undefined) {
                 <div className='container p-relative'>
                     {(userPublicKey!==null || publicKey !== null) ? (
                     <Stakes 
+                        // @ts-ignore
                         key={(publicKey===null) ? 'stakes-container-'+userPublicKey.toString() : 'stakes-container-'+publicKey}
+                        // @ts-ignore
                         userPubkey={(publicKey===null) ? userPublicKey : publicKey}
                         connection={connection}
                         connected={connected}

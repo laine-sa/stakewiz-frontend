@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import {Header, TopBar, Footer} from 'components/common';
 import { useRouter } from 'next/router'
-import { ValidatorDetail } from '../../components/validator'
+import { ValidatorDetail } from '../../components/validator/detail'
 import { checkSolflareEnabled } from '../../components/common';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
