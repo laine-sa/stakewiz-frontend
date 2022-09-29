@@ -139,7 +139,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
                     let preBalance = 0
                     let apy: any = 0
-                    let epochs_per_year = 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds;
+                    let epochs_per_year = (epochHistory[epoch] !== undefined) ? 365.25 * 24 * 60 * 60 / epochHistory[epoch].duration_seconds : 0;
                     
                     preBalance = rewards.postBalance - rewards.amount
                     apy = Math.pow(1 + (rewards.amount / (preBalance - staleLamports)), epochs_per_year) - 1
@@ -152,7 +152,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             if(row[0] == rewards.epoch) return true;
                         }
                         else return false
-                    })) chart_data.push([epoch, parseFloat(rewards.apy), (rewards.apy*100).toFixed(2)+'%']);
+                    }) && epochHistory[epoch] !== undefined) chart_data.push([epoch, parseFloat(rewards.apy), (rewards.apy*100).toFixed(2)+'%']);
 
 
                 }
@@ -244,6 +244,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             <tbody>
                                 {rewardsEpochs.map((epoch) => {
 
+                                    let apy_na = (epochHistory[epoch] === undefined) ? true : false
+
                                     return (
                                         <tr key={'rewards-epoch-row-'+epoch}>
                                             <th scope='row'>
@@ -263,7 +265,10 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                                                 {(sortedRewardsData[epoch]!=undefined) ? '◎ '+Number((sortedRewardsData[epoch].postBalance - staleLamports) / LAMPORTS_PER_SOL) : null}
                                             </td>
                                             <td className='text-truncate'>
-                                                {(sortedRewardsData[epoch]!=undefined) ? (sortedRewardsData[epoch].apy * 100).toFixed(2)+' %' : null}
+                                                {(sortedRewardsData[epoch]!=undefined) ? 
+                                                    (!apy_na) ? (sortedRewardsData[epoch].apy * 100).toFixed(2)+' %' 
+                                                    : 'N/A'
+                                                    : null}
                                             </td>
                                             <td>
                                                 {(sortedRewardsData[epoch]!=undefined) ? sortedRewardsData[epoch].commission+' %' : null}
@@ -807,86 +812,94 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
             let result = []
 
             stakes.sort((a,b) => {
-                if(b.account.data.parsed.info.stake.delegation.stake === a.account.data.parsed.info.stake.delegation.stake) {
+                if(a.account.data.parsed.info.stake !== null && b.account.data.parsed.info.stake !== null) {
+                    try {
+                        if(b.account.data.parsed.info.stake.delegation.stake === a.account.data.parsed.info.stake.delegation.stake) {
 
-                    return b.pubkey.toString().toLowerCase().localeCompare(a.pubkey.toString().toLowerCase())
+                            return b.pubkey.toString().toLowerCase().localeCompare(a.pubkey.toString().toLowerCase())
+                        }
+                        else {
+                            return b.account.data.parsed.info.stake.delegation.stake - a.account.data.parsed.info.stake.delegation.stake
+                        }
+                    }
+                    catch(e) {
+                        console.log(b)
+                    }
                 }
-                else {
-                    return b.account.data.parsed.info.stake.delegation.stake - a.account.data.parsed.info.stake.delegation.stake
-                }
-
             })
 
             stakes.map((stake) => {
-                let validator = findStakeValidator(stake.account.data.parsed.info.stake.delegation.voter);
-                let status = getStakeStatus(stake,epoch);
-                let statusbg = (status == 2) ? 'bg-success' : 'bg-secondary';
-                statusbg = (status == 1) ? 'bg-info' : statusbg;
-                statusbg = (status == 3) ? 'bg-warning' : statusbg;
-                let statustext = (status==3 || status ==1) ? 'text-dark' : 'text-white'
-                
-                result.push((
-                    <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5' key={'stake-card-'+stake.pubkey.toString()}>
-                        <div className='me-2 stake-image'>
-                            {(validator!=null) ? (
-                            <RenderImage
-                                img={validator.image}
-                                vote_identity={validator.vote_identity}
-                                size={60}
-                                className='border border-2 border-dark'
-                            />   
-                            ) : null}
-                        </div>
-                        <div className='fs-5 text-truncate w-100 px-3 text-center'>
-                            <RenderName
-                                validator={validator}
-                            />
-                        </div> 
-                        
-                            <div className='d-flex align-items-center'>
-                                <div className='justify-content-center fs-6 p-1 px-3 badge bg-dark flex-nowrap ms-4'>
-                                    ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
-                                </div>
-                                <div>
-                                    <OverlayTrigger
-                                        placement="top"
-                                        overlay={
-                                            <Tooltip>
-                                                Delegated amount, excludes rent exempt amount<br />(~ ◎ 0.002)
-                                            </Tooltip>
-                                        } 
-                                    >
-                                        <i className='bi bi-info-circle ms-2'></i>
-                                    </OverlayTrigger>
-                                </div>
-                            </div>
-                        
-                        <div className={'p-1 my-1 px-3 badge '+statusbg+' '+statustext}>
-                            {StakeStatus[status]}
-                        </div>
-                        <div className='w-100 text-truncate p-1 px-3 text-center'>
-                            <OverlayTrigger
-                                placement="top"
-                                overlay={
-                                    <Tooltip>
-                                        Click to copy stake account address
-                                    </Tooltip>
-                                } 
-                            >
-                        
-                                <span className='pointer' onClick={() => {navigator.clipboard.writeText(stake.pubkey.toString())}}>
-                                    <i className='bi bi-key me-2'></i>{stake.pubkey.toString()}
-                                </span>
-                            
-                            </OverlayTrigger>
-                            
-                        </div>
-                        <div className='p-1'>
-                            {renderStakeButtons(stake,status)}
-                        </div>
-                    </div>
+                if(stake.account.data.parsed.info.stake !== null) {
+                    let validator = findStakeValidator(stake.account.data.parsed.info.stake.delegation.voter);
+                    let status = getStakeStatus(stake,epoch);
+                    let statusbg = (status == 2) ? 'bg-success' : 'bg-secondary';
+                    statusbg = (status == 1) ? 'bg-info' : statusbg;
+                    statusbg = (status == 3) ? 'bg-warning' : statusbg;
+                    let statustext = (status==3 || status ==1) ? 'text-dark' : 'text-white'
                     
-                ))
+                    result.push((
+                        <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5' key={'stake-card-'+stake.pubkey.toString()}>
+                            <div className='me-2 stake-image'>
+                                {(validator!=null) ? (
+                                <RenderImage
+                                    img={validator.image}
+                                    vote_identity={validator.vote_identity}
+                                    size={60}
+                                    className='border border-2 border-dark'
+                                />   
+                                ) : null}
+                            </div>
+                            <div className='fs-5 text-truncate w-100 px-3 text-center'>
+                                <RenderName
+                                    validator={validator}
+                                />
+                            </div> 
+                            
+                                <div className='d-flex align-items-center'>
+                                    <div className='justify-content-center fs-6 p-1 px-3 badge bg-dark flex-nowrap ms-4'>
+                                        ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
+                                    </div>
+                                    <div>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Tooltip>
+                                                    Delegated amount, excludes rent exempt amount<br />(~ ◎ 0.002)
+                                                </Tooltip>
+                                            } 
+                                        >
+                                            <i className='bi bi-info-circle ms-2'></i>
+                                        </OverlayTrigger>
+                                    </div>
+                                </div>
+                            
+                            <div className={'p-1 my-1 px-3 badge '+statusbg+' '+statustext}>
+                                {StakeStatus[status]}
+                            </div>
+                            <div className='w-100 text-truncate p-1 px-3 text-center'>
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            Click to copy stake account address
+                                        </Tooltip>
+                                    } 
+                                >
+                            
+                                    <span className='pointer' onClick={() => {navigator.clipboard.writeText(stake.pubkey.toString())}}>
+                                        <i className='bi bi-key me-2'></i>{stake.pubkey.toString()}
+                                    </span>
+                                
+                                </OverlayTrigger>
+                                
+                            </div>
+                            <div className='p-1'>
+                                {renderStakeButtons(stake,status)}
+                            </div>
+                        </div>
+                        
+                    ))
+                }
             })
             
             setRenderResult(result); 
