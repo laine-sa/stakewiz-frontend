@@ -241,7 +241,9 @@ class ValidatorDetail extends React.Component<validatorDetailI,
 
                     />
 
-                    <div className='d-flex flex-column p-2 text-white border border-white rounded'>
+                    <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box'>
+                        
+                        <div className='validator-detail-flex-opacity-bg'></div>
                     
                             <div className='row'>
                                 <div className='col'>

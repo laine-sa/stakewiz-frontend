@@ -134,6 +134,10 @@ input:focus {
   font-size:0.8rem;
 }
 
+.validator-detail-box .row {
+  z-index:10;
+}
+
 .vbox {
   background-image:url('../public/images/box-tile.png');
   background-repeat:repeat;
