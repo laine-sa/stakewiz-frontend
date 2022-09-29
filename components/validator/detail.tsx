@@ -104,7 +104,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
     }
 
     renderCommissionTable() {
-        if(this.state.commissionHistory!==null) {
+        if(this.state.commissionHistory!==null && this.state.commissionHistory.length>0) {
 
             let rows: JSX.Element[] = []
             this.state.commissionHistory.map((event,i) => {
