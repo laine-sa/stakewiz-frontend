@@ -104,7 +104,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
     }
 
     renderCommissionTable() {
-        if(this.state.commissionHistory!==null) {
+        if(this.state.commissionHistory!==null && this.state.commissionHistory.length>0) {
 
             let rows: JSX.Element[] = []
             this.state.commissionHistory.map((event,i) => {
@@ -150,7 +150,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             )
         }
         else {
-            <div>No commission changes in our records for this validator.</div>
+            return <div>No commission changes in our records for this validator.<br /><br />Our data begins from 28 Dec 2021.</div>
         }
         
     }
