@@ -150,7 +150,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             )
         }
         else {
-            <div>No commission changes in our records for this validator.</div>
+            return <div>No commission changes in our records for this validator. We have data from 28 December 2021 onwards.</div>
         }
         
     }
