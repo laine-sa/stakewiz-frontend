@@ -14,6 +14,7 @@ import { AlertForm } from '../alert';
 import { StakeDialog } from '../stake/single-stake';
 import { getCommissionHistory } from '../stake/common';
 import { CommissionHistoryI } from '../stake/interfaces';
+import * as browser from '../../lib/browser';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -90,7 +91,16 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         if(this.state.commissionHistory!==null && this.state.validator !== null) {
             if(this.state.commissionHistory.length>0) {
                 if(this.state.commissionHistory[0].commission == this.state.validator.commission) {
-                    let since = new Date(this.state.commissionHistory[0].observed_at)
+                    let isSafari:boolean = browser.check('Safari');
+
+                    let since: Date|null = null
+
+                    if(isSafari){
+                        let timeZone = this.state.commissionHistory[0].observed_at.slice(-3)+':00';
+                        since = new Date(this.state.commissionHistory[0].observed_at.substring(0, 19).replace(/-/g, "/")+timeZone)
+                    }else{                
+                        since = new Date(this.state.commissionHistory[0].observed_at)
+                    }
                     return (
                         <div className='badge bg-light text-dark badge-sm mx-1'>
                             Since {since.toLocaleDateString(undefined, {
@@ -108,7 +118,16 @@ class ValidatorDetail extends React.Component<validatorDetailI,
 
             let rows: JSX.Element[] = []
             this.state.commissionHistory.map((event,i) => {
-                let formatted_date = new Date(event.observed_at)
+                let isSafari:boolean = browser.check('Safari');
+
+                let formatted_date: Date|null = null
+
+                if(isSafari){
+                    let timeZone = event.observed_at.slice(-3)+':00';
+                    formatted_date = new Date(event.observed_at.substring(0, 19).replace(/-/g, "/")+timeZone)
+                }else{                
+                    formatted_date = new Date(event.observed_at)
+                }
 
                 let prev_comm = (this.state.commissionHistory!==null && i+1 < this.state.commissionHistory.length) ? this.state.commissionHistory[i+1].commission+' %' : 'N/A'
 
