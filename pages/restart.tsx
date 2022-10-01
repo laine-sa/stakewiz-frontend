@@ -76,7 +76,7 @@ export default function Home() {
                             <p>This display was rapidly built to provide insight into the restart. It receives data directly from our validator log every 5 seconds, refresh to update.</p>
                             <p>Built by <a href='http://laine.co.za/solana' target='_new'>Laine</a> - a Solana Validator</p>
                             <p>Join our Discord <a href='https://discord.gg/4jWhWZX7ef' target='_new'>here</a></p>
-                            <p>Information is provided without warranty for it&apos;s accuracy.</p>
+                            <p>Information is provided without warranty for its accuracy.</p>
                         </div>         
                     </div>     
                 ) : (
