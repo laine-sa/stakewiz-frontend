@@ -13,6 +13,10 @@
   src: url('./fonts/fullpack.ttf');
 }
 
+.chatbox {
+  height:50vh!important;
+}
+
 
 button:focus, button:active {
   outline:none!important;
@@ -784,6 +788,14 @@ a:hover {
   .nav-discord {
     display:flex;
     align-items:center;
+  }
+
+  .restart-flex {
+    flex-direction:column!important;
+  }
+
+  .restart-flex div {
+    width:100%!important;
   }
 
   .nav-discord span {

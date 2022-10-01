@@ -25,6 +25,7 @@
     "next": "12.1.0",
     "object-hash": "^3.0.0",
     "ordinal": "^1.0.3",
+    "random-name": "^0.1.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.2",
     "react-bootstrap-range-slider": "^3.0.4",
@@ -33,6 +34,7 @@
     "react-google-charts": "^4.0.0",
     "react-google-recaptcha": "^2.1.0",
     "sharp": "^0.30.1",
+    "talkjs": "^0.15.5",
     "typescript": "^4.6.3"
   },
   "devDependencies": {
