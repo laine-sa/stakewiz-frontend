@@ -60,18 +60,20 @@ export default function Home() {
                 {(stake!=null) ? (
                     <div className='container'>         
                         <div className='text-center'>
-                            <h2 className='text-white'>Cluster restart is underway</h2>
+                            <h2 className='text-white'>{(stake<80) ? 'Network restart is underway' : 'Network has restarted'}</h2>
                         </div>       
-                        <div className="d-flex justify-content-center my-5">                    
+                        {(stake<80) ? ( [
+                        <div className="d-flex justify-content-center my-5" key='progress-bar'>                    
                             <div className="w-50 progress" data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom" style={{height:'30px'}}>                        
                                 <div className={"progress-bar progress-bar-striped progress-bar-animated bg-success"} role="progressbar"  style={{width: stake+'%'}}>
                                     {stake+'%'}
                                 </div>                    
                             </div>                
-                        </div>    
-                        <div className='text-center text-white fs-5'>
+                        </div>,
+                        <div className='text-center text-white fs-5' key='progress-label'>
                             Bar above shows active stake visible in gossip. Once 80% is active the network will restart.
-                        </div>          
+                        </div>]    
+                        ) : null } 
                         <div className='text-center text-white fs-6 my-3'>
                             <p>This display was rapidly built to provide insight into the restart. It receives data directly from our validator log every 5 seconds, refresh to update.</p>
                             <p>Built by <a href='http://laine.co.za/solana' target='_new'>Laine</a> - a Solana Validator</p>
