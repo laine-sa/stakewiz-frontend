@@ -5,8 +5,8 @@ import { getStakeAccounts, StakeStatus, getStakeStatus, getRewards } from './com
 import { ValidatorContext } from '../validator/validatorhook';
 import { getAllEpochHistory, getClusterStats, Spinner} from '../common'
 import { RenderImage, RenderName } from '../validator/common'
-import { Alert, Form, InputGroup, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { addMeta, closeStake, deactivateStake, delegateStake } from "./transactions";
+import { Alert, Dropdown, Form, InputGroup, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { addMeta, buildTxBatches, closeStake, deactivateStake, delegateStake, mergeStake } from "./transactions";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { validatorI } from "components/validator/interfaces";
 import ordinal from "ordinal";
@@ -14,7 +14,6 @@ import { arrayBuffer } from "node:stream/consumers";
 
 import * as gtag from '../../lib/gtag.js'
 import Chart from "react-google-charts";
-import { createNamedExports } from "typescript";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -24,11 +23,12 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
     const [renderResult, setRenderResult] = useState<any>(<Spinner />)
     const validatorList = useContext(ValidatorContext)
     const [epoch, setEpoch] = useState(0)
-    const {signTransaction} = useWallet();
+    const {signTransaction, signAllTransactions} = useWallet();
     const [awaitingSignature, setAwaitingSignature] = useState(false)
     const [updatingStakes, setUpdatingStakes] = useState([])
     const [message, setMessage] = useState(null)
     const [messageType, setMessageType] = useState('success')
+    const [error, setError] = useState(null)
     const [delegatingStake, setDelegatingStake] = useState(null)
     const [delegateSearch, setDelegateSearch] = useState([])
     const [delegateValidator, setDelegateValidator] = useState(null)
@@ -40,6 +40,10 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
     const [rewardsTable, setRewardsTable] = useState(null)
     const [epochHistory, setEpochHistory] = useState([])
     const [activePubkey, setActivePubkey] = useState(userPubkey)
+    const [batchStakes, setBatchStakes] = useState<Object[]>([])
+    const [batchStakesStatus, setBatchStakesStatus] = useState<number|null>(null)
+    const [batchAction, setBatchAction] = useState(null)
+    const [mergeTarget, setMergeTarget] = useState(null)
 
     useEffect(() => {
         if(stakes == null) {
@@ -55,7 +59,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
     useEffect(() => {
         renderStakes()
-    }, [stakes, validatorList, awaitingSignature, updatingStakes, initialFetch])
+    }, [stakes, validatorList, awaitingSignature, updatingStakes, initialFetch, batchStakes])
 
     useEffect(() => {
         if(epochHistory.length==0) {
@@ -529,14 +533,53 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             let tx = delegateStake(activePubkey, stake.pubkey, votePubkey)
 
-            tx = await addMeta(tx,activePubkey,connection)
-
             await signTransaction(tx)
             await submitTx(tx,stake,false,'delegate',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
             displayAlert(e.message,'error')
+            setAwaitingSignature(false)
+        }
+    }
+
+    const doMerge = async () => {
+        if(mergeTarget!==null && batchStakes.length > 1 && batchStakes.includes(mergeTarget)) {
+            setAwaitingSignature(true)
+            try {
+
+                let txs = []
+                let total_lamports = 0;
+                batchStakes.map(async (stake: any) => {
+                    if(stake!==mergeTarget) {
+                        let tx = mergeStake(activePubkey,stake.pubkey,mergeTarget.pubkey)
+                        total_lamports += stake.account.lamports
+
+                        txs.push(tx)
+                        
+                    }
+                })
+
+                const transactions = await buildTxBatches(txs,2,activePubkey,connection)
+                           
+
+                let signedTx = await signAllTransactions(transactions);
+                
+                let sigs = []
+                
+                for(let i = 0; i < signedTx.length; i++) {
+
+                    await submitTx(signedTx[i],batchStakes,false,'batch_merge',total_lamports)
+                }
+
+            }
+            catch(e) {
+                setError(e.message)
+                setAwaitingSignature(false)
+            }
+        } 
+        else {
+            setError('Something has gone wrong, verify your selection.')
             setAwaitingSignature(false)
         }
     }
@@ -807,6 +850,125 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
         else return null
     }
 
+    const renderBatchModal = () => {
+        if(batchStakes.length>0) {
+            
+            const batchTable = []
+            batchStakes.map((stake: any) => {
+                let status = getStakeStatus(stake,epoch)
+
+                batchTable.push(
+                    <tr key={'batch-table-'+stake.pubkey.toString()}>
+                        {(batchAction=='merge') ? (
+                            <td>
+                                {(mergeTarget==stake) ? (
+                                    <i className='bi bi-check2-square pointer' onClick={() => setMergeTarget(null)}></i>
+                                ) : (
+                                    <i className='bi bi-square pointer' onClick={() => setMergeTarget(stake)}></i>
+                                )}
+                            </td>
+                        ) : null}
+                        <td className='text-truncate mx-2'>
+                            {stake.pubkey.toString()}
+                        </td>
+                        <td>
+                            <div className='badge badge-sm bg-success text-light'>
+                                {StakeStatus[status]}
+                            </div>
+                        </td>
+                        <td>
+                            ◎ {Number(stake.account.data.parsed.info.stake.delegation.stake/LAMPORTS_PER_SOL).toFixed(9)}
+                        </td>
+                    </tr>
+                )
+            })
+        
+            return (
+                <Modal show={(batchStakes.length>0 && batchAction!==null)} onHide={() => {setBatchAction(null); setMergeTarget(null); setError(null)}} dialogClassName='modal-lg'>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Perform batch operations</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className='d-flex flex-column'>
+                        <div>
+                            <table className='table table-sm text-light table-responsive'>
+                                <thead>
+                                    <tr key='batch-table-header'>
+                                        {(batchAction=='merge') ? (
+                                                <th scope='col'></th>
+                                            ) : null}
+                                        <th scope='col'>
+                                            Stake Account Public Key
+                                        </th>
+                                        <th scope='col'>
+                                            Status
+                                        </th>
+                                        <th scope='col'>
+                                            Delegated Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {batchTable}
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                        <div className='m-2 text-center'>
+                            <p>This action will merge all selected stake accounts into one account.</p>
+                            <p>Please select a target account above which will be the account into which the others will merge.</p>
+                        </div>
+                        {(error!==null) ? (
+                            <div className='text-center px-5 mx-5'>
+                                <div className='alert alert-danger' role='alert'>
+                                    {error}
+                                </div>
+                            </div>
+                        ) : null}
+                        <div className='my-2 text-center'>
+                                <button 
+                                    className='btn btn-outline-light px-5' 
+                                    onClick={() => { 
+                                        doMerge()
+                                    }}
+                                    disabled={awaitingSignature || mergeTarget===null}
+                                    >
+                                    🚀 Merge
+                                </button>
+                            </div>
+
+                    </Modal.Body>
+                </Modal>
+            )
+        }
+        else return null
+    }
+
+    const batchProcess = (stake,status) => {
+        if(batchStakes.length==0) {
+            setBatchStakesStatus(status)
+        }
+        if(batchStakes.includes(stake)) {
+            // Remove stake from selection
+            if(batchStakes.length>1) {
+                let bs = batchStakes
+                setBatchStakes(bs.filter((pk) => { return pk!==stake}))
+                
+            }
+            else {
+                console.log('Emptying batchStakes and resetting status')
+                setBatchStakes([])
+                setBatchStakesStatus(null)
+            }
+        }
+        else {
+            if(batchStakes.length==0) setBatchStakes([stake])
+            else {
+                setBatchStakes(batchStakes => [...batchStakes,stake])
+            }
+        }
+
+    }
+
     const renderStakes = () => {
         if(stakes!=null && stakes.length > 0) {
             let result = []
@@ -836,9 +998,18 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                     statusbg = (status == 1) ? 'bg-info' : statusbg;
                     statusbg = (status == 3) ? 'bg-warning' : statusbg;
                     let statustext = (status==3 || status ==1) ? 'text-dark' : 'text-white'
+                    let activation = stake.account.data.parsed.info.stake.delegation.activationEpoch
                     
                     result.push((
-                        <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5' key={'stake-card-'+stake.pubkey.toString()}>
+                        <div className='d-flex card-light rounded border border-1 border-dark flex-column align-items-center m-1 text-light my-stake-box mt-5 position-relative' key={'stake-card-'+stake.pubkey.toString()}>
+                            <div className='position-absolute m-1 stake-bulk-checkbox'>
+                                {(batchStakesStatus==status || batchStakesStatus===null) ? (
+                                <i 
+                                    className={(batchStakes.includes(stake)) ? 'pointer bi bi-check2-square' : 'pointer bi bi-square'}
+                                    onClick={() => batchProcess(stake,status)}   
+                                ></i>
+                                ) : null}
+                            </div>
                             <div className='me-2 stake-image'>
                                 {(validator!=null) ? (
                                 <RenderImage
@@ -875,8 +1046,9 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             
                             <div className={'p-1 my-1 px-3 badge '+statusbg+' '+statustext}>
                                 {StakeStatus[status]}
+                                {(status==2) ? ' since Epoch '+activation : null}
                             </div>
-                            <div className='w-100 text-truncate p-1 px-3 text-center'>
+                            <div className='w-100 text-truncate p-1 px-3 text-center d-flex'>
                                 <OverlayTrigger
                                     placement="top"
                                     overlay={
@@ -886,12 +1058,24 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                                     } 
                                 >
                             
-                                    <span className='pointer' onClick={() => {navigator.clipboard.writeText(stake.pubkey.toString())}}>
+                                    <div className='pointer flex-grow-1 text-truncate' onClick={() => {navigator.clipboard.writeText(stake.pubkey.toString())}}>
                                         <i className='bi bi-key me-2'></i>{stake.pubkey.toString()}
-                                    </span>
+                                    </div>
+                                    
                                 
                                 </OverlayTrigger>
-                                
+                                <OverlayTrigger
+                                    placement="top"
+                                    overlay={
+                                        <Tooltip>
+                                            View in Explorer
+                                        </Tooltip>
+                                    } 
+                                >
+                                    <div className='flex-grow-1 text-white'>
+                                        <a href={config.EXPLORER_ACCOUNT_BASE+stake.pubkey.toString()} target="_blank" rel="noreferrer"><i className='bi bi-box-arrow-up-right ms-2'></i></a>
+                                    </div>
+                                </OverlayTrigger>
                             </div>
                             <div className='p-1'>
                                 {renderStakeButtons(stake,status)}
@@ -933,8 +1117,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                     <div className='fs-5 flex-grow-1'>
                         {(connected) ? 'Manage stake accounts' : 'View stake accounts'}
                     </div>
-                    <div className='flex-shrink-1 align-items-center lh-1 my-stakes-connected-wallet-badge'>
-                        <div className='badge bg-light text-dark d-flex align-items-center'>
+                    <div className='flex-shrink-1 align-items-center lh-1 my-stakes-connected-wallet-badge flex-row d-flex'>
+                        <div className='badge bg-light text-dark d-flex align-items-center lh-1'>
                             {(connected) ? <span className='text-success'>Connected to</span> : <span className='text-success'>Viewing</span>} 
                             <span className='px-1 text-truncate'>{activePubkey.toString()}</span>
                             <OverlayTrigger
@@ -949,6 +1133,20 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                                     <i className='bi bi-x fs-6 fw-bold'></i>
                                 </span>
                             </OverlayTrigger>
+                            
+                        </div>
+                        <div className='ms-1 lh-1'>
+                            <Dropdown>
+                                <Dropdown.Toggle variant="light" id="dropdown-basic" size="sm" className='lh-1'>
+                                    Batch Actions
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => setBatchAction('merge')}>Merge</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-2">Split</Dropdown.Item>
+                                    <Dropdown.Item href="#/action-3">Deactivate</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </div>
                     </div>
                 </div>
@@ -966,6 +1164,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                 </Alert>,
                 {renderRedelegateModal()},
                 {renderRewardsModal()}
+                {renderBatchModal()}
                 ]
             </React.Fragment>
         )

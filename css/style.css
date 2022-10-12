@@ -126,6 +126,11 @@ input:focus {
   line-height:1rem;;
 }
 
+.stake-bulk-checkbox {
+  top:0;
+  left:0;
+}
+
 .multi-stake-input-container {
   width: 15rem;
 }

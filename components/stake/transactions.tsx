@@ -1,5 +1,6 @@
 import { useConnection } from "@solana/wallet-adapter-react";
 import { Authorized, Connection, Keypair, PublicKey, StakeProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import config from "../../config.json";
 
 export const addMeta = async (tx: Transaction, feePayer:PublicKey, connection: Connection) => {
 
@@ -66,4 +67,42 @@ export const delegateStake = (authorizedPubkey, stakePubkey, votePubkey): Transa
         votePubkey: votePubkey
     })
 
+}
+
+export const mergeStake = (authorizedPubkey, sourcePubkey, targetPubkey): Transaction => {
+
+    return StakeProgram.merge({
+        authorizedPubkey: authorizedPubkey,
+        sourceStakePubKey: sourcePubkey,
+        stakePubkey: targetPubkey
+    })
+}
+
+
+// y is the number of txs per batch
+export const buildTxBatches = async (txs,y, publicKey, connection) => {
+    let transactions = [];
+    let x = 0
+    let i = 0
+    for(const tx of txs) {
+
+        if(transactions[i]!==undefined) {
+            let currentLength = transactions[i].serialize({requireAllSignatures:false, verifySignatures:false}).length
+            let pertx = currentLength / x
+            if((currentLength + pertx) > config.MAX_CONSERVATIVE_TX_SIZE_BYTES) i++
+        }
+    
+        if(transactions[i]==undefined) {
+            transactions[i] = new Transaction();
+            transactions[i] = await addMeta(transactions[i],publicKey,connection)
+            
+        }
+
+        transactions[i].add(tx);
+        x++
+    }
+    console.log(transactions[0].serialize({requireAllSignatures:false, verifySignatures:false}).length)
+
+    return transactions
+    
 }

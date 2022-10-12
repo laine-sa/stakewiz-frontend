@@ -25,7 +25,7 @@
         "all_epoch_history": "all_epochs_history",
         "commission_history": "commission_history"
     },
-    "MIN_AVAILABLE_EPOCH_HISTORY": 273,
+    "MAX_CONSERVATIVE_TX_SIZE_BYTES": 1000,
     "DEFAULT_LIST_SIZE": 50,
     "WIZ_SCORE_RANK_GROUPS": {
         "TOP": 50,
@@ -38,6 +38,7 @@
     "RECAPTCHA_SITE_KEY": "6LefDqYdAAAAACgv6tMS0h5f6Y9YHslRBtW5nZNf",
     "TX_RESERVE_LAMPORTS": 10000000,
     "EXPLORER_TX_BASE": "https://solscan.io/tx/",
+    "EXPLORER_ACCOUNT_BASE": "https://solscan.io/account/",
     "DEFAULT_STAKE_RENT_LAMPORTS": 2282880,
     "SLOTS_PER_EPOCH": 432000,
     "DEFAULT_SEARCH_KEY_COUNT": 2,

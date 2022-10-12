@@ -8,7 +8,7 @@ import RangeSlider from 'react-bootstrap-range-slider'
 import { RenderImage, RenderName } from '../validator/common';
 import { getEpochInfo, Spinner } from '../common';
 import { getStakeAccounts, StakeInput, DistributionMethods } from './common'
-import { addMeta, createStake } from './transactions'
+import { addMeta, buildTxBatches, createStake } from './transactions'
 
 import * as gtag from '../../lib/gtag.js'
 
@@ -382,27 +382,9 @@ export const MultiStakeDialog: FC<{
                 signers.push(stakeKeys);
             })
 
-            const buildTxs = async (txs) => {
-                let transactions = [];
-                let i = 0
-                for(const tx of txs) {
-                    let y = Math.floor(i / 4);
-                
-                    if(transactions[y]==undefined) {
-                        transactions[y] = new Transaction();
-                        transactions[y] = await addMeta(transactions[y],publicKey,connection)
-                        
-                    }
-    
-                    transactions[y].add(tx);
-                    i++
-                }
+            
 
-                return transactions
-                
-            }
-
-            const transactions = await buildTxs(txs)
+            const transactions = await buildTxBatches(txs, 4, publicKey, connection)
 
             signers.map((keypair, i) => {
                 let y = Math.floor(i / 2);
