@@ -186,20 +186,17 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             let activated_stake = new Intl.NumberFormat().format(Number(this.state.validator.activated_stake.toFixed(0)));
 
             return ( [
-                <div className='container-sm m-1 mt-5 rounded-top position-relative d-flex align-items-center flex-column' key='validator-details-header'>
+                <div className='container-sm m-1 position-relative d-flex align-items-center validator-detail-header' key='validator-details-header'>
                     
                    
-                    <div className='d-flex'>
+                    <div className='d-flex flex-grow-1 align-items-center validator-detail-name text-truncate'>
                         <RenderImage
                             img={this.state.validator.image}
                             vote_identity={this.state.validator.vote_identity}
-                            size={100}
+                            size={50}
                             className={(this.state.validator.delinquent) ? 'border border-danger border-3' : ''}
                         />
-                    </div>
-
-                    <div className='d-flex text-white text-center p-2 flex-column'>
-                        <h2 className='d-flex align-items-center justify-content-center'>{this.renderName()}
+                        <h3 className='d-flex align-items-center justify-content-center text-white ms-2 text-truncate mb-0'>{this.renderName()}
                         {(this.state.validator.delinquent) ? (
                             <div className='ms-2 badge bg-danger fs-6'>
                                 <OverlayTrigger
@@ -214,9 +211,26 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 </OverlayTrigger>
                             </div>
                         ): null}
-                        </h2>
+                        </h3>
+                    </div>
+                    <div className='d-flex'>
+                        <Gauges
+                            skip_rate={this.state.validator.skip_rate}
+                            credit_ratio={this.state.validator.credit_ratio}
+                            wiz_score={this.state.validator.wiz_score}
+                            uptime={this.state.validator.uptime}
+
+                        />
+                    </div>
                         
-                        <div>
+                        
+                </div>,
+                <div className='d-flex flex-column validator-details-content' key='validator-details-content'>
+
+                    <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box'>
+                        
+                        <div className='validator-detail-flex-opacity-bg'></div>
+                        <div className='validator-buttons'>
                             <button className='btn btn-outline-light mx-1' onClick={scrollToAlertForm}>
                                 + Create Alert
                             </button>
@@ -246,23 +260,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 </span>
                             </ConditionalWrapper>
                         </div>
-                        
-                    </div>
-                </div>,
-                <div className='d-flex flex-column validator-details-content' key='validator-details-content'>
-
-                    <Gauges
-                        skip_rate={this.state.validator.skip_rate}
-                        credit_ratio={this.state.validator.credit_ratio}
-                        wiz_score={this.state.validator.wiz_score}
-                        uptime={this.state.validator.uptime}
-
-                    />
-
-                    <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box'>
-                        
-                        <div className='validator-detail-flex-opacity-bg'></div>
-                    
                             <div className='row'>
                                 <div className='col'>
                                         <div className='row mb-2'>

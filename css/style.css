@@ -306,6 +306,13 @@ a:hover {
   display:none!important;
 }
 
+.validator-buttons {
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:9999;
+}
+
 
 .wallet-container .wallet-adapter-button {
   height:auto;
@@ -945,6 +952,10 @@ a:hover {
     
   }
 
+  .validator-detail-header {
+    flex-direction:column;
+  }
+
   .searchToggle {
     margin-left:3rem!important;
   }
@@ -1007,6 +1018,13 @@ a:hover {
     font-size:0.6rem;
   }
 
+  .validator-buttons {
+    position:unset;
+    text-align:center;
+    margin-top:5px;
+    margin-bottom:5px;
+  }
+
   .validator-detail-table tbody tr th {
     min-width:initial;
   }
@@ -1018,6 +1036,10 @@ a:hover {
 
   .mobile-validator-info-row .col .row {
     flex-direction:row;
+  }
+
+  .mobile-gauge-container {
+    flex-direction:column;
   }
 
   .mobile-gauge-gauge {
