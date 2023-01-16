@@ -57,7 +57,6 @@ export const StakeHistoryChart: FC<{vote_identity: string}> = ({vote_identity}) 
                 data={allStakes}
                 options={{
                     backgroundColor: 'none',
-                    curveType: "function",
                     colors: ['#fff', '#fff', '#fff'],
                     lineWidth: 2,
                     legend:{
