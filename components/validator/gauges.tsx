@@ -1,6 +1,6 @@
 import { FC } from "react";
 import GaugeChart from 'react-gauge-chart'
-
+import WizEmblem from '../../public/images/emblem.svg'
 
 export const Gauges: FC<{
     skip_rate: number, 
@@ -92,7 +92,7 @@ export const Gauges: FC<{
                         />
                         </div>
                         <div>
-                            <span className='wiz-font me-2'>WIZ score</span>
+                            <span><WizEmblem fill="#fff" width="25px" height="25px" /> Score</span>
                         </div>
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>

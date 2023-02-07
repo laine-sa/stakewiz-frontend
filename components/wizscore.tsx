@@ -7,6 +7,8 @@ import {Chart} from 'react-google-charts'
 import {Spinner} from './common'
 import { validatorI } from './validator/interfaces';
 import * as browser from 'lib/browser';
+import WizEmblem from '../public/images/emblem.svg'
+import ordinal from 'ordinal';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -113,16 +115,16 @@ class WizScoreBody extends React.Component<{
             color = 'text-warning';
         }
         return (
-            <div className="d-flex flex-grow-1 justify-content-center text-center text-white mx-5 p-3 text-italic scorecard-wiz-score align-items-center">
+            <div className="d-flex flex-grow-1 justify-content-center text-center text-white mx-5 p-3 text-italic scorecard-wiz-score align-items-center ms-2">
                     
-                        <div className={'wiz-font me-2 '}>WIZ SCORE:</div> 
+                        <div className={'me-2 '}><WizEmblem fill="#fff" width="40px" height="40px" /> Score</div> 
                         <div>
                             <span id="scorecard-wizscore">
                             {' '+new Intl.NumberFormat().format(Number(this.props.validator.wiz_score.toFixed(2)))+'% '}
                             </span> 
-                            (RANK 
+                            ( 
                                 <span id="scorecard-wizrank">
-                                    {' '+this.props.validator.rank}
+                                    {ordinal(this.props.validator.rank)}
                                 </span>
                                 )
                         </div>

@@ -66,6 +66,10 @@ div#__next > div {
   text-decoration: underline;
 }
 
+.no-underline:hover {
+  text-decoration:none;
+}
+
 .grecaptcha-badge {
   visibility: hidden;
 }
