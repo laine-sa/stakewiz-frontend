@@ -13,4 +13,3 @@ module.exports = {
     domains: ['s3.amazonaws.com']
   }
 }
-
