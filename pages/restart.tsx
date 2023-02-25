@@ -60,9 +60,9 @@ export default function Home() {
                 {(stake!=null) ? (
                     <div className='container'>         
                         <div className='text-center'>
-                            <h2 className='text-white'>{(stake<0) ? 'Network restart is underway' : 'Network restart is paused pending further investigation.'}</h2>
+                            <h2 className='text-white'>{(stake<80) ? 'Network restart is underway' : 'Network has restarted'}</h2>
                         </div>       
-                        {(stake<0) ? ( [
+                        {(stake<80) ? ( [
                         <div className="d-flex justify-content-center my-5" key='progress-bar'>                    
                             <div className="w-50 progress" data-bs-toggle="tooltip" title="See FAQ for formula of this display." data-bs-placement="bottom" style={{height:'30px'}}>                        
                                 <div className={"progress-bar progress-bar-striped progress-bar-animated bg-success"} role="progressbar"  style={{width: stake+'%'}}>
