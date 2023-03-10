@@ -259,6 +259,10 @@ a:hover {
   font-size:1.2rem;
 }
 
+.delinquent-label {
+  margin-left: 50px;
+}
+
 .td-min-width {
   width:30%;
 }
