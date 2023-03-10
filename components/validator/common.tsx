@@ -83,10 +83,10 @@ export const RenderName: FC<{
 }> = ({validator}) => {
     if(validator!=null) {
         if(validator.name=='') {
-            return <span>{validator.vote_identity}</span>;
+            return <span className='text-truncate'>{validator.vote_identity}</span>;
         }
         else {
-            return <span>{validator.name}</span>;
+            return <span className='text-truncate'>{validator.name}</span>;
         }
     }
     else {

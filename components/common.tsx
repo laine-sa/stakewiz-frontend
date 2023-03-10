@@ -13,6 +13,7 @@ import { clusterStatsI, EpochInfoI } from './validator/interfaces';
 import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
 import { PublicKey } from '@solana/web3.js';
+import StakewizLogo from '../public/images/logo-horizontal.svg'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -53,8 +54,8 @@ class Header extends React.Component<HeaderProps, {}> {
                 <meta property="og:title" content={this.props.title} />
                 <meta property="og:description" content="Validator analytics, monitoring and alerting for Solana." />
                 <meta property="og:url" content="https://stakewiz.com" />
-                <meta property="og:image" content="https://stakewiz.com/images/wiz-square-new.webp" />
-                <link rel="icon" href="/images/wiz-square-new.webp" />.
+                <meta property="og:image" content="https://stakewiz.com/images/favicon-new.png" />
+                <link rel="icon" href="/images/favicon-new.png" />.
             </Head>
         )
     }
@@ -92,7 +93,7 @@ const TopBar: FC = () => {
                 Epoch {epochInfo.epoch}
               </div>
               <div className="progress epoch-progress w-100" style={{height: '5px'}}>
-                <div className="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
+                <div className="progress-bar progress-bar-striped bg-light progress-bar-animated" role="progressbar" style={{width:(epochInfo.slot_height/432000*100)+'%'}} aria-valuenow={epochInfo.slot_height} aria-valuemin={0} aria-valuemax={432000}>
                 </div>
               </div>
               <div className='epoch-progress-label text-light'>
@@ -130,13 +131,7 @@ const TopBar: FC = () => {
         <Navbar key='navbar' bg="none" variant="dark" expand="lg">
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
-                <Image 
-                  src={"/images/new-logo-white.webp"}
-                  className='stakewiz-logo'
-                  alt="Stakewiz Logo" 
-                  width={300}
-                  height={96}
-                />
+                <StakewizLogo fill="#fff" height="80px" width="250px" />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
@@ -149,7 +144,7 @@ const TopBar: FC = () => {
                 <Nav.Link href="/validator/GE6atKoWiQ2pt3zL7N13pjNHjdLVys8LinG8qeJLcAiL" target="_new" className='text-white'>Support Laine</Nav.Link>
                 <a href="https://discord.gg/3JXdTavv6x" target="_new" className='text-white me-2 nav-discord'>
                   <i className="bi bi-discord p-2 pointer"></i>
-                  <span className='d-none'>Join Discord</span>
+                  <span className='d-none'>Join Discord</span> 
                 </a>
               </Nav>
               <div className='wallet-container'>
@@ -191,14 +186,6 @@ class Footer extends React.Component {
                   </div>
                   <div className="col"> 
                     This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
-                    <br /><br />
-                    RPC Services powered by
-                    <Image
-                      src='/images/gg-logo.png'
-                      width='267px'
-                      height='30px'
-                      alt='GenesysGo Logo'
-                    />
                   </div>
               </div>
               </div>

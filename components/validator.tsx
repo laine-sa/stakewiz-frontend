@@ -4,23 +4,15 @@ import config from '../config.json';
 import SearchBar from './search';
 import {WizScore, WizScoreBody, WizScoreChart} from './wizscore';
 import {Alert, AlertForm} from './alert';
-import Image from 'next/image';
 import Link from 'next/link';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import {ConditionalWrapper, getClusterStats, Spinner} from './common'
-import {Chart} from 'react-google-charts'
-import { Connection, ConnectionConfig, PublicKey } from '@solana/web3.js';
-import { checkSolflareEnabled } from './common';
-import { StakeHistoryChart } from './validator/stake_history'
-import { DelinquencyChart } from './validator/delinquency'
 import { StakeLabel, RenderUrl, RenderImage, RenderName } from './validator/common'
-import { Gauges } from './validator/gauges';
-import { EpochStakeChart } from './validator/epoch_stake'
-import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './validator/interfaces'
-import { StakeDialog } from './stake/single-stake';
+import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI } from './validator/interfaces'
 import { MultiStakeDialog } from './stake/multi-stake';
 import { ValidatorContext } from './validator/validatorhook'
 import ordinal from 'ordinal'
+import WizEmblem from '../public/images/emblem.svg'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -330,7 +322,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
             stakeWidth = validator.stake_ratio*1000;
         }
         else {
-            stakeText = 'Low Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0)));
+            stakeText = 'Low Stake: ◎ '+new Intl.NumberFormat().format(Number(validator.activated_stake.toFixed(0))); 
             stakeColor = 'text-success';
             stakeBg = 'bg-success';
             stakeWidth = validator.stake_ratio*1000;
@@ -420,7 +412,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </div>
                     <div className={'fs-6 ms-2 text-truncate'+(showListView?' my-2':' my-3')}>
                         <Link href={'/validator/'+validator.vote_identity} passHref>
-                            <span className="ms-2 vlist-name-inner pointer">
+                            <span className="ms-2 vlist-name-inner pointer no-underline">
                                 <RenderName
                                     validator={validator}    
                                 />
@@ -475,13 +467,17 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
             </div>  
             
             <div className={'d-flex my-2' + (showListView?' text-left flex-column':' text-center')}>
-                <div className={'flex-grow-1'+(showListView?' d-flex flex-column-reverse align-items-center':'')}>
-                    <span className={'pointer '+(showListView?' wiz-font':' me-3 wiz-font')} onClick={() => showWizModal()}>WIZ SCORE</span>
-                    <span className='fw-bold'>{validator.wiz_score}%</span>
+                <div className={'flex-grow-1'}>
+                    <span className={'pointer no-underline flex-nowrap '+(showListView?'':' me-3')} onClick={() => showWizModal()}>
+                            <WizEmblem fill="#fff" width="40px" height="40px" /> Score
+                    </span>
+                    <span className='ms-2'>{validator.wiz_score}%</span>
                 </div>
                 <div className='flex-grow-1'>
-                    <span className={'me-3'+(showListView?'':' wiz-font')}> {showListView?'RANK:':'WIZ RANK'}</span>
-                    <span className='fw-bold'>{ordinal(validator.rank)}</span>
+                    <span className={'me-3'}>
+                        <WizEmblem fill="#fff" width="40px" height="40px" /> Rank
+                    </span>
+                    <span className='ms-2'>{ordinal(validator.rank)}</span>
                 </div>
             </div>
 
