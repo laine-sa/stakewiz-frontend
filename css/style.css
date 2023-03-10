@@ -39,7 +39,7 @@ body {
   font-display:auto;
   font-family:lato;
   font-size:0.9rem;
-  background-color:#164570;
+  background-color:#222;
   background-image:url('../public/images/bg-symmetry-line.webp');
   background-size:cover;
   background-attachment:fixed;
@@ -64,6 +64,10 @@ div#__next > div {
 
 .pointer:hover {
   text-decoration: underline;
+}
+
+.no-underline:hover {
+  text-decoration:none;
 }
 
 .grecaptcha-badge {
@@ -253,6 +257,10 @@ a:hover {
 
 .apy-value {
   font-size:1.2rem;
+}
+
+.delinquent-label {
+  margin-left: 50px;
 }
 
 .td-min-width {
@@ -954,6 +962,25 @@ a:hover {
 
   .validator-detail-header {
     flex-direction:column;
+  }
+
+  .validator-detail-name {
+    flex-direction:column!important;
+    align-items: center;
+  }
+
+  .validator-detail-name h4 {
+    max-width:100%;
+    margin-top:0.4rem;
+  }
+
+  .validator-delinquency-container {
+    max-width:100%;
+  }
+
+  .delinquent-label {
+    margin-top:1rem;
+    margin: auto!important;
   }
 
   .searchToggle {

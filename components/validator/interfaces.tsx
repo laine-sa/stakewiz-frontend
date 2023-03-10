@@ -1,4 +1,3 @@
-import { ConnectionContextState } from "@solana/wallet-adapter-react";
 import { Connection } from "@solana/web3.js";
 
 export interface validatorI {
