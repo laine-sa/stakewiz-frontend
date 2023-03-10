@@ -131,7 +131,7 @@ const TopBar: FC = () => {
         <Navbar key='navbar' bg="none" variant="dark" expand="lg">
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
-                <StakewizLogo fill="#fff" height="96px" width="300px" />
+                <StakewizLogo fill="#fff" height="80px" width="250px" />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
@@ -186,14 +186,6 @@ class Footer extends React.Component {
                   </div>
                   <div className="col"> 
                     This site is protected by reCAPTCHA and the Google&nbsp;<a href="https://policies.google.com/privacy">Privacy Policy</a>&nbsp;and&nbsp;<a href="https://policies.google.com/terms">Terms of Service</a>&nbsp;apply.
-                    <br /><br />
-                    RPC Services powered by
-                    <Image
-                      src='/images/gg-logo.png'
-                      width='267px'
-                      height='30px'
-                      alt='GenesysGo Logo'
-                    />
                   </div>
               </div>
               </div>

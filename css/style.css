@@ -964,6 +964,25 @@ a:hover {
     flex-direction:column;
   }
 
+  .validator-detail-name {
+    flex-direction:column!important;
+    align-items: center;
+  }
+
+  .validator-detail-name h4 {
+    max-width:100%;
+    margin-top:0.4rem;
+  }
+
+  .validator-delinquency-container {
+    max-width:100%;
+  }
+
+  .delinquent-label {
+    margin-top:1rem;
+    margin: auto!important;
+  }
+
   .searchToggle {
     margin-left:3rem!important;
   }

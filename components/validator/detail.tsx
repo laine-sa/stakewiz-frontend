@@ -3,7 +3,7 @@ import axios from 'axios';
 import config from '../../config.json';
 import { validatorI, ValidatorBoxPropsI, ValidatorListI, ValidatorListingI, validatorDetailI, clusterStatsI } from './interfaces'
 import {checkSolflareEnabled, ConditionalWrapper, getClusterStats, Spinner} from '../common'
-import { RenderImage, RenderUrl, StakeLabel } from './common';
+import { RenderImage, RenderName, RenderUrl, StakeLabel } from './common';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Gauges } from './gauges';
 import { StakeHistoryChart } from './stake_history';
@@ -189,7 +189,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                 <div className='container-sm m-1 position-relative d-flex align-items-center validator-detail-header' key='validator-details-header'>
                     
                    
-                    <div className='d-flex flex-grow-1 flex-column'>
+                    <div className='d-flex flex-grow-1 flex-column validator-delinquency-container'>
                         <div className='d-flex flex-row validator-detail-name text-truncate '>
                             <RenderImage
                                 img={this.state.validator.image}
@@ -197,7 +197,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 size={50}
                                 className={(this.state.validator.delinquent) ? 'border border-danger border-3' : ''}
                             />
-                            <h4 className='d-flex align-items-center text-white ms-2 text-truncate mb-0'>{this.renderName()}</h4>
+                            <h4 className='d-flex align-items-center text-white ms-2 text-truncate mb-0'><RenderName validator={this.state.validator} /></h4>
                         </div>
                         <div className='d-flex flex-row delinquent-label'>
                             {(this.state.validator.delinquent) ? (
