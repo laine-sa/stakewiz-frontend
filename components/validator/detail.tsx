@@ -230,7 +230,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                 </div>,
                 <div className='d-flex flex-column validator-details-content' key='validator-details-content'>
 
-                    <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box'>
+                    <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box m-1'>
                         
                         <div className='validator-detail-flex-opacity-bg'></div>
                         <div className='validator-buttons'>
@@ -406,7 +406,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                     </div>
 
 
-                    <div className='d-flex my-1 flex-grow-1 flex-wrap validator-detail-flex-container'>
+                    <div className='d-flex mb-1 flex-grow-1 flex-wrap validator-detail-flex-container'>
                         <div className='flex-grow-1 m-1 validator-detail-flex-card'>
                             <div className='validator-detail-flex-opacity-bg'></div>
                             <div className='card text-light'>
