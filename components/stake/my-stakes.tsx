@@ -337,7 +337,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             </Tooltip>
                         } 
                         > 
-                            <button className='btn btn-outline-light me-1 px-4' onClick={() => doClose(stake)} disabled={awaitingSignature}><i className='bi bi-box-arrow-left fs-6'></i></button>
+                            <button className='btn btn-outline-light btn-sm me-1 px-4' onClick={() => doClose(stake)} disabled={awaitingSignature}><i className='bi bi-box-arrow-left fs-6'></i></button>
                         </OverlayTrigger>,
                         <OverlayTrigger
                         placement="bottom"
@@ -348,7 +348,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             </Tooltip>
                         } 
                         > 
-                            <button className='btn btn-outline-light px-4' onClick={() => setDelegatingStake(stake)} disabled={awaitingSignature}><i className='bi bi-arrow-up-right-square-fill fs-6'></i></button>
+                            <button className='btn btn-outline-light btn-sm px-4' onClick={() => setDelegatingStake(stake)} disabled={awaitingSignature}><i className='bi bi-arrow-up-right-square-fill fs-6'></i></button>
                         </OverlayTrigger>
                     ]
                 )
@@ -364,7 +364,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             </Tooltip>
                         } 
                         > 
-                            <button className='btn btn-outline-light px-4' onClick={() => doDelegate(stake, stake.account.data.parsed.info.stake.delegation.voter)} disabled={awaitingSignature}><i className='bi bi-x-octagon fs-6'></i></button>
+                            <button className='btn btn-outline-light btn-sm me-1 px-4' onClick={() => doDelegate(stake, stake.account.data.parsed.info.stake.delegation.voter)} disabled={awaitingSignature}><i className='bi bi-x-octagon fs-6'></i></button>
                         </OverlayTrigger>
                 )
             }
@@ -400,7 +400,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
     const submitTx = async (tx, stake, isClose:Boolean = false, type = 'none', value = 0) => {
 
-
+        console.log(tx)
         let signature = await connection.sendRawTransaction(tx.serialize())
         console.log('Transaction signature: '+signature)
 
@@ -489,8 +489,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             tx = await addMeta(tx,activePubkey,connection)
     
-            await signTransaction(tx)
-            await submitTx(tx,stake,false,'deactivate',stake.account.lamports)
+            let signedTx = await signTransaction(tx)
+            await submitTx(signedTx,stake,false,'deactivate',stake.account.lamports)
     
         }
         catch(e) {
@@ -510,8 +510,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             tx = await addMeta(tx,activePubkey,connection)
 
-            await signTransaction(tx)
-            await submitTx(tx,stake,true,'close',stake.account.lamports)
+            let signedTx = await signTransaction(tx)
+            await submitTx(signedTx,stake,true,'close',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
@@ -531,8 +531,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             tx = await addMeta(tx,activePubkey,connection)
 
-            await signTransaction(tx)
-            await submitTx(tx,stake,false,'delegate',stake.account.lamports)
+            let signedTx = await signTransaction(tx)
+            await submitTx(signedTx,stake,false,'delegate',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
