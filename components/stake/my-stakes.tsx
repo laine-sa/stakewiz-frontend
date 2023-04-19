@@ -400,7 +400,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
     const submitTx = async (tx, stake, isClose:Boolean = false, type = 'none', value = 0) => {
 
-
+        console.log(tx)
         let signature = await connection.sendRawTransaction(tx.serialize())
         console.log('Transaction signature: '+signature)
 
@@ -489,8 +489,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             tx = await addMeta(tx,activePubkey,connection)
     
-            await signTransaction(tx)
-            await submitTx(tx,stake,false,'deactivate',stake.account.lamports)
+            let signedTx = await signTransaction(tx)
+            await submitTx(signedTx,stake,false,'deactivate',stake.account.lamports)
     
         }
         catch(e) {
@@ -510,8 +510,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             tx = await addMeta(tx,activePubkey,connection)
 
-            await signTransaction(tx)
-            await submitTx(tx,stake,true,'close',stake.account.lamports)
+            let signedTx = await signTransaction(tx)
+            await submitTx(signedTx,stake,true,'close',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
@@ -531,8 +531,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
 
             tx = await addMeta(tx,activePubkey,connection)
 
-            await signTransaction(tx)
-            await submitTx(tx,stake,false,'delegate',stake.account.lamports)
+            let signedTx = await signTransaction(tx)
+            await submitTx(signedTx,stake,false,'delegate',stake.account.lamports)
         }
         catch(e) {
             console.log(e.message)
