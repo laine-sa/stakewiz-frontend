@@ -337,7 +337,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             </Tooltip>
                         } 
                         > 
-                            <button className='btn btn-outline-light me-1 px-4' onClick={() => doClose(stake)} disabled={awaitingSignature}><i className='bi bi-box-arrow-left fs-6'></i></button>
+                            <button className='btn btn-outline-light btn-sm me-1 px-4' onClick={() => doClose(stake)} disabled={awaitingSignature}><i className='bi bi-box-arrow-left fs-6'></i></button>
                         </OverlayTrigger>,
                         <OverlayTrigger
                         placement="bottom"
@@ -348,7 +348,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             </Tooltip>
                         } 
                         > 
-                            <button className='btn btn-outline-light px-4' onClick={() => setDelegatingStake(stake)} disabled={awaitingSignature}><i className='bi bi-arrow-up-right-square-fill fs-6'></i></button>
+                            <button className='btn btn-outline-light btn-sm px-4' onClick={() => setDelegatingStake(stake)} disabled={awaitingSignature}><i className='bi bi-arrow-up-right-square-fill fs-6'></i></button>
                         </OverlayTrigger>
                     ]
                 )
@@ -364,7 +364,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                             </Tooltip>
                         } 
                         > 
-                            <button className='btn btn-outline-light px-4' onClick={() => doDelegate(stake, stake.account.data.parsed.info.stake.delegation.voter)} disabled={awaitingSignature}><i className='bi bi-x-octagon fs-6'></i></button>
+                            <button className='btn btn-outline-light btn-sm me-1 px-4' onClick={() => doDelegate(stake, stake.account.data.parsed.info.stake.delegation.voter)} disabled={awaitingSignature}><i className='bi bi-x-octagon fs-6'></i></button>
                         </OverlayTrigger>
                 )
             }
