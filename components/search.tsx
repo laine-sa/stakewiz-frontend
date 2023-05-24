@@ -16,13 +16,14 @@ interface searchI {
 class SearchBar extends React.Component<
         searchI, 
         {
-            textInput:string,
-            hideAnonymous:boolean,
-            onlyMine:boolean,
-            hideHighStake:boolean,
-            showListView:boolean,
+            textInput:string;
+            hideAnonymous:boolean;
+            onlyMine:boolean;
+            hideHighStake:boolean;
+            showListView:boolean;
             validatorCount: number;
             sortField: string;
+            onlyJito: boolean;
         }
     > {
     constructor(props) {
@@ -34,7 +35,8 @@ class SearchBar extends React.Component<
             hideHighStake: false,
             showListView: this.props.showListView,
             validatorCount: this.props.validators.length,
-            sortField: 'rank_asc'
+            sortField: 'rank_asc',
+            onlyJito: false,
         };
     }
 
@@ -62,7 +64,7 @@ class SearchBar extends React.Component<
             obj[key] = value;
             return obj;
             },() => {
-                const {textInput, hideAnonymous, onlyMine, hideHighStake } = this.state;
+                const {textInput, hideAnonymous, onlyMine, hideHighStake, onlyJito } = this.state;
                 const list = this.props.validators;
                 let filteredValidators: validatorI[] = [];
 
@@ -74,6 +76,7 @@ class SearchBar extends React.Component<
             
                     let stakeRatio = list[i].stake_ratio*1000;
                     let name = list[i].name;
+                    let is_jito = list[i].is_jito;
                     let txtValue = list[i].name + list[i].identity + list[i].vote_identity;
                     let vote_identity = list[i].vote_identity;
                     
@@ -86,6 +89,7 @@ class SearchBar extends React.Component<
                             if(onlyMine && this.props.walletValidators!=null) {
                                 if(!this.props.walletValidators.includes(vote_identity)) continue;
                             }
+                            if(!is_jito && this.state.onlyJito) continue;
                             filteredValidators.push(list[i]);
                             
                             counter ++;
@@ -164,6 +168,10 @@ class SearchBar extends React.Component<
                     <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
                         <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="hideHighStake" id="vhidehstake" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.hideHighStake} />
                         <label htmlFor="vhidestake">Hide high-stake</label>
+                    </div>
+                    <div className="d-flex align-items-center text-left form-check form-switch searchToggle">
+                        <input className="form-check-input p-2 vcheckbox mx-1" type="checkbox" name="onlyJito" id="vonlyjito" role="switch" onChange={event => this.doSearch(event.target.name,event.target.checked)} checked={this.state.onlyJito} />
+                        <label htmlFor="vhidestake">Only Jito</label>
                     </div>
                     <div className="d-flex align-items-center text-left form-check form-switch searchSort">
                         <label className="text-nowrap pe-1" htmlFor="sortField">Sort by</label>
