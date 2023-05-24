@@ -24,6 +24,8 @@ export interface validatorI {
     image: string;
     gossip_ip: string;
     mod: boolean;
+    is_jito: boolean;
+    jito_commission_bps;
     ip_latitude: string;
     ip_longitude: string;
     ip_city: string;
