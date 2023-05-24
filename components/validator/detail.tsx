@@ -357,7 +357,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                             </div>
                             <div className='row  mobile-validator-info-row'>
                             <div className='col'>
-                                    <div className='row mb-2'>
+                                    <div className='row'>
                                         <div className='col fw-bold'>
                                             TrueAPY (estimate)
                                             <OverlayTrigger
@@ -377,7 +377,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                     </div>
                                 </div>
                                 <div className='col'>
-                                    <div className='row mb-2'>
+                                    <div className='row'>
                                         <div className='col fw-bold'>
                                             Stake
                                         </div>
@@ -390,25 +390,27 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                     </div>
                                 </div>
                                 <div className='col'>
-                                    <div className='row mb-2'>
+                                    <div className='row'>
                                         <div className='col fw-bold'>
                                             Version
                                         </div>
                                         <div className='col'>
-                                            {this.state.validator.version}
-                                            {(this.state.validator.is_jito) ? (
-                                                <OverlayTrigger
-                                                placement="bottom"
-                                                overlay={
-                                                    <Tooltip>
-                                                        Jito Commission {this.state.validator.jito_commission_bps/100+" %"}
-                                                    </Tooltip>
-                                                } 
-                                            >
-                                                <span>&nbsp;(Jito)</span>
-                                            </OverlayTrigger>
-                                                
-                                                ): ''}
+                                            <div className='col d-flex align-items-center'>
+                                                {this.state.validator.version}
+                                                {(this.state.validator.is_jito) ? (
+                                                    <OverlayTrigger
+                                                    placement="bottom"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            Jito Commission {this.state.validator.jito_commission_bps/100+" %"}
+                                                        </Tooltip>
+                                                    } 
+                                                    >
+                                                        <div className='badge bg-info text-dark badge-sm mx-1'>Jito</div>
+                                                    </OverlayTrigger>
+                                                    
+                                                    ): ''}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
