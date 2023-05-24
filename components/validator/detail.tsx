@@ -406,7 +406,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                                         </Tooltip>
                                                     } 
                                                     >
-                                                        <div className='badge bg-info text-dark badge-sm mx-1'>Jito</div>
+                                                        <div className='badge bg-info text-light badge-sm mx-1'>JITO</div>
                                                     </OverlayTrigger>
                                                     
                                                     ): ''}
