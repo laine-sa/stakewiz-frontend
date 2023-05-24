@@ -421,6 +421,20 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     </div>
                 </div>
                 <div className='d-flex'>
+                    {(validator.is_jito) ? (
+                        <OverlayTrigger
+                            placement="top"
+                            overlay={
+                                <Tooltip>
+                                    Jito Commission: {validator.jito_commission_bps/100+' %'}
+                                </Tooltip>
+                            } 
+                        >
+                            <div className={'badge bg-info align-self-start '+(showListView?' ms-1 order-4':' ms-auto')}>
+                                    JITO
+                            </div>
+                        </OverlayTrigger>
+                    ) : ''}
                     <OverlayTrigger
                         placement="top"
                         overlay={
@@ -429,7 +443,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             </Tooltip>
                         } 
                     >
-                        <div className={'badge bg-wizdark align-self-start pointer'+(showListView?' ms-1 order-2':' ms-auto')}>
+                        <div className={'ms-1 badge bg-wizdark align-self-start pointer'+(showListView?' ms-1 order-2':'')}>
                             <span id={validator.identity} onClick={() => {navigator.clipboard.writeText(validator.identity)}}>
                                 i
                             </span>
