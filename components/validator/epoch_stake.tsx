@@ -10,26 +10,42 @@ export const EpochStakeChart: FC<{vote_identity: string, updateStake: Function}>
     const [stakes, setStakes] = useState(null);
     
     useEffect(() => {
-        axios(API_URL+config.API_ENDPOINTS.validator_epoch_stakes+"/"+vote_identity, {
+        axios(API_URL+config.API_ENDPOINTS.validator_epoch_stake_accounts+"/"+vote_identity, {
             headers: {'Content-Type':'application/json'}
         })
             .then(response => {
                 
                 let json = response.data;
-            
 
-                let stakes = [];
-                stakes.push(['Label','Stake',{role: 'style'}]);
-    
-                let change = json[0].activating_stake-json[0].deactivating_stake;
-                
-                
-                stakes.push(['Activating',parseFloat(json[0].activating_stake),'#428c57']);
-                stakes.push(['Deactivating',parseFloat(json[0].deactivating_stake)*-1, '#d65127']);
-                //stakes.push(['Net Change',parseFloat(change), '#27abd6']);
+                let change = json.activating.amount-json.deactivating.amount;
                 
                 updateStake(change);
-    
+                
+                let stakes = [];
+                stakes.push(['Location','Parent','Value (SOL)','Color value']);
+                stakes.push(['Total Epoch Stake Changes',null,0,0]);
+                stakes.push(['Activating','Total Epoch Stake Changes',0,0]);
+                stakes.push(['Deactivating','Total Epoch Stake Changes', 0,0]);
+                
+                json.activating.stake_accounts.map((stake) => {
+                    stakes.push([
+                        stake.pubkey,
+                        'Activating',
+                        parseFloat(stake.delegated_amount),
+                        Math.sqrt(parseFloat(stake.delegated_amount))
+                    ])
+                })
+                json.deactivating.stake_accounts.map((stake) => {
+                    stakes.push([
+                        stake.pubkey,
+                        'Deactivating',
+                        parseFloat(stake.delegated_amount),
+                        Math.sqrt(parseFloat(stake.delegated_amount))*-1
+                    ])
+                })
+
+                console.log(stakes)
+
                 setStakes(stakes);
             })
             .catch(e => {
@@ -47,36 +63,25 @@ export const EpochStakeChart: FC<{vote_identity: string, updateStake: Function}>
         return (
             <Chart 
                     key='epoch-stake-chart'
-                    chartType='BarChart'
+                    chartType='TreeMap'
                     width="100%"
                     height="20rem"
                     data={stakes}
                     options={{
                         backgroundColor: 'none',
-                        lineWidth: 1,
-                        bars: 'horizontal',
-                        legend:{
-                            position:'none'
-                        },
-                        vAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            },
-                            format: 'short',
-                            label: 'none'
-                        },
-                        hAxis: {
-                            gridlines: {
-                                color: 'transparent'
-                            },
-                            textStyle: {
-                                color: '#fff'
-                            }
-                        },
-                        allowAsync: true
+                        highlightOnMouseOver: false,
+                        maxDepth: 1,
+                        maxPostDepth: 2,
+                        minColor: "#dc3545",
+                        maxColor: "#198754",
+                        headerHeight: 0,
+                        hintOpacity: 0.4,
+                        showScale: false,
+                        useWeightedAverageForAggregation: true,
+                        textStyle: {
+                            fontName: 'lato',
+                            bold: true
+                        }
                     }}
                 />
         )

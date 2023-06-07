@@ -460,6 +460,10 @@ a:hover {
   color: #000;
 }
 
+.epoch-stake-chart-container div div div div div svg g rect {
+  stroke-width: 0!important;
+}
+
 .mglass {
   display: inline-block;
   pointer-events: none;
