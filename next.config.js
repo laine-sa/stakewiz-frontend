@@ -10,6 +10,6 @@ module.exports = {
     API_BASE_URL: process.env.API_BASE_URL
   },
   images: {
-    domains: ['s3.amazonaws.com']
+    domains: ['s3.amazonaws.com', 'media.stakewiz.com']
   }
 }
