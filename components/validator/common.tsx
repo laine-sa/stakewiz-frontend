@@ -63,19 +63,18 @@ export const RenderImage: FC<
     }> = ({ img, vote_identity, size, className }) => {
         
     return (
-        
-        <Link href={'/validator/'+vote_identity} passHref>
-            <a className='d-flex'>
-                <Image 
-                    className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} 
-                    src={(img==null) ? '/images/validator-image-na.png' : img} 
-                    width={size} 
-                    height={size} 
-                    loading="lazy" 
-                    alt={vote_identity+"-logo"} />
-            </a>
-        </Link>
-    )
+        (<Link href={'/validator/'+vote_identity} passHref className='d-flex'>
+
+            <Image 
+                className={(className!=undefined) ? className+" rounded-circle pointer " : " rounded-circle pointer "} 
+                src={(img==null) ? '/images/validator-image-na.png' : img} 
+                width={size} 
+                height={size} 
+                loading="lazy" 
+                alt={vote_identity+"-logo"} />
+
+        </Link>)
+    );
 }
 
 export const RenderName: FC<{

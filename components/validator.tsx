@@ -411,7 +411,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         />
                     </div>
                     <div className={'fs-6 ms-2 text-truncate'+(showListView?' my-2':' my-3')}>
-                        <Link href={'/validator/'+validator.vote_identity} passHref>
+                        <Link href={'/validator/'+validator.vote_identity} passHref legacyBehavior>
                             <span className="ms-2 vlist-name-inner pointer no-underline">
                                 <RenderName
                                     validator={validator}    
@@ -629,7 +629,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                         } 
                     >
                         <span>
-                            <Link href={'/validator/'+validator.vote_identity} passHref>
+                            <Link href={'/validator/'+validator.vote_identity} passHref legacyBehavior>
                                 <button className={'btn btn-outline-light btn-sm w-100'+(showListView?' p-2':'')}>
                                     <i className='bi bi-info-lg pe-1 alert-btn-icon'></i>
                                 </button>
@@ -640,8 +640,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                 </div>
             </div>
         </div>
-
-    )
+    );
 }
 
 
