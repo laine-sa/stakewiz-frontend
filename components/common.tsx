@@ -2,7 +2,7 @@ import Head from 'next/head';
 import React, {FC, useEffect, useState} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import axios from 'axios';
