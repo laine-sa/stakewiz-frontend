@@ -145,7 +145,7 @@ class WizScoreBody extends React.Component<{
                             <span id="scorecard-scoreversion">
                                {this.props.validator.score_version}
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
-                            <Link href="/faq#faq-wizscore" passHref><a target="_new">here</a></Link>.
+                            <Link href="/faq#faq-wizscore" passHref target="_new">here</Link>.
                         </p>
                         <table className={"table table-sm text-white"}> 
                             <thead>
@@ -194,7 +194,7 @@ class WizScoreBody extends React.Component<{
                                 />
                                 <WizScoreRow
                                     label='Published Information'
-                                    tooltip="2% for each of these: name, logo, description, keybase ID &amp; website."
+                                    tooltip="2.5% for each of these: name, logo, description &amp; website."
                                     value={this.renderInfoCount()+' out of 5'}
                                     score={this.props.validator.info_score}
                                     addPercent={true}
@@ -492,7 +492,7 @@ class WizScoreWeightings extends React.Component<{},
                                     {this.state.weightings.info_weight}
                                 </td>
                                 <td>
-                                    The total weight of validator info (broken up into 5 equally weighted components for name, logo, website, description and keybase account).
+                                    The total weight of validator info (broken up into 4 equally weighted components for name, logo, website and description).
                                 </td>
                             </tr>
                             <tr> 
