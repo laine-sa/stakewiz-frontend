@@ -334,17 +334,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         </div>
                                     </div>
                                     
-                                </div>
-                                <div className='col'>
-                                    <div className='row mb-2'>
-                                        <div className='col fw-bold'>
-                                            Keybase
-                                        </div>
-                                        <div className='col'>
-                                            {this.state.validator.keybase}
-                                        </div>
-                                    </div>
-                                </div>
+                                </div>  
                                 <div className='col'>
                                     <div className='row mb-2'>
                                         <div className='col fw-bold'>
@@ -353,6 +343,16 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         <div className='col'>
                                             {this.state.validator.commission} %
                                             {this.renderCommissionLabel()}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className='col'>
+                                    <div className='row mb-2'>
+                                        <div className='col fw-bold'>
+                                            
+                                        </div>
+                                        <div className='col'>
                                         </div>
                                     </div>
                                 </div>
