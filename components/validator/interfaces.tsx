@@ -49,6 +49,9 @@ export interface validatorI {
     asn: string;
     asn_concentration: number;
     asn_concentration_score: number;
+    tpu_ip: string;
+    tpu_ip_concentration: number;
+    tpu_ip_concentration_score: number;
     uptime: number;
     uptime_score: number;
     wiz_score: number;

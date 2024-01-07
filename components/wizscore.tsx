@@ -106,6 +106,17 @@ class WizScoreBody extends React.Component<{
         else return null;
     }
 
+    renderTPUIPAlert() {
+        if(this.props.validator.tpu_ip_concentration>0) {
+            return (
+                <div className="bg-danger text-white p-2 m-2 text-center">
+                    Validator is using a shared TPU IP or TPU relayer (e.g. Jito relayer).
+                </div>
+            );
+        }
+        else return null;
+    }
+
     renderWizScore() {
         let color = 'text-danger';
         if(this.props.validator.rank <= config.WIZ_SCORE_RANK_GROUPS.TOP) {
@@ -273,6 +284,16 @@ class WizScoreBody extends React.Component<{
                                     inverse={true}
                                 />
                                 <WizScoreRow
+                                    label={`TPU IP Concentration (${(this.props.validator.tpu_ip) ? this.props.validator.tpu_ip : 'N/A'})`}
+                                    tooltip="Stake concentration by TPU IP. Penalty applied relative to the highest-staked TPU IP (which incurs the max penalty). A penalty here implies the validator may be using a shared relayer instead of running their own."
+                                    value={this.props.validator.tpu_ip_concentration+'%'}
+                                    score={this.props.validator.tpu_ip_concentration_score}
+                                    addPercent={true}
+                                    threshold='0'
+                                    color='red'
+                                    inverse={true}
+                                />
+                                <WizScoreRow
                                     label='Uptime (30 days)'
                                     tooltip="Percentage of time a validator was not delinquent over the past 30 days (or since the validator was added to our database if less than 30 days)."
                                     value={this.props.validator.uptime+'%'}
@@ -306,6 +327,7 @@ class WizScoreBody extends React.Component<{
                         </table>
                         {this.renderCommissionAlert()}
                         {this.renderNoVotingAlert()}
+                        {this.renderTPUIPAlert()}
                         {this.renderWizScore()}
                     </div>
         );
