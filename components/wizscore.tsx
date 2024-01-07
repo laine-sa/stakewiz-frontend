@@ -109,7 +109,7 @@ class WizScoreBody extends React.Component<{
     renderTPUIPAlert() {
         if(this.props.validator.tpu_ip_concentration>0) {
             return (
-                <div className="bg-danger text-white p-2 m-2 text-center">
+                <div className="bg-warning text-white p-2 m-2 text-center">
                     Validator is using a shared TPU IP or TPU relayer (e.g. Jito relayer).
                 </div>
             );
