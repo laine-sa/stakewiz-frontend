@@ -628,6 +628,18 @@ class WizScoreWeightings extends React.Component<{},
                                     The weighting given to validator&apos;s ASN + city combined stake concentration.
                                 </td>
                             </tr>
+                            
+                            <tr> 
+                                <td>
+                                    TPU IP Concentration Weight
+                                </td>
+                                <td>
+                                    {this.state.weightings.tpu_ip_concentration_weight}
+                                </td>
+                                <td>
+                                    The weighting given to validator&apos;s TPU IP stake concentration. This penalizes validators who use shared relayers.
+                                </td>
+                            </tr>
                             <tr> 
                                 <td>
                                     Uptime Weight 
