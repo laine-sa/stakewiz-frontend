@@ -18,7 +18,6 @@ import { AppProps } from 'next/app';
 import { FC, useMemo,  useEffect, useState, useContext } from 'react';
 import { ValidatorContext } from '../components/validator/validatorhook';
 import { ValidatorData } from '../components/common';
-import config from '../config.json'
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('bootstrap/dist/css/bootstrap.css');
