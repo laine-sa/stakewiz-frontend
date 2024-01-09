@@ -33,7 +33,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
 
   // You can also provide a custom RPC endpoint
   //const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const endpoint = config.RPC_URL;
+  const endpoint = process.env.RPC_URL;
   
 
   // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
