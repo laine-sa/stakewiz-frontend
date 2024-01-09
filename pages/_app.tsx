@@ -18,7 +18,6 @@ import { AppProps } from 'next/app';
 import { FC, useMemo,  useEffect, useState, useContext } from 'react';
 import { ValidatorContext } from '../components/validator/validatorhook';
 import { ValidatorData } from '../components/common';
-import config from '../config.json'
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('bootstrap/dist/css/bootstrap.css');
@@ -33,7 +32,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
 
   // You can also provide a custom RPC endpoint
   //const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const endpoint = config.RPC_URL;
+  const endpoint = process.env.RPC_URL;
   
 
   // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --

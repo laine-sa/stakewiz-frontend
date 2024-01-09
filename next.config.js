@@ -7,7 +7,9 @@ module.exports = nextConfig
 
 module.exports = {
   env: {
-    API_BASE_URL: process.env.API_BASE_URL
+    API_BASE_URL: process.env.API_BASE_URL,
+    GA_TRACKING_ID: process.env.GA_TRACKING_ID,
+    RPC_URL: process.env.RPC_URL
   },
   images: {
     domains: ['s3.amazonaws.com', 'media.stakewiz.com']
