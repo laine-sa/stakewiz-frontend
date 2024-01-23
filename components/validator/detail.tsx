@@ -114,6 +114,31 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         }
     }
 
+    renderJitoCommissionLabel() {
+        if(this.state.validator !== null && this.state.validator.is_jito) {
+           
+                    
+                    return (
+                        <div className={'badge fw-normal badge-sm mx-1'+((this.state.validator.jito_commission_bps/100>10)?' bg-warning text-dark':' bg-info')}>
+                            <OverlayTrigger
+                                placement="top"
+                                overlay={
+                                    <Tooltip>
+                                        {(this.state.validator.jito_commission_bps/100 > 10) ?
+                                            "Caution: High MEV commission. This is the commission charged on MEV Tips earned through Jito, remainder goes to stakers."
+                                        :
+                                            "Commission charged on MEV Tips earned through Jito, remainder goes to stakers"}
+                                    </Tooltip>
+                                } 
+                            >
+                                <span>JITO {this.state.validator.jito_commission_bps/100}%</span>
+                            </OverlayTrigger>
+                        </div>
+                    )
+                
+        }
+    }
+
     renderCommissionTable() {
         if(this.state.commissionHistory!==null && this.state.commissionHistory.length>0) {
 
@@ -340,9 +365,9 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         <div className='col fw-bold'>
                                             Commission
                                         </div>
-                                        <div className='col'>
+                                        <div className='col d-flex align-items-center'>
                                             {this.state.validator.commission} %
-                                            {this.renderCommissionLabel()}
+                                            {this.renderJitoCommissionLabel()}
                                         </div>
                                     </div>
                                 </div>
@@ -399,19 +424,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                         <div className='col'>
                                             <div className='col d-flex align-items-center'>
                                                 {this.state.validator.version}
-                                                {(this.state.validator.is_jito) ? (
-                                                    <OverlayTrigger
-                                                    placement="bottom"
-                                                    overlay={
-                                                        <Tooltip>
-                                                            Jito Commission {this.state.validator.jito_commission_bps/100+" %"}
-                                                        </Tooltip>
-                                                    } 
-                                                    >
-                                                        <div className='badge bg-info text-light badge-sm mx-1'>JITO</div>
-                                                    </OverlayTrigger>
-                                                    
-                                                    ): ''}
                                             </div>
                                         </div>
                                     </div>
