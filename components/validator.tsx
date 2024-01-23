@@ -426,15 +426,12 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                             placement="top"
                             overlay={
                                 <Tooltip>
-                                        {(validator.jito_commission_bps/100 > 10) ?
-                                            "Caution: High MEV commission. This is the commission charged on MEV Tips earned through Jito, remainder goes to stakers."
-                                        :
-                                            "Commission charged on MEV Tips earned through Jito, remainder goes to stakers"}
-                                    </Tooltip>
+                                    Jito Commission: {validator.jito_commission_bps/100+' %'}
+                                </Tooltip>
                             } 
                         >
-                            <div className={'badge fw-normal align-self-start '+(showListView?' ms-1 order-4':' ms-auto')+((validator.jito_commission_bps/100>10)?' bg-warning text-dark':' bg-info')}>
-                                    JITO {validator.jito_commission_bps/100+' %'}
+                            <div className={'badge bg-info align-self-start '+(showListView?' ms-1 order-4':' ms-auto')}>
+                                    JITO
                             </div>
                         </OverlayTrigger>
                     ) : ''}
