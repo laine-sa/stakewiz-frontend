@@ -433,7 +433,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                                     </Tooltip>
                             } 
                         >
-                            <div className={'badge align-self-start '+(showListView?' ms-1 order-4':' ms-auto')+((validator.jito_commission_bps/100>10)?' bg-warning text-dark':' bg-info')}>
+                            <div className={'badge fw-normal align-self-start '+(showListView?' ms-1 order-4':' ms-auto')+((validator.jito_commission_bps/100>10)?' bg-warning text-dark':' bg-info')}>
                                     JITO {validator.jito_commission_bps/100+' %'}
                             </div>
                         </OverlayTrigger>
