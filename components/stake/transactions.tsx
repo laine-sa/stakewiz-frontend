@@ -1,5 +1,5 @@
 import { useConnection } from "@solana/wallet-adapter-react";
-import { Authorized, Connection, Keypair, PublicKey, StakeProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { Authorized, ComputeBudgetProgram, Connection, Keypair, PublicKey, StakeProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 
 export const addMeta = async (tx: Transaction, feePayer:PublicKey, connection: Connection) => {
 
@@ -8,6 +8,13 @@ export const addMeta = async (tx: Transaction, feePayer:PublicKey, connection: C
     tx.recentBlockhash = blockhash.blockhash
     tx.lastValidBlockHeight = blockhash.lastValidBlockHeight
     tx.feePayer = feePayer
+    
+    
+    const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: parseInt(process.env.PRIORITY_FEE),
+    })
+
+    tx = tx.add(addPriorityFee)
 
     return tx
 

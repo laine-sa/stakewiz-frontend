@@ -1,6 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import config from '../../config.json';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { ComputeBudgetProgram, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { getStakeAccounts, StakeStatus, getStakeStatus, getRewards } from './common';
 import { ValidatorContext } from '../validator/validatorhook';
 import { getAllEpochHistory, getClusterStats, Spinner} from '../common'
@@ -401,6 +401,8 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
     const submitTx = async (tx, stake, isClose:Boolean = false, type = 'none', value = 0) => {
 
         console.log(tx)
+
+
         let signature = await connection.sendRawTransaction(tx.serialize())
         console.log('Transaction signature: '+signature)
 
