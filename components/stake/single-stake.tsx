@@ -49,7 +49,7 @@ export const StakeDialog: FC<{
 
             if(epoch == undefined) epoch = epochInfo;
         
-            let epoch_return = Math.pow(1+validator.apy_estimate/100, 1/epoch.epochs_per_year)-1;
+            let epoch_return = Math.pow(1+validator.total_apy/100, 1/epoch.epochs_per_year)-1;
             setEpochReturn(epoch_return);
 
             let month_return = Math.pow(1+epoch_return, epoch.epochs_per_year/12)-1;
@@ -266,7 +266,7 @@ export const StakeDialog: FC<{
                     </div>
                     <div className='row mt-3 text-center justify-content-center d-flex'>
                         <div className='col-md-6 rounded border border-light border-2 bg-secondary text-dark p-2'>
-                            <div className='fs-4'>{validator.apy_estimate} %</div>
+                            <div className='fs-4'>{validator.total_apy} %</div>
                             <div className='fw-bold fs-6'>Estimated APY</div>
                         </div>
                     </div>
@@ -357,10 +357,10 @@ export const StakeDialog: FC<{
                                         Year
                                     </td>
                                     <td>
-                                        {(stakeAmount * validator.apy_estimate/100).toFixed(8)}
+                                        {(stakeAmount * validator.total_apy/100).toFixed(8)}
                                     </td>
                                     <td>
-                                        {(stakeAmount + stakeAmount * validator.apy_estimate/100).toFixed(8)}
+                                        {(stakeAmount + stakeAmount * validator.total_apy/100).toFixed(8)}
                                     </td>
                                 </tr>
                             </tbody>

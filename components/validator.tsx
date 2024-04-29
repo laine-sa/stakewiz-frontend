@@ -572,19 +572,19 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     placement="bottom"
                     overlay={
                         <Tooltip>
-                            Our TrueAPY is calculated by estimating the precise on-chain inflation for the current estimated epoch duration, giving you the most accurate compounded, annualised yield estimate based on real-time performance.
+                            Our TrueAPY is based on a 10-epoch median of both the true staking APY and Jito MEV APY (where applicable).
                         </Tooltip>
                     } 
                 >
                     <div className={'bg-wizlight rounded text-center flex-grow-1 m-1'+(showListView?' w-70':'')}>
                         <div className='p-2'>
-                            {validator.apy_estimate}%
+                            {validator.total_apy}%
                         </div>
                         <div>
                                 <i className='bi bi-graph-up-arrow'></i>  
                         </div>
                         <div className="progress bg-semidark" style={{height: '2px'}}>                        
-                            <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.apy_estimate} aria-valuemin={0} aria-valuemax={10} style={{width: validator.apy_estimate*10+'%'}}>
+                            <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={validator.total_apy} aria-valuemin={0} aria-valuemax={10} style={{width: validator.total_apy*10+'%'}}>
                             </div>                    
                         </div> 
                     </div>

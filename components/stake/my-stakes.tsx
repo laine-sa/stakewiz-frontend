@@ -745,13 +745,13 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                                 >
                                     <div className='bg-wizlight rounded text-center flex-grow-1 m-1'>
                                         <div className='p-2'>
-                                            {delegateValidator.apy_estimate}%
+                                            {delegateValidator.total_apy}%
                                         </div>
                                         <div>
                                                 <i className='bi bi-graph-up-arrow'></i>  
                                         </div>
                                         <div className="progress bg-semidark" style={{height: '2px'}}>                        
-                                            <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={delegateValidator.apy_estimate} aria-valuemin={0} aria-valuemax={10} style={{width: delegateValidator.apy_estimate*10+'%'}}>
+                                            <div className="progress-bar bg-warning" role="progressbar" aria-valuenow={delegateValidator.total_apy} aria-valuemin={0} aria-valuemax={10} style={{width: delegateValidator.total_apy*10+'%'}}>
                                             </div>                    
                                         </div> 
                                     </div>

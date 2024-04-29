@@ -102,7 +102,7 @@ export const MultiStakeDialog: FC<{
             
             stakeValidators.map((validator) => {
                 totalWizScore += validator.wiz_score;
-                totalAPY += validator.apy_estimate;
+                totalAPY += validator.total_apy;
             })
 
             let distribution = {};
@@ -116,7 +116,7 @@ export const MultiStakeDialog: FC<{
                         validatorStake += remainder * (validator.wiz_score / totalWizScore);
                         break;
                     case DistributionMethods.APY:
-                        validatorStake += remainder * (validator.apy_estimate / totalAPY);
+                        validatorStake += remainder * (validator.total_apy / totalAPY);
                         break;
                 }
                 validatorStake = Math.floor(validatorStake);
@@ -220,7 +220,7 @@ export const MultiStakeDialog: FC<{
                         </div>
                         <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>
                             <div className='badge bg-light text-dark ms-1'>
-                                APY {validator.apy_estimate} %
+                                APY {validator.total_apy} %
                             </div>
                             <div className='badge bg-light text-dark ms-1'>
                                 Comm {validator.commission} %
@@ -270,7 +270,7 @@ export const MultiStakeDialog: FC<{
                         </div>
                         <div className='d-flex flex-row align-items-center lh-1 multi-stake-validator-badges flex-grow-1'>
                             <div className='badge bg-light text-dark ms-1'>
-                                APY {laine.apy_estimate} %
+                                APY {laine.total_apy} %
                             </div>
                             <div className='badge bg-light text-dark ms-1'>
                                 Comm {laine.commission} %
@@ -281,8 +281,8 @@ export const MultiStakeDialog: FC<{
                             
                         </div>
                         <div className='text-truncate d-flex'>
-                            <button className='btn btn-outline-light btn-sm' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
-                                <i className='bi bi-plus me-1'></i>Add Laine
+                            <button className='btn btn-outline-warning btn-sm bg-success text-light' onClick={() => { updateStakeValidators(laine); calculateDistribution() }}>
+                                <i className='bi bi-plus me-1'></i>Stake with us
                             </button>
                         </div>
                         
@@ -300,7 +300,7 @@ export const MultiStakeDialog: FC<{
     const estimatedAPY = () => {
         let apy_multiples = 0;
         stakeValidators.map((validator) => {
-            if(stakeDistribution[validator.vote_identity]!=undefined) apy_multiples += validator.apy_estimate * stakeDistribution[validator.vote_identity];
+            if(stakeDistribution[validator.vote_identity]!=undefined) apy_multiples += validator.total_apy * stakeDistribution[validator.vote_identity];
         });
 
         return Math.round((apy_multiples / stakeAmount/LAMPORTS_PER_SOL*100)+Number.EPSILON) / 100;
