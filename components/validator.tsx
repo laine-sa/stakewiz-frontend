@@ -433,7 +433,7 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                                     </Tooltip>
                             } 
                         >
-                            <div className={'badge fw-normal align-self-start '+(showListView?' ms-1 order-4':' ms-auto')+((validator.jito_commission_bps/100>10)?' bg-warning text-dark':' bg-info')}>
+                            <div className={'badge fw-normal align-self-start border '+(showListView?' ms-1 order-4':' ms-auto')+((validator.jito_commission_bps/100>10)?' border-warning':' bg- border-info')}>
                                     JITO {validator.jito_commission_bps/100+' %'}
                             </div>
                         </OverlayTrigger>
@@ -572,7 +572,19 @@ const ValidatorBox: FC<ValidatorBoxPropsI> = ({validator,clusterStats,showWizMod
                     placement="bottom"
                     overlay={
                         <Tooltip>
-                            Our TrueAPY is based on a 10-epoch median of both the true staking APY and Jito MEV APY (where applicable).
+                            Our TrueAPY is based on a 10-epoch median of both the true staking APY and Jito MEV APY (where applicable).<br /><br />
+                            <div className='border border-light m-1 p-1 rounded'>
+                                <div className='text-start my-0 text-warning d-flex'>
+                                    <div className='w-75'>Staking APY:</div>
+                                    <div>{validator.staking_apy} %</div>
+                                </div>
+                                {(validator.is_jito) ?
+                                <div className='text-start my-0 text-warning d-flex'>
+                                    <div className='w-75'>Jito MEV APY:</div>
+                                    <div>{validator.jito_apy} %</div>
+                                </div>
+                                : null}
+                            </div>
                         </Tooltip>
                     } 
                 >
