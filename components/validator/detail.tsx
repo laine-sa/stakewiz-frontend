@@ -391,15 +391,45 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                                 placement="bottom"
                                                 overlay={
                                                     <Tooltip>
-                                                        Our TrueAPY is calculated by estimating the precise on-chain inflation for the current estimated epoch duration, giving you the most accurate compounded, annualised yield estimate based on real-time performance.
+                                                        Our TrueAPY is based on a 10-epoch median of both the true staking APY and Jito MEV APY (where applicable).
                                                     </Tooltip>
                                                 } 
                                             >
                                                 <i className='bi bi-info-circle ms-2'></i>
                                             </OverlayTrigger>
                                         </div>
-                                        <div className='col'>
-                                            {this.state.validator.apy_estimate} %
+                                        <div className='col d-flex align-items-center'>
+                                            <div>{this.state.validator.total_apy} %</div>
+                                            <div className='d-flex flex-row'>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    overlay={
+                                                        <Tooltip>
+                                                            10-epoch median staking APY
+                                                        </Tooltip>
+                                                    } 
+                                                >
+                                                    <div className='badge fw-normal badge-sm mx-1 bg-warning text-dark'>
+                                                        S {this.state.validator.staking_apy} %
+                                                    </div>
+                                                </OverlayTrigger>
+                                                {(this.state.validator.is_jito) ? 
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        overlay={
+                                                            <Tooltip>
+                                                                10-epoch cluster-median Jito APY
+                                                            </Tooltip>
+                                                        } 
+                                                    >
+                                                        <div className='badge fw-normal badge-sm mx-1 bg-info text-dark'>
+                                                            J {this.state.validator.jito_apy} %
+                                                        </div>
+                                                    </OverlayTrigger>
+                                                    : null
+                                                }
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>

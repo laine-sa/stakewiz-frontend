@@ -180,7 +180,7 @@ class SearchBar extends React.Component<
                             <option value='rank_asc'>Wiz Score ↓</option>
                             <option value='activated_stake_asc'>Stake ↑</option>
                             <option value='activated_stake'>Stake ↓</option>
-                            <option value='apy_estimate'>Estimated APY ↓</option>
+                            <option value='total_apy'>TrueAPY ↓</option>
                             <option value='skip_rate_asc'>Slot skip rate ↑</option>
                             <option value='epoch_credits_asc'>Vote Credits ↑</option>
                             <option value='epoch_credits'>Vote Credits ↓</option>

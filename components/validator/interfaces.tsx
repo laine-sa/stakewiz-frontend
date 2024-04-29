@@ -74,6 +74,9 @@ export interface validatorI {
     userPubkey: string;
     solflareEnabled: boolean;
     skip_rate_ignored: boolean;
+    staking_apy: number;
+    jito_apy?: number;
+    total_apy: number;
 };
 
 export interface clusterStatsI {

@@ -93,13 +93,14 @@ export default function Home() {
                                 Estimating APY can be difficult. APY is the compounded annual yield you can expect on your stake. This means we need to factor in the validator&apos;s performance, the network&apos;s average performance, the total inflation and the total active stake, as well as the how many epochs there are in a calendar year.
                             </p>
                             <p>
-                                Many websites use a simpler method, where they look at the previous epoch and assume that the highest APY last epoch will be the highest APY this epoch. Then validators are just ranked and their APY calculated relative to this reference APY. This method is somewhat accurate, but not entirely correct.
+                                We used to compute a real-time estimation based on the  performance in the current epoch, however this is highly volatile and unlikely to be accurate over a longer time period.
+                            </p>
+                            <p>At the end of April 2024 our TrueAPY method was updated to take the median of the last 10 epochs of real achieved APY. This eliminates short-term outlying performance and provides a smoothed and realistic long-term yield estimate.</p>
+                            <p>
+                                Ultimately this is still an estimate and a projection and APY is never guaranteed. Use Stakewiz alerts to monitor your validators for extended delinquencies and commission changes to protect your stake.
                             </p>
                             <p>
-                                We have updated our method where we now calculate the exact network inflation for the current epoch from on-chain data, we also determine the total supply of SOL and work out the stake and credit weighted portion of inflation each validator should earn this epoch. Based on this, together with our internal epoch tracking data we can then extrapolate the compounded annual return for a given validator.
-                            </p>
-                            <p>
-                                It&apos;s important to note that the estimated APY makes one important assumption: That every epoch for a year takes as long as this one, and that the validator&apos;s performance relative to its peers remains the same for a year. Of course in reality those two things are unlikely, but it&apos;s not something we can easily model for.
+                                For validators with less than 10 epochs of data the median of the available epochs is used. This requires at least one completed epoch + a few hours for our data collection to run.
                             </p>
                             <hr className="m-3 my-5" />
                             <h3 className="mb-4" id="faq-3">
