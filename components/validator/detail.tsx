@@ -119,7 +119,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
            
                     
                     return (
-                        <div className={'badge fw-normal badge-sm mx-1'+((this.state.validator.jito_commission_bps/100>10)?' bg-warning text-dark':' bg-info')}>
+                        <div className={'badge fw-normal badge-sm mx-1 border'+((this.state.validator.jito_commission_bps/100>10)?' border-warning':' border-info')}>
                             <OverlayTrigger
                                 placement="top"
                                 overlay={
@@ -405,12 +405,12 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                                     placement="bottom"
                                                     overlay={
                                                         <Tooltip>
-                                                            10-epoch median staking APY
+                                                            10-epoch median native staking APY
                                                         </Tooltip>
                                                     } 
                                                 >
-                                                    <div className='badge fw-normal badge-sm mx-1 bg-warning text-dark'>
-                                                        S {this.state.validator.staking_apy} %
+                                                    <div className='badge fw-normal badge-sm ms-2 me-1 bg-dark border border-light text-light'>
+                                                        <span className='font-italic'>S</span> {this.state.validator.staking_apy} %
                                                     </div>
                                                 </OverlayTrigger>
                                                 {(this.state.validator.is_jito) ? 
@@ -418,12 +418,12 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                                         placement="bottom"
                                                         overlay={
                                                             <Tooltip>
-                                                                10-epoch cluster-median Jito APY
+                                                                10-epoch cluster-median Jito MEV APY
                                                             </Tooltip>
                                                         } 
                                                     >
-                                                        <div className='badge fw-normal badge-sm mx-1 bg-info text-dark'>
-                                                            J {this.state.validator.jito_apy} %
+                                                        <div className='badge fw-normal badge-sm bg-dark border border-light text-light'>
+                                                            <span className='font-italic'>J</span> {this.state.validator.jito_apy} %
                                                         </div>
                                                     </OverlayTrigger>
                                                     : null
