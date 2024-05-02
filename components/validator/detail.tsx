@@ -256,7 +256,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                         
                 </div>,
                 <div className='d-flex flex-column validator-details-content' key='validator-details-content'>
-
+                    {(this.state.validator.admin_comment!==null) ?
+                        <div className='d-flex p-1 border border-warning rounded m-2 text-light'>
+                            <span className='fw-bold mx-2'>Admin Comment:</span> {this.state.validator.admin_comment}
+                        </div>
+                    : null }
                     <div className='d-flex flex-column p-2 text-white position-relative validator-detail-box m-1'>
                         
                         <div className='validator-detail-flex-opacity-bg'></div>

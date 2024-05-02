@@ -26,6 +26,7 @@ export interface validatorI {
     mod: boolean;
     is_jito: boolean;
     jito_commission_bps;
+    admin_comment: string|null;
     ip_latitude: string;
     ip_longitude: string;
     ip_city: string;
