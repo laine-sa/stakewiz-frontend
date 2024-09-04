@@ -310,6 +310,11 @@ a:hover {
   color:#fff!important;
 }
 
+.validator-detail-scorecard div table th, .validator-detail-scorecard div table td, .commission-history-table th, .commission-history-table td {
+  background-color: unset!important;
+  color: #fff!important;
+}
+
 .validator-detail-scorecard .scorecard-wiz-score { 
   display:none!important;
 }
@@ -323,10 +328,15 @@ a:hover {
 
 
 .wallet-container .wallet-adapter-button {
-  height:auto;
+  line-height: 2rem;
   color:#fff;
   display:flex;
   align-items:center;
+  background-color: transparent;
+  border: 1px solid #fff;
+  font-size: 1rem;
+  font-weight: normal;
+  padding: 0 1rem;
 }
 
 .wallet-container .wallet-adapter-button:not([disabled]):hover {

@@ -4,7 +4,6 @@ import Script from 'next/script'
 import Link from 'next/link'
 import Image from "next/legacy/image";
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
-import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import axios from 'axios';
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -14,6 +13,16 @@ import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
 import { PublicKey } from '@solana/web3.js';
 import StakewizLogo from '../public/images/logo-horizontal.svg'
+import dynamic from 'next/dynamic';
+
+const WalletDisconnectButtonDynamic = dynamic(
+  async () => (await import('@solana/wallet-adapter-react-ui')).WalletDisconnectButton,
+  { ssr: false }
+);
+const WalletMultiButtonDynamic = dynamic(
+  async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+  { ssr: false }
+);
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -148,7 +157,7 @@ const TopBar: FC = () => {
                 </a>
               </Nav>
               <div className='wallet-container'>
-                  <WalletMultiButton
+                  <WalletMultiButtonDynamic
                     className='btn btn-outline-light'
                   />
               </div>

@@ -5,13 +5,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import {
     LedgerWalletAdapter,
     PhantomWalletAdapter,
-    SlopeWalletAdapter,
     SolflareWalletAdapter,
-    SolletExtensionWalletAdapter,
-    SolletWalletAdapter,
-    TorusWalletAdapter,
-    ExodusWalletAdapter,
-    BackpackWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { AppProps } from 'next/app';
@@ -41,14 +35,8 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   const wallets = useMemo(
       () => [
           new PhantomWalletAdapter(),
-          new SlopeWalletAdapter(),
           new SolflareWalletAdapter({ network }),
-          new TorusWalletAdapter(),
           new LedgerWalletAdapter(),
-          new SolletWalletAdapter({ network }),
-          new SolletExtensionWalletAdapter({ network }),
-          new ExodusWalletAdapter({ network }),
-          new BackpackWalletAdapter({ network }),
       ],
       [network]
   );

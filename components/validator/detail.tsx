@@ -174,7 +174,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             })
 
             return (
-                <table className='table table-sm text-light'>
+                <table className='table table-sm text-light commission-history-table'>
                     <thead>
                         <tr>
                             <th scope='col'>
