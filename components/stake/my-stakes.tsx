@@ -14,7 +14,6 @@ import { arrayBuffer } from "node:stream/consumers";
 
 import * as gtag from '../../lib/gtag.js'
 import Chart from "react-google-charts";
-import { createNamedExports } from "typescript";
 
 const API_URL = process.env.API_BASE_URL;
 
