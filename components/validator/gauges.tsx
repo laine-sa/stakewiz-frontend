@@ -1,6 +1,10 @@
 import { FC } from "react";
-import GaugeChart from 'react-gauge-chart'
+import dynamic from "next/dynamic";
 import WizEmblem from '../../public/images/emblem.svg'
+
+const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
+import { GaugeChartProps } from 'react-gauge-chart';
+
 
 export const Gauges: FC<{
     skip_rate: number, 
@@ -38,17 +42,20 @@ export const Gauges: FC<{
                 <div className='d-flex flex-row'>
                     <div className='flex-shrink-1 d-flex flex-column align-items-center'>
                         <div>
-                            <GaugeChart id='gauge-chart-skip' 
-                                nrOfLevels={15} 
-                                percent={skip_rate/100} 
-                                colors={["#ffffff", "#666666"]} 
-                                arcWidth={0.08} 
-                                arcPadding={0.03}
-                                needleBaseColor="#AAAAAA"
-                                needleColor="#AAAAAA"
-                                animate={false}
-                                cornerRadius={0}
-                                style={chartStyle}
+                            <GaugeChart
+                                {...{
+                                    id: 'gauge-chart-skip',
+                                    nrOfLevels: 15,
+                                    percent: skip_rate / 100,
+                                    colors: ["#ffffff", "#666666"],
+                                    arcWidth: 0.08,
+                                    arcPadding: 0.03,
+                                    needleBaseColor: "#AAAAAA",
+                                    needleColor: "#AAAAAA",
+                                    animate: false,
+                                    cornerRadius: 0,
+                                    style: chartStyle
+                                } as GaugeChartProps}
                             />
                         </div>
                         <div>
@@ -57,17 +64,20 @@ export const Gauges: FC<{
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart id='gauge-chart-credits' 
-                            nrOfLevels={15} 
-                            percent={credit_ratio/100}  
-                            colors={["#666666", "#ffffff"]} 
-                            arcWidth={0.08} 
-                            arcPadding={0.03}
-                            needleBaseColor="#AAAAAA"
-                            needleColor="#AAAAAA"
-                            animate={false}
-                            cornerRadius={0}
-                            style={chartStyle}
+                        <GaugeChart
+                            {...{
+                                id: 'gauge-chart-credits',
+                                nrOfLevels: 15,
+                                percent: credit_ratio/100,
+                                colors: ["#666666", "#ffffff"],
+                                arcWidth: 0.08,
+                                arcPadding: 0.03,
+                                needleBaseColor: "#AAAAAA",
+                                needleColor: "#AAAAAA",
+                                animate: false,
+                                cornerRadius: 0,
+                                style: chartStyle
+                            } as GaugeChartProps}
                         />
                         </div>
                         <div>
@@ -78,17 +88,20 @@ export const Gauges: FC<{
                 <div className='d-flex flex-row'>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart id='gauge-chart-wiz' 
-                            nrOfLevels={15} 
-                            percent={wiz_score/100}  
-                            colors={["#666666", "#ffffff"]} 
-                            arcWidth={0.08} 
-                            arcPadding={0.03}
-                            needleBaseColor="#AAAAAA"
-                            needleColor="#AAAAAA"
-                            animate={false}
-                            cornerRadius={0}
-                            style={chartStyle}
+                        <GaugeChart
+                            {...{
+                                id: 'gauge-chart-wiz',
+                                nrOfLevels: 15,
+                                percent: wiz_score/100,
+                                colors: ["#666666", "#ffffff"],
+                                arcWidth: 0.08,
+                                arcPadding: 0.03,
+                                needleBaseColor: "#AAAAAA",
+                                needleColor: "#AAAAAA",
+                                animate: false,
+                                cornerRadius: 0,
+                                style: chartStyle
+                            } as GaugeChartProps}
                         />
                         </div>
                         <div>
@@ -97,17 +110,20 @@ export const Gauges: FC<{
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart id='gauge-chart-uptime' 
-                            nrOfLevels={15} 
-                            percent={uptime/100}  
-                            colors={["#666666", "#ffffff"]} 
-                            arcWidth={0.08} 
-                            arcPadding={0.03}
-                            needleBaseColor="#AAAAAA"
-                            needleColor="#AAAAAA"
-                            animate={false}
-                            cornerRadius={0}
-                            style={chartStyle}
+                        <GaugeChart
+                            {...{
+                                id: 'gauge-chart-uptime',
+                                nrOfLevels: 15,
+                                percent: uptime/100,
+                                colors: ["#666666", "#ffffff"],
+                                arcWidth: 0.08,
+                                arcPadding: 0.03,
+                                needleBaseColor: "#AAAAAA",
+                                needleColor: "#AAAAAA",
+                                animate: false,
+                                cornerRadius: 0,
+                                style: chartStyle
+                            } as GaugeChartProps}
                         />
                         </div>
                         <div>
