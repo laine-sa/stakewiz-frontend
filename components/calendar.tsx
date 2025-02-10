@@ -108,7 +108,7 @@ export default class GitHubCalendar extends React.Component<Props, State> {
             ? this.props.panelColors[numOfColors - 2] 
             : (contribution.value>2 && numOfColors >=4) 
             ? this.props.panelColors[numOfColors-3] 
-            : this.props.panelColors[1];
+            : (contribution.value>0) ? this.props.panelColors[2] : this.props.panelColors[1];
         const dom = (
                 <rect
                     key={ 'panel_key_' + i + '_' + j }
@@ -117,7 +117,7 @@ export default class GitHubCalendar extends React.Component<Props, State> {
                     width={ this.panelSize }
                     height={ this.panelSize * this.heightFactor }
                     style={{ strokWidth: 3, stroke: color }}
-                    fill='transparent'
+                    fill={(contribution.value>0 && !contribution.preOperative) ? color : 'transparent'}
                     { ...this.props.panelAttributes }
                 />
         );
