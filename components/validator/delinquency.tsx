@@ -69,7 +69,7 @@ export const DelinquencyChart: FC<{vote_identity: string}> = ({vote_identity}) =
                     until={until}
                     weekLabelAttributes={{}}
                     monthLabelAttributes={{}}
-                    panelColors={['#555', '#e5b467', '#e2a124', '#dd6e1d', '#c34c0b']}
+                    panelColors={['#198754', '#e5b467', '#e2a124', '#dd6e1d', '#c34c0b']}
                     panelAttributes={{}}
                 />
             </div>

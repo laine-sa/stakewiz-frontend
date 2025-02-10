@@ -538,11 +538,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
 
 
                     <div className='d-flex mb-1 flex-grow-1 flex-wrap validator-detail-flex-container'>
-                        <div className='flex-grow-1 m-1 validator-detail-flex-card'>
+                        <div className='flex-grow-1 m-1 validator-detail-flex-card delinquency-flex-card'>
                             <div className='validator-detail-flex-opacity-bg'></div>
                             <div className='card text-light delinquency-card'>
                                 <div className='card-header'>
-                                    Delinquencies
+                                    Uptime
                                 </div>
                                 <div className='card-body d-flex align-items-center delinquency-card-body'>
                                     <DelinquencyChart

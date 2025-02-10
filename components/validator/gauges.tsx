@@ -49,7 +49,7 @@ export const Gauges: FC<{
                                     width:0.15,
                                     subArcs: [
                                         {
-                                            limit: (skip_rate),
+                                            limit: (skip_rate >=5) ? 4.99 : skip_rate,
                                             color: '#bb5555',
                                             
                                         },
@@ -63,7 +63,7 @@ export const Gauges: FC<{
                                 value={skip_rate} 
                                 pointer={{hide:true}}
                                 style={chartStyle}
-                                labels={{tickLabels:{hideMinMax:true}}}
+                                labels={{tickLabels:{hideMinMax:true}, valueLabel: {formatTextValue: (value) => value+' %', style: { fontSize: '30px'}}}}
                             />
                         </div>
                         <div>
@@ -92,7 +92,7 @@ export const Gauges: FC<{
                                 value={credit_ratio} 
                                 pointer={{hide:true}}
                                 style={chartStyle}
-                                labels={{tickLabels:{hideMinMax:true}}}
+                                labels={{tickLabels:{hideMinMax:true}, valueLabel: {formatTextValue: (value) => value+' %', style: { fontSize: '30px'}}}}
                             />
                         </div>
                         <div>
@@ -123,7 +123,7 @@ export const Gauges: FC<{
                                 value={wiz_score} 
                                 pointer={{hide:true}}
                                 style={chartStyle}
-                                labels={{tickLabels:{hideMinMax:true}}}
+                                labels={{tickLabels:{hideMinMax:true}, valueLabel: {formatTextValue: (value) => value+' %', style: { fontSize: '30px'}, maxDecimalDigits: 1}}}
                             />
                         </div>
                         <div>
@@ -152,7 +152,7 @@ export const Gauges: FC<{
                                 value={uptime} 
                                 pointer={{hide:true}}
                                 style={chartStyle}
-                                labels={{tickLabels:{hideMinMax:true}}}
+                                labels={{tickLabels:{hideMinMax:true}, valueLabel: {formatTextValue: (value) => value+' %', style: { fontSize: '30px'}}}}
                             />
                         </div>
                         <div>
