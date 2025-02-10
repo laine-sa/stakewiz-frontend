@@ -211,7 +211,7 @@ export const Stakes: FC<{userPubkey: PublicKey, connection: Connection, connecte
                         </div>
                     ) : null}
                     <div className='table-responsive-md'>
-                        <table className='table tabl-sm text-light'>
+                        <table className='table tabl-sm text-light table-dark'>
                             <thead>
                                 <tr>
                                     <th scope='col'>

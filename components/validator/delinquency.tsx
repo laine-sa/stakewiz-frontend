@@ -3,6 +3,7 @@ import axios from "axios";
 import config from '../../config.json'
 import { Spinner } from '../common'
 import Chart from "react-google-charts";
+import Calendar from '../calendar';
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -13,42 +14,46 @@ export const DelinquencyChart: FC<{vote_identity: string}> = ({vote_identity}) =
         axios(API_URL+config.API_ENDPOINTS.validator_delinquencies+"/"+vote_identity, {
             headers: {'Content-Type':'application/json'}
         })
-            .then(response => {
-                let json = response.data;
+            .then(async (response) => {
+                let json: [] = response.data;
 
-                let delinquencies = [];
-                delinquencies.push([
+                let d: Object = {};
+
+                json.forEach((delinquency: any) => {
+                        d[delinquency.date] = delinquency.delinquent_minutes
+                })
+
+                /*delinquencies.push([
                     'Date', 'Delinquent Minutes'
                 ]);
 
                 let d = new Date();
-                for(let a = 1; a <= 30; a++) {
+                for(let a = 1; a <= 365; a++) {
+                    let label = d.getFullYear()+'-'+d.getMonth()+'-'+d.getDay()
+                    let delinquency: any|undefined = json.find((delinquency: any) => delinquency.date==label)
+                    let delinquent_minutes = (delinquency==undefined) ? 0 : delinquency.delinquent_minutes;
                     
+                    console.log(label+': '+delinquent_minutes)
                     delinquencies.push([
-                        new Date(d.getTime()),
-                        0
+                        label,
+                        delinquent_minutes
                     ]);
                     d.setDate(d.getDate() - 1);
-                }
+                }*/
 
-                
-                if(json.length>0) {
-                    for(var i in json) {
-                        for(var a in delinquencies) {
-                            if(new Date(delinquencies[a][0]).toLocaleDateString() == new Date(json[i].date).toLocaleDateString()) {
-                                delinquencies[a][1] = parseInt(json[i].delinquent_minutes);
-                            }
-                        }
-                    }
-                }
-
-                setDelinquencies(delinquencies);
+                setDelinquencies(d);
             })
             .catch(e => {
             console.log(e);
             })
     }, []);
 
+    const today = new Date();
+    let year = today.getFullYear()
+    let month: string|number = today.getMonth() + 1
+    let day = today.getDate();
+    if(month<10) month = '0'+month
+    const until = year+'-'+month+'-'+day
 
     if(delinquencies==null) {
         
@@ -57,46 +62,17 @@ export const DelinquencyChart: FC<{vote_identity: string}> = ({vote_identity}) =
     }
     else {
         return (
-            <Chart 
-                chartType='ColumnChart'
-                width="100%"
-                height="20rem"
-                data={delinquencies}
-                options={{
-                    backgroundColor: 'none',
-                    curveType: "function",
-                    colors: ['#fff', '#fff', '#fff'],
-                    lineWidth: 2,
-                    legend:{
-                        position:'none'
-                    },
-                    vAxis: {
-                        gridlines: {
-                            color: 'transparent'
-                        },
-                        textStyle: {
-                            color: '#fff'
-                        },
-                        format: 'short',
-                        maxValue: 30
-                    },
-                    hAxis: {
-                        gridlines: {
-                            color: 'transparent'
-                        },
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    chartArea: {
-                        top: 20,
-                        left: 50,
-                        width:'100%',
-                        height:'80%'
-                    },
-                    allowAsync: true
-                }}
-            />
+            <div className='w-100 d-flex'>
+                <Calendar 
+                    key='del1'
+                    values={delinquencies}
+                    until={until}
+                    weekLabelAttributes={{}}
+                    monthLabelAttributes={{}}
+                    panelColors={['#555', '#e5b467', '#e2a124', '#dd6e1d', '#c34c0b']}
+                    panelAttributes={{}}
+                />
+            </div>
         )
     }
 }

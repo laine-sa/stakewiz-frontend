@@ -44,8 +44,6 @@ export const EpochStakeChart: FC<{vote_identity: string, updateStake: Function}>
                     ])
                 })
 
-                console.log(stakes)
-
                 setStakes(stakes);
             })
             .catch(e => {
