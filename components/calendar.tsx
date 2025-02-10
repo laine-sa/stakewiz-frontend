@@ -112,15 +112,15 @@ export default class GitHubCalendar extends React.Component<Props, State> {
             ? this.props.panelColors[numOfColors-3] 
             : this.props.panelColors[0];
         const dom = (
-          <rect
-            key={ 'panel_key_' + i + '_' + j }
-            x={ pos.x }
-            y={ pos.y }
-            width={ this.panelSize }
-            height={ this.panelSize * this.heightFactor }
-            fill={ color }
-            { ...this.props.panelAttributes }
-          />
+                <rect
+                    key={ 'panel_key_' + i + '_' + j }
+                    x={ pos.x }
+                    y={ pos.y }
+                    width={ this.panelSize }
+                    height={ this.panelSize * this.heightFactor }
+                    fill={ color }
+                    { ...this.props.panelAttributes }
+                />
         );
         innerDom.push(dom);
       }
@@ -199,7 +199,7 @@ export default class GitHubCalendar extends React.Component<Props, State> {
   updateSize(size?: BoundingRect) {
     if (!size) return;
 
-    const visibleWeeks = Math.floor((size.width - this.weekLabelWidth) / 13);
+    const visibleWeeks = Math.floor((size.width - this.weekLabelWidth) / 22);
     this.setState({
       columns: Math.min(visibleWeeks, this.state.maxWidth)
     });
