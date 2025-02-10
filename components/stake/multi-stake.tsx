@@ -409,7 +409,6 @@ export const MultiStakeDialog: FC<{
 
                 transactions[y].partialSign(keypair);
             })
-            
             let signedTx = await signAllTransactions(transactions);
             setSigned(true);
             let sigs = []
@@ -446,11 +445,10 @@ export const MultiStakeDialog: FC<{
         }
         catch(error) {
             console.log(error);
-            console.log(error.message);
             setSigned(false);
             setSignatures([]);
             setConfirmations([]);
-            setSubmitError(error.message)
+            setSubmitError((error.message=='') ? 'An error occured, please try again.' : error.message)
         }
 
     };

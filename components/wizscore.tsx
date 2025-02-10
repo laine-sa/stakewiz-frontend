@@ -158,7 +158,7 @@ class WizScoreBody extends React.Component<{
                             </span>. You can read the full details of the current version&apos;s weightings&nbsp; 
                             <Link href="/faq#faq-wizscore" passHref target="_new">here</Link>.
                         </p>
-                        <table className={"table table-sm text-white"}> 
+                        <table className={"table table-sm text-white table-dark"}> 
                             <thead>
                                 <tr> 
                                     <th scope="col">
@@ -418,7 +418,7 @@ class WizScoreWeightings extends React.Component<{},
                     <p key='wiz-weighting-paragraph'>
                         The Wiz Score consists of many metrics which are given different weightings. We revise these from time to time and assign them a version number. The current score (for which the details are shown below) is version {this.state.weightings.score_version}.
                     </p>,
-                    <table className="table table-sm text-white" key='wiz-weighting-table'> 
+                    <table className="table table-sm text-white table-dark" key='wiz-weighting-table'> 
                         <thead> 
                             <tr>
                                 <th scope="col">

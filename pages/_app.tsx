@@ -1,11 +1,14 @@
+import dynamic from 'next/dynamic';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+const WalletProvider = dynamic(
+    async () => (await import('@solana/wallet-adapter-react')).WalletProvider,
+    { ssr: false }
+);
+import { ConnectionProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import {
-    LedgerWalletAdapter,
     PhantomWalletAdapter,
     SolflareWalletAdapter,
-    TorusWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { AppProps } from 'next/app';
@@ -35,6 +38,8 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   // of wallets that your users connect to will be loaded
   const wallets = useMemo(
       () => [
+          new PhantomWalletAdapter(),
+          new SolflareWalletAdapter({ network })
       ],
       [network]
   );
