@@ -16,6 +16,7 @@ import { ValidatorData } from '../components/common';
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('bootstrap/dist/css/bootstrap.css');
 require('react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css')
+require('../css/wallet.css')
 require("../css/style.css");
 
 
@@ -34,8 +35,6 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   // of wallets that your users connect to will be loaded
   const wallets = useMemo(
       () => [
-          new PhantomWalletAdapter(),
-          new SolflareWalletAdapter({ network })
       ],
       [network]
   );
