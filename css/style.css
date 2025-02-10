@@ -263,6 +263,22 @@ a:hover {
   margin-left: 50px;
 }
 
+.delinquency-card {
+  height:100%;
+  min-height:fit-content;
+  position:relative;
+}
+
+.delinquency-card-body {
+  height:100%;
+  min-height:fit-content;
+}
+
+.delinquency-card-body div {
+  height:100%;
+  min-height:fit-content;
+}
+
 .td-min-width {
   width:30%;
 }
@@ -793,7 +809,7 @@ a:hover {
     padding:5px;
     background-color:#333;
     border-radius:3px;
-    z-index:9999;
+    z-index:1039;
   }
 
   .navbar-nav {
@@ -862,6 +878,10 @@ a:hover {
   .logo {
     text-align:center;
     
+  }
+
+  .validator-detail-flex-card {
+    height:400px;
   }
 
   .stakewiz-logo {

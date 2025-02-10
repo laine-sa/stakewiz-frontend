@@ -188,7 +188,7 @@ export const StakeDialog: FC<{
             setSigned(false);
             setProcessed(false);
             setConfirmed(false);
-            setSubmitError(error.message);
+            setSubmitError((error.message=='') ? 'An error occured.' : error.message)
         }
 
     };

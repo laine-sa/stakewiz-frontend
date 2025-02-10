@@ -12,8 +12,8 @@ import { DelinquencyChart } from './delinquency';
 import { EpochStakeChart } from './epoch_stake';
 import { AlertForm } from '../alert';
 import { StakeDialog } from '../stake/single-stake';
-import { getCommissionHistory } from '../stake/common';
-import { CommissionHistoryI } from '../stake/interfaces';
+import { getCommissionHistory, getJitoCommissionHistory } from '../stake/common';
+import { CommissionHistoryI, JitoCommissionHistoryI } from '../stake/interfaces';
 import * as browser from '../../lib/browser';
 import { VoteSuccessChart } from './vote_success';
 import { SkipRateChart } from './skip_rate';
@@ -27,6 +27,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         showStakeModal: boolean;
         clusterStats: clusterStatsI|null;
         commissionHistory: CommissionHistoryI[]|null;
+        jitoCommissionHistory: JitoCommissionHistoryI[]|null;
     }> {
     constructor(props) {
         super(props);
@@ -35,7 +36,8 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             stake_change: null,
             showStakeModal: false,
             clusterStats: null,
-            commissionHistory: null
+            commissionHistory: null,
+            jitoCommissionHistory: null,
         };
         if(this.props.vote_identity!='') this.getValidator();
         if(this.state.clusterStats==null) getClusterStats().then((stats) => {
@@ -46,6 +48,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
         if(this.state.commissionHistory==null) getCommissionHistory(this.props.vote_identity).then((history) => {
             this.setState({
                 commissionHistory: history
+            })
+        })
+        if(this.state.jitoCommissionHistory==null) getJitoCommissionHistory(this.props.vote_identity).then((history) => {
+            this.setState({
+                jitoCommissionHistory: history
             })
         })
     }
@@ -174,7 +181,68 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             })
 
             return (
-                <table className='table table-sm text-light'>
+                <table className='table table-sm text-light table-dark'>
+                    <thead>
+                        <tr>
+                            <th scope='col'>
+                                Observation time
+                            </th>
+                            <th scope='col'>
+                                Previous commission
+                            </th>
+                            <th scope='col'>
+                                New commission
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            )
+        }
+        else {
+            return <div>No commission changes in our records for this validator.<br /><br />Our data begins from 28 Dec 2021.</div>
+        }
+        
+    }
+
+    renderJitoCommissionTable() {
+        if(this.state.jitoCommissionHistory!==null && this.state.jitoCommissionHistory.length>0) {
+
+            let rows: JSX.Element[] = []
+            this.state.jitoCommissionHistory.map((event,i) => {
+                let isSafari:boolean = browser.check('Safari');
+
+                let formatted_date: Date|null = null
+
+                if(isSafari){
+                    let timeZone = event.created_at.slice(-3)+':00';
+                    formatted_date = new Date(event.created_at.substring(0, 19).replace(/-/g, "/")+timeZone)
+                }else{                
+                    formatted_date = new Date(event.created_at)
+                }
+                let prev_comm = (this.state.jitoCommissionHistory!==null && i+1 < this.state.jitoCommissionHistory.length && this.state.jitoCommissionHistory[i+1].commission_bps != null)  ? this.state.jitoCommissionHistory[i+1].commission_bps/100+' %' : null
+                if(i==this.state.jitoCommissionHistory.length-1) prev_comm = 'N/A';
+
+                let row = (
+                    <tr key={'commission-history-row-'+i}>
+                        <th scope='row' className='fw-normal'>
+                            {formatted_date.toLocaleDateString(undefined,{dateStyle:'medium'})+' '+formatted_date.toLocaleTimeString()}
+                        </th>
+                        <td>
+                            {(prev_comm==null) ? "Not running Jito" : prev_comm}
+                        </td>
+                        <td>
+                            {(event.commission_bps==null) ? "Not running Jito" : event.commission_bps/100+" %"}
+                        </td>
+                    </tr>
+                )
+                rows.push(row)
+            })
+
+            return (
+                <table className='table table-sm text-light table-dark'>
                     <thead>
                         <tr>
                             <th scope='col'>
@@ -472,11 +540,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                     <div className='d-flex mb-1 flex-grow-1 flex-wrap validator-detail-flex-container'>
                         <div className='flex-grow-1 m-1 validator-detail-flex-card'>
                             <div className='validator-detail-flex-opacity-bg'></div>
-                            <div className='card text-light'>
+                            <div className='card text-light delinquency-card'>
                                 <div className='card-header'>
-                                    Delinquencies (30 days)
+                                    Delinquencies
                                 </div>
-                                <div className='card-body'>
+                                <div className='card-body d-flex align-items-center delinquency-card-body'>
                                     <DelinquencyChart
                                         vote_identity={this.state.validator.vote_identity}
                                     />
@@ -594,6 +662,14 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 </div>
                                 <div className='card-body'>
                                     {this.renderCommissionTable()}
+                                </div>
+                            </div>
+                            <div className='card text-light'>
+                                <div className='card-header'>
+                                    Jito MEV Commission History
+                                </div>
+                                <div className='card-body'>
+                                    {this.renderJitoCommissionTable()}
                                 </div>
                             </div>
                         </div>

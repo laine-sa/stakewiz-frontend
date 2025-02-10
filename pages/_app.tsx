@@ -1,17 +1,14 @@
-
+import dynamic from 'next/dynamic';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+const WalletProvider = dynamic(
+    async () => (await import('@solana/wallet-adapter-react')).WalletProvider,
+    { ssr: false }
+);
+import { ConnectionProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import {
-    LedgerWalletAdapter,
     PhantomWalletAdapter,
-    SlopeWalletAdapter,
     SolflareWalletAdapter,
-    SolletExtensionWalletAdapter,
-    SolletWalletAdapter,
-    TorusWalletAdapter,
-    ExodusWalletAdapter,
-    BackpackWalletAdapter
 } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import { AppProps } from 'next/app';
@@ -22,6 +19,7 @@ import { ValidatorData } from '../components/common';
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('bootstrap/dist/css/bootstrap.css');
 require('react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css')
+require('../css/wallet.css')
 require("../css/style.css");
 
 
@@ -41,14 +39,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   const wallets = useMemo(
       () => [
           new PhantomWalletAdapter(),
-          new SlopeWalletAdapter(),
-          new SolflareWalletAdapter({ network }),
-          new TorusWalletAdapter(),
-          new LedgerWalletAdapter(),
-          new SolletWalletAdapter({ network }),
-          new SolletExtensionWalletAdapter({ network }),
-          new ExodusWalletAdapter({ network }),
-          new BackpackWalletAdapter({ network }),
+          new SolflareWalletAdapter({ network })
       ],
       [network]
   );
