@@ -4,7 +4,7 @@ import { Modal, Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap
 import RangeSlider from 'react-bootstrap-range-slider'
 import config from '../../config.json';
 import axios from 'axios';
-import { CommissionHistoryI } from './interfaces'
+import { CommissionHistoryI, JitoCommissionHistoryI } from './interfaces'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -44,6 +44,22 @@ export const getCommissionHistory = async (vote_identity):Promise<CommissionHist
         return null
       }
   }
+
+export const getJitoCommissionHistory = async (vote_identity):Promise<JitoCommissionHistoryI[]> => {
+
+    try {
+        let response = await axios(API_URL+config.API_ENDPOINTS.jito_commission_history+'/'+vote_identity, {
+        headers: {'Content-Type':'application/json'}
+        })
+        let json = response.data;
+
+        return json
+        }
+        catch(e) {
+        console.log(e);
+        return null
+        }
+    }
 
 export const StakeInput: FC<{
     balance: number;

@@ -25,7 +25,8 @@
         "gossip_stake": "gossip_stake",
         "validator_rewards_since_epoch": "validator_rewards_since_epoch",
         "all_epoch_history": "all_epochs_history",
-        "commission_history": "commission_history"
+        "commission_history": "commission_history",
+        "jito_commission_history": "jito_commission_history"
     },
     "MAX_CONSERVATIVE_TX_SIZE_BYTES": 1000,
     "DEFAULT_LIST_SIZE": 50,
