@@ -35,9 +35,7 @@ const Stakewiz: FC<AppProps> = ({ Component, pageProps }) => {
   const wallets = useMemo(
       () => [
           new PhantomWalletAdapter(),
-          new SolflareWalletAdapter({ network }),
-          new TorusWalletAdapter(),
-          new LedgerWalletAdapter(),
+          new SolflareWalletAdapter({ network })
       ],
       [network]
   );

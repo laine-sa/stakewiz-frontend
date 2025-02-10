@@ -1,5 +1,6 @@
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic'
 import { FC } from "react";
+const GaugeComponent = dynamic(() => import('react-gauge-component'), { ssr: false });
 const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
 import WizEmblem from '../../public/images/emblem.svg'
 
@@ -34,22 +35,35 @@ export const Gauges: FC<{
         width: 180
     }
 
+    console.log(skip_rate);
+
     return (
         <div className='d-flex flex-nowrap justify-content-center mobile-gauge-container text-white my-2'>
                 <div className='d-flex flex-row'>
                     <div className='flex-shrink-1 d-flex flex-column align-items-center'>
                         <div>
-                            <GaugeChart  
-                                nrOfLevels={15} 
-                                percent={skip_rate/100} 
-                                colors={["#ffffff", "#666666"]} 
-                                arcWidth={0.08} 
-                                arcPadding={0.03}
-                                needleBaseColor="#AAAAAA"
-                                needleColor="#AAAAAA"
-                                animate={false}
-                                cornerRadius={0}
+                            <GaugeComponent id='gauge-chart-skip' 
+                                type="semicircle"
+                                arc={{
+                                    cornerRadius: 0,
+                                    width:0.15,
+                                    subArcs: [
+                                        {
+                                            limit: (skip_rate),
+                                            color: '#bb5555',
+                                            
+                                        },
+                                        {
+                                            limit: 5,
+                                            color:'#55bb55',
+                                        }
+                                    ]
+                                }}
+                                maxValue={5}
+                                value={skip_rate} 
+                                pointer={{hide:true}}
                                 style={chartStyle}
+                                labels={{tickLabels:{hideMinMax:true}}}
                             />
                         </div>
                         <div>
@@ -58,18 +72,28 @@ export const Gauges: FC<{
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart 
-                            nrOfLevels={15} 
-                            percent={credit_ratio/100}  
-                            colors={["#666666", "#ffffff"]} 
-                            arcWidth={0.08} 
-                            arcPadding={0.03}
-                            needleBaseColor="#AAAAAA"
-                            needleColor="#AAAAAA"
-                            animate={false}
-                            cornerRadius={0}
-                            style={chartStyle}
-                        />
+                            <GaugeComponent id='gauge-chart-voting' 
+                                type="semicircle"
+                                arc={{
+                                    cornerRadius: 0,
+                                    width:0.15,
+                                    subArcs: [
+                                        {
+                                            limit: (credit_ratio>95) ? (credit_ratio-95)*20 : 0,
+                                            color: '#55bb55',
+                                            
+                                        },
+                                        {
+                                            limit: 100,
+                                            color:'#bb5555',
+                                        }
+                                    ]
+                                }}
+                                value={credit_ratio} 
+                                pointer={{hide:true}}
+                                style={chartStyle}
+                                labels={{tickLabels:{hideMinMax:true}}}
+                            />
                         </div>
                         <div>
                             Voting rate
@@ -79,18 +103,28 @@ export const Gauges: FC<{
                 <div className='d-flex flex-row'>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart 
-                            nrOfLevels={15} 
-                            percent={wiz_score/100}  
-                            colors={["#666666", "#ffffff"]} 
-                            arcWidth={0.08} 
-                            arcPadding={0.03}
-                            needleBaseColor="#AAAAAA"
-                            needleColor="#AAAAAA"
-                            animate={false}
-                            cornerRadius={0}
-                            style={chartStyle}
-                        />
+                            <GaugeComponent id='gauge-chart-uptime' 
+                                type="semicircle"
+                                arc={{
+                                    cornerRadius: 0,
+                                    width:0.15,
+                                    subArcs: [
+                                        {
+                                            limit: wiz_score,
+                                            color: '#55bb55',
+                                            
+                                        },
+                                        {
+                                            limit: 100,
+                                            color:'#bb5555',
+                                        }
+                                    ]
+                                }}
+                                value={wiz_score} 
+                                pointer={{hide:true}}
+                                style={chartStyle}
+                                labels={{tickLabels:{hideMinMax:true}}}
+                            />
                         </div>
                         <div>
                             <span><WizEmblem fill="#fff" width="25px" height="25px" /> Score</span>
@@ -98,18 +132,28 @@ export const Gauges: FC<{
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart  
-                            nrOfLevels={15} 
-                            percent={uptime/100}  
-                            colors={["#666666", "#ffffff"]} 
-                            arcWidth={0.08} 
-                            arcPadding={0.03}
-                            needleBaseColor="#AAAAAA"
-                            needleColor="#AAAAAA"
-                            animate={false}
-                            cornerRadius={0}
-                            style={chartStyle}
-                        />
+                            <GaugeComponent id='gauge-chart-voting' 
+                                type="semicircle"
+                                arc={{
+                                    cornerRadius: 0,
+                                    width:0.15,
+                                    subArcs: [
+                                        {
+                                            limit: (uptime==100) ? 99.999 : (uptime>99) ? (uptime-99)*100 : 0,
+                                            color: '#55bb55',
+                                            
+                                        },
+                                        {
+                                            limit: 100,
+                                            color:'#bb5555',
+                                        }
+                                    ]
+                                }}
+                                value={uptime} 
+                                pointer={{hide:true}}
+                                style={chartStyle}
+                                labels={{tickLabels:{hideMinMax:true}}}
+                            />
                         </div>
                         <div>
                             Uptime (30 days)
