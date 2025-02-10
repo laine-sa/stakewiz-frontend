@@ -102,9 +102,9 @@ export default class GitHubCalendar extends React.Component<Props, State> {
         const numOfColors = this.props.panelColors.length
         const color =
             (contribution.preOperative) ? this.props.panelColors[0]
-            : (contribution.value >= numOfColors * 2)
+            : (contribution.value >= numOfColors * 5)
             ? this.props.panelColors[numOfColors - 1]
-            : (contribution.value > numOfColors && numOfColors >= 4) 
+            : (contribution.value > numOfColors * 2.5 && numOfColors >= 4) 
             ? this.props.panelColors[numOfColors - 2] 
             : (contribution.value>2 && numOfColors >=4) 
             ? this.props.panelColors[numOfColors-3] 
