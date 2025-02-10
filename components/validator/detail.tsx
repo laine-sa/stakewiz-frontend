@@ -547,6 +547,7 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                                 <div className='card-body d-flex align-items-center delinquency-card-body'>
                                     <DelinquencyChart
                                         vote_identity={this.state.validator.vote_identity}
+                                        first_epoch={this.state.validator.first_epoch_with_stake}
                                     />
                                 </div>
                                 
