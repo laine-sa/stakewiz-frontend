@@ -8,6 +8,7 @@ interface Props {
   panelColors?: string[]
   values: { [date: string]: number }
   until: string
+  start: string
   dateFormat?: string
   weekLabelAttributes: any | undefined
   monthLabelAttributes: any | undefined
@@ -37,16 +38,9 @@ export default class GitHubCalendar extends React.Component<Props, State> {
     this.heightFactor = 1;
     this.maxColorValue = 120;
 
-    if(props.weeks!=undefined) {
-        this.state = {
-            columns: props.weeks,
-            maxWidth: props.weeks
-        }
-    } else {
-        this.state = {
-            columns: 27,
-            maxWidth: 27
-        }
+    this.state = {
+        columns: 27,
+        maxWidth: 27
     }
   }
 
@@ -59,12 +53,13 @@ export default class GitHubCalendar extends React.Component<Props, State> {
     };
   }
 
-  makeCalendarData(history: { [k: string]: number }, lastDay: string, columns: number) {
-    const d = dayjs(lastDay, { format: this.props.dateFormat });
+  makeCalendarData(history: { [k: string]: number }, lastDay: string, firstDay: string, columns: number) {
+    const d = dayjs(lastDay, { format: this.props.dateFormat })
+    const startDate = dayjs(firstDay, {format: this.props.dateFormat})
     const lastWeekend = d.endOf('week');
     const endDate = d.endOf('day');
 
-    var result: ({ value: number, month: number } | null)[][] = [];
+    var result: ({ value: number, month: number, preOperative: boolean } | null)[][] = [];
     for (var i = 0; i < columns; i++) {
       result[i] = [];
       for (var j = 0; j < 14; j++) {
@@ -72,7 +67,8 @@ export default class GitHubCalendar extends React.Component<Props, State> {
         if (date <= endDate) {
           result[i][j] = {
             value: history[date.format(this.props.dateFormat)] || 0,
-            month: date.month()
+            month: date.month(),
+            preOperative: (date < startDate) ? true : false
           };
         } else {
           result[i][j] = null;
@@ -87,13 +83,14 @@ export default class GitHubCalendar extends React.Component<Props, State> {
     const columns = this.state.columns;
     const values = this.props.values;
     const until = this.props.until;
+    const start = this.props.start;
 
     // TODO: More sophisticated typing
     if (this.props.panelColors == undefined || this.props.weekNames == undefined || this.props.monthNames == undefined) {
       return;
     }
 
-    var contributions = this.makeCalendarData(values, until, columns);
+    var contributions = this.makeCalendarData(values, until, start, columns);
     var innerDom: ReactElement[] = [];
 
     // panels
@@ -104,13 +101,14 @@ export default class GitHubCalendar extends React.Component<Props, State> {
         const pos = this.getPanelPosition(i, j);
         const numOfColors = this.props.panelColors.length
         const color =
-          contribution.value >= numOfColors * 2
+            (contribution.preOperative) ? this.props.panelColors[0]
+            : (contribution.value >= numOfColors * 2)
             ? this.props.panelColors[numOfColors - 1]
-            : (contribution.value > numOfColors && numOfColors >= 3) 
+            : (contribution.value > numOfColors && numOfColors >= 4) 
             ? this.props.panelColors[numOfColors - 2] 
-            : (contribution.value>0) 
+            : (contribution.value>2 && numOfColors >=4) 
             ? this.props.panelColors[numOfColors-3] 
-            : this.props.panelColors[0];
+            : (contribution.value>0) ? this.props.panelColors[2] : this.props.panelColors[1];
         const dom = (
                 <rect
                     key={ 'panel_key_' + i + '_' + j }
@@ -118,7 +116,8 @@ export default class GitHubCalendar extends React.Component<Props, State> {
                     y={ pos.y }
                     width={ this.panelSize }
                     height={ this.panelSize * this.heightFactor }
-                    fill={ color }
+                    style={{ strokWidth: 3, stroke: color }}
+                    fill={(contribution.value>0 && !contribution.preOperative) ? color : 'transparent'}
                     { ...this.props.panelAttributes }
                 />
         );
