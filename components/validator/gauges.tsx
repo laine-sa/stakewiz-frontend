@@ -1,5 +1,6 @@
+import dynamic from "next/dynamic";
 import { FC } from "react";
-import GaugeChart from 'react-gauge-chart'
+const GaugeChart = dynamic(() => import('react-gauge-chart'), { ssr: false });
 import WizEmblem from '../../public/images/emblem.svg'
 
 export const Gauges: FC<{
@@ -38,7 +39,7 @@ export const Gauges: FC<{
                 <div className='d-flex flex-row'>
                     <div className='flex-shrink-1 d-flex flex-column align-items-center'>
                         <div>
-                            <GaugeChart id='gauge-chart-skip' 
+                            <GaugeChart  
                                 nrOfLevels={15} 
                                 percent={skip_rate/100} 
                                 colors={["#ffffff", "#666666"]} 
@@ -57,7 +58,7 @@ export const Gauges: FC<{
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart id='gauge-chart-credits' 
+                        <GaugeChart 
                             nrOfLevels={15} 
                             percent={credit_ratio/100}  
                             colors={["#666666", "#ffffff"]} 
@@ -78,7 +79,7 @@ export const Gauges: FC<{
                 <div className='d-flex flex-row'>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart id='gauge-chart-wiz' 
+                        <GaugeChart 
                             nrOfLevels={15} 
                             percent={wiz_score/100}  
                             colors={["#666666", "#ffffff"]} 
@@ -97,7 +98,7 @@ export const Gauges: FC<{
                     </div>
                     <div className='flex-grow-1 d-flex flex-column align-items-center'>
                         <div>
-                        <GaugeChart id='gauge-chart-uptime' 
+                        <GaugeChart  
                             nrOfLevels={15} 
                             percent={uptime/100}  
                             colors={["#666666", "#ffffff"]} 
