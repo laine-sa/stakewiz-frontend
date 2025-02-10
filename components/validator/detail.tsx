@@ -54,7 +54,6 @@ class ValidatorDetail extends React.Component<validatorDetailI,
             this.setState({
                 jitoCommissionHistory: history
             })
-            console.log(history)
         })
     }
     getValidator() {
@@ -541,11 +540,11 @@ class ValidatorDetail extends React.Component<validatorDetailI,
                     <div className='d-flex mb-1 flex-grow-1 flex-wrap validator-detail-flex-container'>
                         <div className='flex-grow-1 m-1 validator-detail-flex-card'>
                             <div className='validator-detail-flex-opacity-bg'></div>
-                            <div className='card text-light'>
+                            <div className='card text-light delinquency-card'>
                                 <div className='card-header'>
-                                    Delinquencies (30 days)
+                                    Delinquencies
                                 </div>
-                                <div className='card-body'>
+                                <div className='card-body d-flex align-items-center delinquency-card-body'>
                                     <DelinquencyChart
                                         vote_identity={this.state.validator.vote_identity}
                                     />

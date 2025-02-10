@@ -19,6 +19,7 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "jquery": "^3.7.1",
     "jsdom": "^19.0.0",
@@ -31,8 +32,10 @@
     "react-dom": "^18.3.1",
     "react-gauge-chart": "^0.5.1",
     "react-gauge-component": "^1.2.64",
+    "react-github-contribution-calendar": "^2.2.0",
     "react-google-charts": "^4.0.7",
     "react-google-recaptcha": "^2.1.0",
+    "react-measure": "^2.5.2",
     "sharp": "^0.33.5",
     "typescript": "^4.9.5"
   },
