@@ -200,19 +200,6 @@ input:focus {
   border-radius:0.3em;
 }
 
-.uptime-svg-group {
-  position:relative;
-}
-
-.uptime-rect-tooltip {
-  visibility:hidden;
-  position:absolute;
-}
-
-.uptime-svg-group:hover .uptime-rect-tooltip {
-  visibility:visible;
-}
-
 .search-row .form-check, .search-row .form-switch {
   padding-left:0.1rem!important;
 }
