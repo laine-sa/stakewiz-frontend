@@ -31,11 +31,11 @@ export default class GitHubCalendar extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
 
-    this.monthLabelHeight = 15;
+    this.monthLabelHeight = 18;
     this.weekLabelWidth = 15;
-    this.panelSize = 19;
-    this.panelMargin = 3;
-    this.heightFactor = 1;
+    this.panelSize = 18;
+    this.panelMargin = 4;
+    this.heightFactor = 0.9;
     this.maxColorValue = 120;
 
     this.state = {
@@ -123,7 +123,6 @@ export default class GitHubCalendar extends React.Component<Props, State> {
                     >
                         <title>{(!contribution.preOperative) ? (contribution.value===0) ? '100%' : ((1-(contribution.value/3600))*100).toFixed(3)+'%, '+contribution.value+' min delinquent' : 'Not operating'}</title>
                     </rect>
-                    
                 </g>
         );
         innerDom.push(dom);
