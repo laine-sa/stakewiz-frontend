@@ -31,11 +31,11 @@ export default class GitHubCalendar extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
 
-    this.monthLabelHeight = 15;
+    this.monthLabelHeight = 18;
     this.weekLabelWidth = 15;
-    this.panelSize = 19;
-    this.panelMargin = 3;
-    this.heightFactor = 1;
+    this.panelSize = 18;
+    this.panelMargin = 4;
+    this.heightFactor = 0.9;
     this.maxColorValue = 120;
 
     this.state = {
@@ -102,24 +102,28 @@ export default class GitHubCalendar extends React.Component<Props, State> {
         const numOfColors = this.props.panelColors.length
         const color =
             (contribution.preOperative) ? this.props.panelColors[0]
-            : (contribution.value >= numOfColors * 5)
+            : (contribution.value >= numOfColors * 10)
             ? this.props.panelColors[numOfColors - 1]
-            : (contribution.value > numOfColors * 2.5 && numOfColors >= 4) 
+            : (contribution.value > numOfColors * 5 && numOfColors >= 4) 
             ? this.props.panelColors[numOfColors - 2] 
-            : (contribution.value>2 && numOfColors >=4) 
+            : (contribution.value > numOfColors*2.5 && numOfColors >=4) 
             ? this.props.panelColors[numOfColors-3] 
             : (contribution.value>0) ? this.props.panelColors[2] : this.props.panelColors[1];
         const dom = (
-                <rect
-                    key={ 'panel_key_' + i + '_' + j }
-                    x={ pos.x }
-                    y={ pos.y }
-                    width={ this.panelSize }
-                    height={ this.panelSize * this.heightFactor }
-                    style={{ strokWidth: 3, stroke: color }}
-                    fill={(contribution.value>0 && !contribution.preOperative) ? color : 'transparent'}
-                    { ...this.props.panelAttributes }
-                />
+                <g className='uptime-svg-group'>
+                    <rect
+                        key={ 'panel_key_' + i + '_' + j }
+                        x={ pos.x }
+                        y={ pos.y }
+                        width={ this.panelSize }
+                        height={ this.panelSize * this.heightFactor }
+                        style={{ strokWidth: 3, stroke: color }}
+                        fill={(contribution.value>0 && !contribution.preOperative) ? color : 'transparent'}
+                        { ...this.props.panelAttributes }
+                    >
+                        <title>{(!contribution.preOperative) ? (contribution.value===0) ? '100%' : ((1-(contribution.value/3600))*100).toFixed(3)+'%, '+contribution.value+' min delinquent' : 'Not operating'}</title>
+                    </rect>
+                </g>
         );
         innerDom.push(dom);
       }
