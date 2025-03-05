@@ -79,7 +79,7 @@ export const Gauges: FC<{
                                     width:0.15,
                                     subArcs: [
                                         {
-                                            limit: (credit_ratio>95) ? (credit_ratio-95)*20 : 0,
+                                            limit: (credit_ratio>95) ? (credit_ratio>100) ? 100 : (credit_ratio-95)*20 : 0,
                                             color: '#55bb55',
                                             
                                         },
