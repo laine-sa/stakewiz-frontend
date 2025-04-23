@@ -2,7 +2,6 @@ import Head from 'next/head';
 import React, {FC, useEffect, useState} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import axios from 'axios';
@@ -106,6 +105,8 @@ const TopBar: FC = () => {
       else return null;
 
     }
+    
+
 
     return (
       <div>
@@ -126,7 +127,7 @@ const TopBar: FC = () => {
         <Navbar key='navbar' bg="none" variant="dark" expand="lg">
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
-                <Image src='/images/logo-horizontal-ssi.png' width='250' height='78' alt='Stakewiz' />
+                <StakewizLogo fill="#fff" height="80px" width="250px" />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
