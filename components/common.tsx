@@ -2,18 +2,15 @@ import Head from 'next/head';
 import React, {FC, useEffect, useState} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
-import Image from "next/legacy/image";
+import Image from 'next/image'
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
-import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import axios from 'axios';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
 import { clusterStatsI, EpochInfoI } from './validator/interfaces';
-import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
 import { PublicKey } from '@solana/web3.js';
-import StakewizLogo from '../public/images/logo-horizontal.svg'
+import StakewizLogo from '../public/images/logo-horizontal-ssi.svg'
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -131,7 +128,7 @@ const TopBar: FC = () => {
         <Navbar key='navbar' bg="none" variant="dark" expand="lg">
           <Container className='navbar-flex-container'>
             <Navbar.Brand href="/" className='brand-box'>
-                <StakewizLogo fill="#fff" height="80px" width="250px" />
+                <Image src='/images/logo-horizontal-ssi.png' width='250' height='78' alt='Stakewiz' />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav" className='position-relative justify-content-end align-items-center text-white'>
