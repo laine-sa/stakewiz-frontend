@@ -106,8 +106,6 @@ const TopBar: FC = () => {
       else return null;
 
     }
-    
-
 
     return (
       <div>
