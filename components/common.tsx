@@ -2,18 +2,14 @@ import Head from 'next/head';
 import React, {FC, useEffect, useState} from 'react';
 import Script from 'next/script'
 import Link from 'next/link'
-import Image from "next/legacy/image";
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
-import { WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import axios from 'axios';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import config from '../config.json'
 import { clusterStatsI, EpochInfoI } from './validator/interfaces';
-import { JsxElement } from 'typescript';
 import GlobalSearch from "./navbar-search";
 import { PublicKey } from '@solana/web3.js';
-import StakewizLogo from '../public/images/logo-horizontal.svg'
+import StakewizLogo from '../public/images/logo-horizontal-ssi.svg'
 
 const API_URL = process.env.API_BASE_URL;
 
